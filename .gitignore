@@ -1,0 +1,8 @@
+# Ignoring virtual environment files & folders...
+/Include/**
+/Lib/**
+/Scripts/**
+/pyvenv.cfg
+
+# Ignoring Python cache files...
+/**/__pycache__/**
