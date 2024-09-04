@@ -15,3 +15,11 @@ def getHomePage(request: HttpRequest) -> HttpResponse:
         request,
         template_name='home.j2',
         context=context)
+
+
+def getLicensePage(request: HttpRequest) -> HttpResponse:
+    pass
+
+
+def getAboutMePage(request: HttpRequest) -> HttpResponse:
+    pass

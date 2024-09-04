@@ -2,7 +2,7 @@
     The ultimate base skeleton for the entire Megacodist web site, so it
     does not extend any template.
 
-    No context is needed.
+    No special context is needed. Only environment is sufficient.
 -#}
 
 
@@ -19,7 +19,7 @@
     <link rel="shortcut icon" href="{{  static('img/favicon.ico') }}">
 
     <title>
-        {%- block title %}Megacodist{% endblock title -%}
+        {%- block title %}{% endblock title -%}
     </title>
 
     {%- block head -%}

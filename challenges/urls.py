@@ -13,5 +13,5 @@ from .views import getChallengesIndexPage
 app_name = 'challenges'
 
 urlpatterns = [
-    path('', getChallengesIndexPage, name='index_page'),
+    path('', getChallengesIndexPage, name='index-page'),
 ]
