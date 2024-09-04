@@ -1,9 +1,8 @@
 {#-
-    The ultimate base skeleton for the entire Megacodist web site, so it does not extend any template. It requires the following context:
+    The ultimate base skeleton for the entire Megacodist web site, so it
+    does not extend any template.
 
-    context = {
-        'topics':   # A QuerySet contains all topics in the blog to be shown in the 'header.html'.
-    }
+    No context is needed.
 -#}
 
 
@@ -46,7 +45,7 @@
 </head>
 <body>
     {# Including header --------------------------------------------------------------------------------- #}
-    {% include 'header.html' %}
+    {% include 'header.j2' %}
 
     <main class="container">
         {% block main %}
@@ -54,7 +53,7 @@
     </main>
 
     {# Including footer---------------------------------------------------------------------------------- #}
-    {%- include 'footer.html' -%}
+    {%- include 'footer.j2' -%}
 
     {# A reserved region for some HTML elements such as modal boxes ------------------------------------- #}
     {% block EndingReservedTags %}

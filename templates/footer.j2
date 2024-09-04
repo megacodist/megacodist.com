@@ -1,5 +1,6 @@
 {#-
     The footer for the entire Megacodist web site.
+    No context is needed.
 -#}
 
 <head>
@@ -48,7 +49,8 @@
         </div>
 
         <div class="text-center mb-3 mt-0 copywrite">
-            © 2022 Copyright: <strong>Megacodist</strong>
+            {% set year = now().year %}
+            © {{ year }} Copyright: <strong>Megacodist</strong>
         </div>
         <!-- End copyright -->
     </footer>

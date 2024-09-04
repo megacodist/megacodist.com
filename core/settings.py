@@ -12,13 +12,15 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from jinja2 import Undefined, DebugUndefined
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-a$8cw2e^qo%z35p$lsxm_w-ml@2pkvx6f(bd@j#43)9tanirk6'
 
@@ -126,6 +128,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = 'res/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'res',
+]
 
 
 # Default primary key field type

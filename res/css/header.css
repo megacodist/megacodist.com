@@ -1,0 +1,17 @@
+header {
+    border-bottom: 5px solid orange;
+}
+div.mm1-header {
+    padding: 10px;
+    border-bottom: 2px solid orange;
+}
+div.mm1-header  h1, div.mm1-header p {
+    color: orange;
+    text-shadow: 2px 2px 10px black;
+
+    /* Making the text unselectable */
+    -webkit-user-select: none; /* Safari */        
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE10+/Edge */
+    user-select: none;         /* Standard */
+}

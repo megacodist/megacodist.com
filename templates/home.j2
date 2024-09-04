@@ -1,0 +1,14 @@
+{#-
+    This template extends 'base.j2' to be suitable as home page for
+    Megacodist Coding Blog.
+
+    No special context is needed.
+-#}
+
+{% extends 'base.j2' %}
+
+{% block title %}{{ super() }} Coding Blog{% endblock title %}
+
+{% block main %}
+{{ super() }}
+{% endblock main %}

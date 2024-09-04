@@ -8,5 +8,5 @@ from .views import getHomePage
 
 
 urlpatterns = [
-    path('', getHomePage, name='home_page'),
+    path('', getHomePage, name='home-page'),
 ]
