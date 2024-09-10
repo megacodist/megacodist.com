@@ -18,7 +18,11 @@ def getHomePage(request: HttpRequest) -> HttpResponse:
 
 
 def getLicensePage(request: HttpRequest) -> HttpResponse:
-    pass
+    context = dict[str, Any]()
+    return render(
+        request,
+        template_name='license.j2',
+        context=context)
 
 
 def getAboutMePage(request: HttpRequest) -> HttpResponse:

@@ -1,0 +1,43 @@
+{#-
+  This template extends 'base.j2' to serve as License page for
+  Megacodist Coding Blog.
+
+  environment = {
+  'app_name': # The name of the web application
+  }
+
+  No special context is needed.
+-#}
+
+{% extends 'base.j2' %}
+
+{% block title %} Challneges - {{ super() }} {% endblock title %}
+
+{% block style %%}
+  {{ super() }}
+  .game-div {
+    border: 3px solid #fff;
+    padding: 20px;
+  }
+  .player-div {
+    width: 50%;
+    float: left;
+    padding: 20px;
+    border: 2px solid red;
+  }  
+{% endblock style %%}
+
+{% block main %}
+  {{ super() }}
+  <div class="game-div">
+    <div class="player-div">
+    </div>
+    <div class="player-div">
+    </div>
+    <form>
+      <div>
+        <button></button>
+      </div>
+    </form>
+  </div>
+{% endblock main %}
