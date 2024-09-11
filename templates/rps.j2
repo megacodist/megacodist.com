@@ -31,10 +31,10 @@
   {{ super() }}
   <div class="game-div">
     <div class="player-div">
-      <!-- Selecting player -->
-      <div class="btn-group">
+      <!-- Selecting left player -->
+      <div class="btn-group" id="combo-lplayer">
         <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          Action
+          Select left player
         </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">User</a></li>
@@ -44,8 +44,10 @@
     </div>
     <div class="player-div">
       <!-- Selecting player -->
-      <div class="btn-group">
-        <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+      <div class="btn-group" id="combo-rplayer">
+        <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          Select right player
+        </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">User</a></li>
           <li><a class="dropdown-item" href="#">Computer</a></li>
@@ -59,3 +61,21 @@
     </form>
   </div>
 {% endblock main %}
+
+{%- block endingScripts %}
+  {{ super() }}
+  // Showing selected player in the dropdown...
+  const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+  dropdownMenus.forEach((item) => {
+    item.addEventListener(
+      'click',
+      (event) => {
+        // Getting the selected player text...
+        const selectedPlayer = event.target.textContent;
+        const dropdownButton = item.previousElementSibling
+        dropdownButton.textContent = selectedPlayer
+        console.log(selectedPlayer)
+      }
+    )
+  })
+{%- endblock endingScripts %}
