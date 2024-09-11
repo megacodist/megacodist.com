@@ -13,7 +13,7 @@
 
 {% block title %} Challneges - {{ super() }} {% endblock title %}
 
-{% block style %%}
+{% block style %}
   {{ super() }}
   .game-div {
     border: 3px solid #fff;
@@ -25,14 +25,32 @@
     padding: 20px;
     border: 2px solid red;
   }  
-{% endblock style %%}
+{% endblock style %}
 
 {% block main %}
   {{ super() }}
   <div class="game-div">
     <div class="player-div">
+      <!-- Selecting player -->
+      <div class="btn-group">
+        <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          Action
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">User</a></li>
+          <li><a class="dropdown-item" href="#">Computer</a></li>
+        </ul>
+      </div>
     </div>
     <div class="player-div">
+      <!-- Selecting player -->
+      <div class="btn-group">
+        <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"></button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">User</a></li>
+          <li><a class="dropdown-item" href="#">Computer</a></li>
+        </ul>
+      </div>
     </div>
     <form>
       <div>
