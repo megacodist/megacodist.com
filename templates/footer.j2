@@ -46,9 +46,11 @@
     <!-- End of social media buttons -->
 
     <!-- Copyright -->
-    <div class="text-center mb-3 mt-0 copywrite">
-      {% set year = now().year %}
-      © {{ year }} Copyright: <strong>Megacodist</strong>
+    <div class="text-center mb-3 mt-0 copyright">
+      {% block copyright %}
+        {% set year = now().year %}
+        © {{ year }} Copyright: <strong>Megacodist</strong>
+      {% endblock copyright %}
     </div>
     <!-- End of copyright -->
   </footer>

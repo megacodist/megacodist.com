@@ -38,3 +38,6 @@ a.external[target="_blank"]:after {
   content: " \f08e";
   size: 0.5rem;
 }
+section.notes {
+  font-size: small;
+}

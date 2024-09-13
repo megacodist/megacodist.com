@@ -130,6 +130,7 @@ USE_TZ = True
 STATIC_URL = 'res/'
 STATICFILES_DIRS = [
     BASE_DIR / 'res',
+    BASE_DIR / 'templates',
 ]
 
 
