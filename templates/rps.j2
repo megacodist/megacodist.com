@@ -17,10 +17,10 @@
   {{ super() }}
   div.game-info {
     margin: 20px;
+    display: flex;
   }
   div.player-info {
-    width: 50%;
-    float: left;
+    flex: 1;
     padding: 20px;
     border: 2px solid red;
   }
@@ -35,20 +35,13 @@
     width: auto; /* You can set a specific width if required */
   }
   #operations {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    margin-left: auto;
-    margin-right: auto;
+    display: grid;
+    place-items: center;
+    margin-bottom: 2rem;
   }
 {% endblock style %}
 
 <style>
-  #operations {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    margin-left: auto;
-    margin-right: auto;
-  }
 </style>
 
 {% block main %}
@@ -84,8 +77,6 @@
       </div>
     </div>
   </div>
-
-  <div></div>
 
   <!-- Operations -->
   <div id="operations">
