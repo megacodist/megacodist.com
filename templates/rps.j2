@@ -15,30 +15,50 @@
 
 {% block style %}
   {{ super() }}
-  div.game-div {
-    padding: 20px;
+  div.game-info {
+    margin: 20px;
   }
-  div.player-div {
+  div.player-info {
     width: 50%;
     float: left;
     padding: 20px;
     border: 2px solid red;
   }
+  #lplayer-info {
+    justify-content: right;
+  }
+  #alert-container {
+    position: fixed;
+    top: 20px; /* Adjust the vertical position as needed */
+    right: 20px; /* Adjust the horizontal position as needed */
+    z-index: 1050; /* Ensure it's above other elements */
+    width: auto; /* You can set a specific width if required */
+  }
+  #operations {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
 {% endblock style %}
 
 <style>
-  #lplayer-info {
-    justify-content: right;
+  #operations {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>
 
 {% block main %}
   {{ super() }}
   <div id="alert-container"></div>
+
   <!-- The game info div -->
-  <div class="game-div">
+  <div class="game-info">
     <!-- Left player info div -->
-    <div class="player-div border border-warning" id="lplayer-info">
+    <div class="border border-warning player-info" id="lplayer-info">
       <!-- Selecting left player -->
       <div class="btn-group float-end" id="combo-lplayer">
         <button type="button" class="btn btn-outline-warning dropdown-toggle" id="lplayer-name" data-bs-toggle="dropdown" aria-expanded="false">
@@ -51,7 +71,7 @@
       </div>
     </div>
     <!-- Right player info div -->
-    <div class="player-div border border-warning">
+    <div class="border border-warning player-info">
       <!-- Selecting player -->
       <div class="btn-group" id="combo-rplayer">
         <button type="button" class="btn btn-outline-warning dropdown-toggle" id="rplayer-name" data-bs-toggle="dropdown" aria-expanded="false">
@@ -63,19 +83,21 @@
         </ul>
       </div>
     </div>
-    <form>
-      <!-- Operations -->
-      <div class="text-center p-2">
-        <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
-          <button type="button" class="btn btn-dark" id="pause">Pause</button>
-          <button type="button" class="btn btn-dark" id="rock"><img src="{{ static('rock.png') }}" style="width: 40px;"></button>
-          <button type="button" class="btn btn-dark" id="paper"><img src="{{ static('paper.png') }}" style="width: 40px;"></button>
-          <button type="button" class="btn btn-dark" id="scissors"><input type="image" src="{{ static('scissors.png') }}" style="width: 40px;"></button>
-          <button type="button" class="btn btn-dark" id="start-stop">Start</button>
-        </div>
-      </div>
-    </form>
   </div>
+
+  <div></div>
+
+  <!-- Operations -->
+  <div id="operations">
+    <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
+      <button type="button" class="btn btn-dark" id="pause">Pause</button>
+      <button type="button" class="btn btn-dark" id="rock"><img src="{{ static('rock.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="paper"><img src="{{ static('paper.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="scissors"><img src="{{ static('scissors.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="start-stop">Start</button>
+    </div>
+  </div>
+
   <section class="notes">
     <h6>Notes</h6>
     <ul>
@@ -124,34 +146,50 @@
 
 
   function onStartStopClicked() {
-    // Checking if left player is selected...
-    const lplayerName = document.getElementById('lplayer-name').textContent
-    alert(lplayerName)
-    if (lplayerName.startsWith('Select')) {
-      alert('Please specify the left player.')
-      showAlert('Please specify the left player.');
-      return '';
-    }
-    //
-    const btnStartStop = document.getElementById('start-stop')
-    const mode = btnStartStop.textContent
+    const mode = document.getElementById('start-stop').textContent
     if (mode == 'Start') {
-      btnStartStop.textContent = 'Stop'
-      document.getElementById('pause').disabled = false;
-      document.getElementById('rock').disabled = false;
-      document.getElementById('paper').disabled = false;
-      document.getElementById('scissors').disabled = false;
+      startRps()
     } else if (mode == 'Stop') {
-      btnStartStop.textContent = 'Start'
-      document.getElementById('pause').disabled = true;
-      document.getElementById('rock').disabled = true;
-      document.getElementById('paper').disabled = true;
-      document.getElementById('scissors').disabled = true;
+      stopGame()
     }
   }
 
 
-  function showAlert(message, type = 'warning') {
+  function startRps() {
+    // Checking if left player is selected...
+    const lplayerName = document.getElementById('lplayer-name').textContent
+      .trimStart()
+    if (lplayerName.startsWith('Select')) {
+      showAlert('Please specify the left player.');
+      return;
+    }
+    // Checking if right player is selected...
+    const rplayerName = document.getElementById('rplayer-name').textContent
+      .trimStart()
+    if (rplayerName.startsWith('Select')) {
+      showAlert('Please specify the right player.');
+      return;
+    }
+    // Updating elements...
+    document.getElementById('pause').disabled = false;
+    document.getElementById('rock').disabled = false;
+    document.getElementById('paper').disabled = false;
+    document.getElementById('scissors').disabled = false;
+    document.getElementById('start-stop').textContent = 'Stop'
+  }
+
+
+  function stopGame() {
+    // Updating elements...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    document.getElementById('start-stop').textContent = 'Start'
+  }
+
+
+  function showAlert(message, type = 'danger') {
     // Create the alert HTML
     const alertHTML = `
       <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
@@ -167,7 +205,7 @@
       },
       5000 // 5000 milliseconds = 5 seconds
     );
-}
+  }
 {%- endblock endingScripts %}
 <script>
   document.addEventListener(
@@ -201,34 +239,50 @@
 
 
   function onStartStopClicked() {
-    // Checking if left player is selected...
-    const lplayerName = document.getElementById('lplayer-name').textContent
-    alert(lplayerName)
-    if (lplayerName.startsWith('Select')) {
-      alert('Please specify the left player.')
-      showAlert('Please specify the left player.');
-      return '';
-    }
-    //
-    const btnStartStop = document.getElementById('start-stop')
-    const mode = btnStartStop.textContent
+    const mode = document.getElementById('start-stop').textContent
     if (mode == 'Start') {
-      btnStartStop.textContent = 'Stop'
-      document.getElementById('pause').disabled = false;
-      document.getElementById('rock').disabled = false;
-      document.getElementById('paper').disabled = false;
-      document.getElementById('scissors').disabled = false;
+      startRps()
     } else if (mode == 'Stop') {
-      btnStartStop.textContent = 'Start'
-      document.getElementById('pause').disabled = true;
-      document.getElementById('rock').disabled = true;
-      document.getElementById('paper').disabled = true;
-      document.getElementById('scissors').disabled = true;
+      stopGame()
     }
   }
 
 
-  function showAlert(message: String, type: String = 'warning') {
+  function startRps() {
+    // Checking if left player is selected...
+    const lplayerName = document.getElementById('lplayer-name').textContent
+      .trimStart()
+    if (lplayerName.startsWith('Select')) {
+      showAlert('Please specify the left player.');
+      return;
+    }
+    // Checking if right player is selected...
+    const rplayerName = document.getElementById('rplayer-name').textContent
+      .trimStart()
+    if (rplayerName.startsWith('Select')) {
+      showAlert('Please specify the right player.');
+      return;
+    }
+    // Updating elements...
+    document.getElementById('pause').disabled = false;
+    document.getElementById('rock').disabled = false;
+    document.getElementById('paper').disabled = false;
+    document.getElementById('scissors').disabled = false;
+    document.getElementById('start-stop').textContent = 'Stop'
+  }
+
+
+  function stopGame() {
+    // Updating elements...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    document.getElementById('start-stop').textContent = 'Start'
+  }
+
+
+  function showAlert(message, type = 'danger') {
     // Create the alert HTML
     const alertHTML = `
       <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
@@ -244,5 +298,5 @@
       },
       5000 // 5000 milliseconds = 5 seconds
     );
-}
-  </script>
+  }
+</script>

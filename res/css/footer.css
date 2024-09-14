@@ -16,10 +16,12 @@ footer ul {
 }
 footer div.copyright {
     color: orange;
+    text-align: center;
+    font-size: 80%;
     font-weight: 300;
     margin: 0px;
+    margin-bottom: 1rem;
     padding: 0px;
-    font-size: 80%;
 }
 footer a.interface:link {
     color: orange;
