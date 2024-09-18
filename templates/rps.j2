@@ -108,32 +108,35 @@
   {{ super() }}
   document.addEventListener(
     'DOMContentLoaded',
-    function() {
-      // Showing selected player in the dropdown...
-      const dropdownMenus = document.querySelectorAll('.dropdown-menu');
-      dropdownMenus.forEach((item) => {
-        item.addEventListener(
-          'click',
-          (event) => {
-            // Getting the selected player text...
-            const selectedPlayer = event.target.textContent;
-            const dropdownButton = item.previousElementSibling
-            dropdownButton.textContent = selectedPlayer
-          }
-        )
-      })
-      // Disabling some buttons...
-      document.getElementById('pause').disabled = true;
-      document.getElementById('rock').disabled = true;
-      document.getElementById('paper').disabled = true;
-      document.getElementById('scissors').disabled = true;
-      // Adding click handler for `start-stop` button...
-      document.getElementById('start-stop').addEventListener(
-        'click',
-        onStartStopClicked
-      );
-    }
+    onDomLoaded
   );
+
+
+  function onDomLoaded() {
+    // Showing selected player in the dropdown...
+    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+    dropdownMenus.forEach((item) => {
+      item.addEventListener(
+        'click',
+        (event) => {
+          // Getting the selected player text...
+          const selectedPlayer = event.target.textContent;
+          const dropdownButton = item.previousElementSibling
+          dropdownButton.textContent = selectedPlayer
+        }
+      )
+    })
+    // Disabling some buttons...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    // Adding click handler for `start-stop` button...
+    document.getElementById('start-stop').addEventListener(
+      'click',
+      onStartStopClicked
+    );
+  }
 
 
   function onStartStopClicked() {
@@ -141,7 +144,7 @@
     if (mode == 'Start') {
       startRps()
     } else if (mode == 'Stop') {
-      stopGame()
+      stopRps()
     }
   }
 
@@ -149,17 +152,22 @@
   function startRps() {
     // Checking if left player is selected...
     const lplayerName = document.getElementById('lplayer-name').textContent
-      .trimStart()
+      .trim()
     if (lplayerName.startsWith('Select')) {
       showAlert('Please select the left player.');
       return;
     }
     // Checking if right player is selected...
     const rplayerName = document.getElementById('rplayer-name').textContent
-      .trimStart()
+      .trim()
     if (rplayerName.startsWith('Select')) {
       showAlert('Please select the right player.');
       return;
+    }
+    // Preventing two users game...
+    if ((lplayerName === 'User') && (rplayerName === 'User')) {
+      showAlert('This app does not support game between two users.');
+      return
     }
     // Updating elements...
     document.getElementById('pause').disabled = false;
@@ -170,7 +178,7 @@
   }
 
 
-  function stopGame() {
+  function stopRps() {
     // Updating elements...
     document.getElementById('pause').disabled = true;
     document.getElementById('rock').disabled = true;
@@ -237,7 +245,7 @@
     if (mode == 'Start') {
       startRps()
     } else if (mode == 'Stop') {
-      stopGame()
+      stopRps()
     }
   }
 
@@ -271,13 +279,18 @@
   }
 
 
-  function stopGame() {
+  function stopRps() {
     // Updating elements...
     document.getElementById('pause').disabled = true;
     document.getElementById('rock').disabled = true;
     document.getElementById('paper').disabled = true;
     document.getElementById('scissors').disabled = true;
     document.getElementById('start-stop').textContent = 'Start'
+  }
+
+
+  function sendChoice(choice) {
+    //
   }
 
 

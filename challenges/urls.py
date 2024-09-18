@@ -7,12 +7,12 @@
 
 from django.urls import path
 
-from .views import getChallengesIndexPage, getRpsPage
+from .views import getChallengesIndexPage, playRps
 
 
 app_name = 'challenges'
 
 urlpatterns = [
     path('', getChallengesIndexPage, name='index-page'),
-    path('rps', getRpsPage, name='rps'),
+    path('rps', playRps, name='rps'),
 ]
