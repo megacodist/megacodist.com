@@ -7,7 +7,7 @@ from typing import Any
 from django.http import HttpRequest
 from django.http.response import HttpResponse
 from django.shortcuts import render
-from django.views.decorators.http import allow_method
+from django.views.decorators.http import require_http_methods
 
 
 def getChallengesIndexPage(request: HttpRequest) -> HttpResponse:
@@ -18,11 +18,12 @@ def getChallengesIndexPage(request: HttpRequest) -> HttpResponse:
         context=context)
 
 
-@allow_method(['GET', 'POST'])
-def playRps(request: HttpRequest) -> HttpResponse:
+@require_http_methods(['GET', 'POST'])
+def playRps(request: HttpRequest) -> HttpResponse: # type: ignore
     if request.method == 'GET':
         return render(
             request,
             template_name='rps.j2',
-            context=dict[str, Any]())
-    if request.
+            context={},)
+    if request.method == 'POST':
+        pass

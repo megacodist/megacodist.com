@@ -82,9 +82,9 @@
   <div id="operations">
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="pause">Pause</button>
-      <button type="button" class="btn btn-dark" id="rock"><img src="{{ static('rock.png') }}" style="width: 40px;"></button>
-      <button type="button" class="btn btn-dark" id="paper"><img src="{{ static('paper.png') }}" style="width: 40px;"></button>
-      <button type="button" class="btn btn-dark" id="scissors"><img src="{{ static('scissors.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="rock" data-code="0"><img src="{{ static('rock.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="paper" data-code="1"><img src="{{ static('paper.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="scissors" data-code="2"><img src="{{ static('scissors.png') }}" style="width: 40px;"></button>
       <button type="button" class="btn btn-dark" id="start-stop">Start</button>
     </div>
   </div>
@@ -136,107 +136,9 @@
       'click',
       onStartStopClicked
     );
-  }
-
-
-  function onStartStopClicked() {
-    const mode = document.getElementById('start-stop').textContent
-    if (mode == 'Start') {
-      startRps()
-    } else if (mode == 'Stop') {
-      stopRps()
-    }
-  }
-
-
-  function startRps() {
-    // Checking if left player is selected...
-    const lplayerName = document.getElementById('lplayer-name').textContent
-      .trim()
-    if (lplayerName.startsWith('Select')) {
-      showAlert('Please select the left player.');
-      return;
-    }
-    // Checking if right player is selected...
-    const rplayerName = document.getElementById('rplayer-name').textContent
-      .trim()
-    if (rplayerName.startsWith('Select')) {
-      showAlert('Please select the right player.');
-      return;
-    }
-    // Preventing two users game...
-    if ((lplayerName === 'User') && (rplayerName === 'User')) {
-      showAlert('This app does not support game between two users.');
-      return
-    }
-    // Updating elements...
-    document.getElementById('pause').disabled = false;
-    document.getElementById('rock').disabled = false;
-    document.getElementById('paper').disabled = false;
-    document.getElementById('scissors').disabled = false;
-    document.getElementById('start-stop').textContent = 'Stop'
-  }
-
-
-  function stopRps() {
-    // Updating elements...
-    document.getElementById('pause').disabled = true;
-    document.getElementById('rock').disabled = true;
-    document.getElementById('paper').disabled = true;
-    document.getElementById('scissors').disabled = true;
-    document.getElementById('start-stop').textContent = 'Start'
-  }
-
-
-  function showAlert(message, type = 'danger') {
-    // Create the alert HTML
-    const alertHTML = `
-      <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>`;
-    // Append the alert to the body (or a container)
-    document.getElementById('alert-container').innerHTML = alertHTML;
-    // Optionally remove the alert after 5 seconds
-    setTimeout(
-      () => {
-        document.querySelector('.custom-alert').remove();
-      },
-      5000 // 5000 milliseconds = 5 seconds
-    );
-  }
-{%- endblock endingScripts %}
-<script>
-  document.addEventListener(
-    'DOMContentLoaded',
-    onDomLoaded
-  );
-
-
-  function onDomLoaded() {
-    // Showing selected player in the dropdown...
-    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
-    dropdownMenus.forEach((item) => {
-      item.addEventListener(
-        'click',
-        (event) => {
-          // Getting the selected player text...
-          const selectedPlayer = event.target.textContent;
-          const dropdownButton = item.previousElementSibling
-          dropdownButton.textContent = selectedPlayer
-        }
-      )
-    })
-    // Disabling some buttons...
-    document.getElementById('pause').disabled = true;
-    document.getElementById('rock').disabled = true;
-    document.getElementById('paper').disabled = true;
-    document.getElementById('scissors').disabled = true;
-    // Adding click handler for `start-stop` button...
-    document.getElementById('start-stop').addEventListener(
-      'click',
-      onStartStopClicked
-    );
+    // Attaching click event listener to each rock, paper, scissors...
+    var rpsBtns = document.querySelectorAll('#rock, #paper, #scissors');
+    alert(rpsBtns.length)
   }
 
 
@@ -290,6 +192,143 @@
 
 
   function sendChoice(choice) {
+    //
+  }
+
+
+  function showAlert(message, type = 'danger') {
+    // Create the alert HTML
+    const alertHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
+    // Append the alert to the body (or a container)
+    document.getElementById('alert-container').innerHTML = alertHTML;
+    // Optionally remove the alert after 5 seconds
+    setTimeout(
+      () => {
+        document.querySelector('.custom-alert').remove();
+      },
+      5000 // 5000 milliseconds = 5 seconds
+    );
+  }
+{%- endblock endingScripts %}
+<script>
+  document.addEventListener(
+    'DOMContentLoaded',
+    onDomLoaded
+  );
+
+
+  function onDomLoaded() {
+    // Showing selected player in the dropdown...
+    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+    dropdownMenus.forEach((item) => {
+      item.addEventListener(
+        'click',
+        (event) => {
+          // Getting the selected player text...
+          const selectedPlayer = event.target.textContent;
+          const dropdownButton = item.previousElementSibling
+          dropdownButton.textContent = selectedPlayer
+        }
+      )
+    })
+    // Disabling some buttons...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    // Adding click handler for `start-stop` button...
+    document.getElementById('start-stop').addEventListener(
+      'click',
+      onStartStopClicked
+    );
+    // Attaching click event listener to each rock, paper, scissors buttons...
+    var rpsBtns = document.querySelectorAll('#rock, #paper, #scissors');
+    rpsBtns.forEach(
+      (button) => {
+        const choiceCode = button.getAttribute('data-code');
+        button.addEventListener(
+          'click',
+          sendChoice.bind(null, choiceCode))
+      }
+    )
+  }
+
+
+  function onStartStopClicked() {
+    const mode = document.getElementById('start-stop').textContent
+    if (mode == 'Start') {
+      startRps()
+    } else if (mode == 'Stop') {
+      stopRps()
+    }
+  }
+
+
+  function startRps() {
+    // Checking if left player is selected...
+    const lplayerName = document.getElementById('lplayer-name').textContent
+      .trim()
+    if (lplayerName.startsWith('Select')) {
+      showAlert('Please select the left player.');
+      return;
+    }
+    // Checking if right player is selected...
+    const rplayerName = document.getElementById('rplayer-name').textContent
+      .trim()
+    if (rplayerName.startsWith('Select')) {
+      showAlert('Please select the right player.');
+      return;
+    }
+    // Preventing two users game...
+    if ((lplayerName === 'User') && (rplayerName === 'User')) {
+      showAlert('This app does not support game between two users.');
+      return
+    }
+    // Updating elements...
+    document.getElementById('pause').disabled = false;
+    document.getElementById('rock').disabled = false;
+    document.getElementById('paper').disabled = false;
+    document.getElementById('scissors').disabled = false;
+    document.getElementById('start-stop').textContent = 'Stop'
+  }
+
+
+  function stopRps() {
+    // Updating elements...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    document.getElementById('start-stop').textContent = 'Start'
+  }
+
+
+  function sendChoice(choiceCode) {
+    //
+    choiceReq = new Request(
+      '',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain',
+          'X-CSRFToken': csrfToken,
+        },
+        body: choiceCode,
+      }
+    )
+    //
+    fetch(choiceReq)
+      .then(response => response.text())
+      .then(showMoveRes(response))
+      .catch(err => showAlert(err))
+  }
+
+
+  function showMoveRes() {
     //
   }
 
