@@ -60,6 +60,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
             BASE_DIR / 'templates',
+            BASE_DIR / 'uploaded',
             BASE_DIR / 'media',
         ],
         'APP_DIRS': True,
@@ -68,12 +69,16 @@ TEMPLATES = [
             'autoescape': True,
             'auto_reload': DEBUG,
             'undefined': DebugUndefined if DEBUG else Undefined,
-        }
+        },
     },
     # Enabling DTL (Django Template Language)...
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'uploaded',
+            BASE_DIR / 'media',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,6 +140,7 @@ STATIC_URL = 'res/'
 STATICFILES_DIRS = [
     BASE_DIR / 'res',
     BASE_DIR / 'templates',
+    BASE_DIR / 'uploaded',
 ]
 
 
