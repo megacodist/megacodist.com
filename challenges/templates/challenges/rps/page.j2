@@ -322,7 +322,7 @@
     )
     //
     fetch(choiceReq)
-      .then(response => response.text())
+      .then(response => response.json())
       .then(showMoveRes(response))
       .catch(err => showAlert(err))
   }
