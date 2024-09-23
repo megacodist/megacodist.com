@@ -86,7 +86,7 @@
 
   <!-- Operations -->
   <form id="operations">
-    <input type="hidden" name="csrfmiddlewaretoken" value="TOKEN_VALUE">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="pause">Pause</button>
       <button type="button" class="btn btn-dark" id="rock" data-code="1"><img src="{{ static('challenges/rps/rock.png') }}" style="width: 40px;"></button>

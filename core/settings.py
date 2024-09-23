@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'challenges',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',    # Supporting for anonymous sessions
     'django.middleware.common.CommonMiddleware',
@@ -141,6 +143,12 @@ STATICFILES_DIRS = [
     BASE_DIR / 'res',
     BASE_DIR / 'templates',
     BASE_DIR / 'uploaded',
+]
+
+
+#
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 
