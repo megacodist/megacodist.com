@@ -6,7 +6,10 @@
   'app_name': # The name of the web application
   }
 
-  No special context is needed.
+  context = {
+    'algorithms': list[str] # The list of names of all available algorithm
+                            # for computer side
+  }
 -#}
 
 {% extends 'base.j2' %}
@@ -56,31 +59,35 @@
     <div class="border border-warning player-info =" id="lplayer-info">
       <!-- Selecting left player -->
       <div class="btn-group float-end" id="combo-lplayer">
-        <button type="button" class="btn btn-outline-warning dropdown-toggle" id="lplayer-name" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="btn btn-outline-success dropdown-toggle" id="lplayer-name" data-bs-toggle="dropdown" aria-expanded="false">
           Select left player
         </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">User</a></li>
-          <li><a class="dropdown-item" href="#">Computer</a></li>
+          {% for algorithm in algorithms %}
+            <li><a class="dropdown-item" href="#">{{ algorithm|e }}</a></li>
+          {% endfor %}
         </ul>
       </div>
       <!-- Left player score -->
-      <p class="warning fs-1 float-end" id="lplayer-score">0</p>
+      <p class="fs-1 text-success" id="lplayer-score">0</p>
     </div>
     <!-- Right player info div -->
     <div class="border border-warning player-info">
       <!-- Selecting player -->
       <div class="btn-group" id="combo-rplayer">
-        <button type="button" class="btn btn-outline-warning dropdown-toggle" id="rplayer-name" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" class="btn btn-outline-info dropdown-toggle" id="rplayer-name" data-bs-toggle="dropdown" aria-expanded="false">
           Select right player
         </button>
         <ul class="dropdown-menu">
           <li><a class="dropdown-item" href="#">User</a></li>
-          <li><a class="dropdown-item" href="#">Computer</a></li>
+          {% for algorithm in algorithms %}
+            <li><a class="dropdown-item" href="#">{{ algorithm|e }}</a></li>
+          {% endfor %}
         </ul>
       </div>
       <!-- Right player score -->
-      <p class="warning fs-1" id="rplayer-score">0</p>
+      <p class="fs-1 text-info" id="rplayer-score">0</p>
     </div>
   </div>
 
@@ -206,17 +213,20 @@
 
 
   function sendChoice(userMove) {
-    //
+    // Getting CSRF token...
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // Preparing data tosend...
+    const params = new URLSearchParams()
+    params.append('user_move', userMove)
     choiceReq = new Request(
       '',
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'text/plain',
+          'Content-Type': 'application/x-www-form-urlencoded',
           'X-CSRFToken': csrfToken,
         },
-        body: `user_move=${userMove}`,
+        body: params.toString(),
       }
     )
     //
@@ -229,7 +239,7 @@
 
   function showMoveRes(res) {
     //
-    lplayerName = document.getElementById('lplayer-name').trim()
+    lplayerName = document.getElementById('lplayer-name').textContent.trim()
     if (lplayerName === 'User') {
       document.getElementById('lplayer-score').textContent = res['user_score']
       document.getElementById('rplayer-score').textContent = res['com_score']
@@ -261,10 +271,7 @@
 
 
 <script>
-  document.addEventListener(
-    'DOMContentLoaded',
-    onDomLoaded
-  );
+  document.addEventListener('DOMContentLoaded', onDomLoaded);
 
 
   function onDomLoaded() {
@@ -340,6 +347,7 @@
     document.getElementById('paper').disabled = false;
     document.getElementById('scissors').disabled = false;
     document.getElementById('start-stop').textContent = 'Stop'
+    // Informing the server...
   }
 
 
@@ -350,21 +358,40 @@
     document.getElementById('paper').disabled = true;
     document.getElementById('scissors').disabled = true;
     document.getElementById('start-stop').textContent = 'Start'
+    // Informing the server...
+    const data = {
+      'action': 'stop',
+    }
+    stopReq = new Request(
+      '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    fetch(stopReq)
   }
 
 
   function sendChoice(userMove) {
-    //
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    // Preparing data tosend...
+    const data = {
+      'action': 'move',
+      'move': userMove,
+    }
     choiceReq = new Request(
       '',
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'text/plain',
-          'X-CSRFToken': csrfToken,
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
         },
-        body: `user_move=${userMove}`,
+        body: JSON.stringify(data),
       }
     )
     //
@@ -375,9 +402,14 @@
   }
 
 
+  function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value
+  }
+
+
   function showMoveRes(res) {
     //
-    lplayerName = document.getElementById('lplayer-name').trim()
+    lplayerName = document.getElementById('lplayer-name').textContent.trim()
     if (lplayerName === 'User') {
       document.getElementById('lplayer-score').textContent = res['user_score']
       document.getElementById('rplayer-score').textContent = res['com_score']
