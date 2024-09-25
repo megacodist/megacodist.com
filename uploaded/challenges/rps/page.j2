@@ -7,8 +7,7 @@
   }
 
   context = {
-    'algorithms': list[str] # The list of names of all available algorithm
-                            # for computer side
+    'players': list[str] # The list of names of all available players
   }
 -#}
 
@@ -63,9 +62,8 @@
           Select left player
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">User</a></li>
-          {% for algorithm in algorithms %}
-            <li><a class="dropdown-item" href="#">{{ algorithm|e }}</a></li>
+          {% for player in players %}
+            <li><a class="dropdown-item" href="#">{{ player|e }}</a></li>
           {% endfor %}
         </ul>
       </div>
@@ -80,9 +78,8 @@
           Select right player
         </button>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">User</a></li>
-          {% for algorithm in algorithms %}
-            <li><a class="dropdown-item" href="#">{{ algorithm|e }}</a></li>
+          {% for player in players %}
+            <li><a class="dropdown-item" href="#">{{ player|e }}</a></li>
           {% endfor %}
         </ul>
       </div>
@@ -120,10 +117,8 @@
 
 {%- block endingScripts %}
   {{ super() }}
-  document.addEventListener(
-    'DOMContentLoaded',
-    onDomLoaded
-  );
+  
+  document.addEventListener('DOMContentLoaded', onDomLoaded);
 
 
   function onDomLoaded() {
@@ -188,9 +183,15 @@
       showAlert('Please select the right player.');
       return;
     }
-    // Preventing two users game...
+    // Preventing user-user game...
     if ((lplayerName === 'User') && (rplayerName === 'User')) {
       showAlert('This app does not support game between two users.');
+      return
+    }
+    // Preventing computer-computer game...
+    if ((lplayerName !== 'User') && (rplayerName !== 'User')) {
+      showAlert(
+        'This app does not support computer-computer game for the time being.');
       return
     }
     // Updating elements...
@@ -199,6 +200,24 @@
     document.getElementById('paper').disabled = false;
     document.getElementById('scissors').disabled = false;
     document.getElementById('start-stop').textContent = 'Stop'
+    // Informing the server...
+    data = {
+      'action': 'start',
+      'left': lplayerName,
+      'right': rplayerName,
+    }
+    startReq = new Request(
+      '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    fetch(startReq)
   }
 
 
@@ -209,24 +228,40 @@
     document.getElementById('paper').disabled = true;
     document.getElementById('scissors').disabled = true;
     document.getElementById('start-stop').textContent = 'Start'
+    // Informing the server...
+    const data = {
+      'action': 'stop',
+    }
+    stopReq = new Request(
+      '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    fetch(stopReq)
   }
 
 
   function sendChoice(userMove) {
-    // Getting CSRF token...
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     // Preparing data tosend...
-    const params = new URLSearchParams()
-    params.append('user_move', userMove)
+    const data = {
+      'action': 'move',
+      'move': userMove,
+    }
     choiceReq = new Request(
       '',
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'X-CSRFToken': csrfToken,
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
         },
-        body: params.toString(),
+        body: JSON.stringify(data),
       }
     )
     //
@@ -234,6 +269,11 @@
       .then(response => response.json())
       .then(response => showMoveRes(response))
       .catch(err => showAlert(err))
+  }
+
+
+  function getCsrfToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value
   }
 
 
@@ -336,9 +376,15 @@
       showAlert('Please select the right player.');
       return;
     }
-    // Preventing two users game...
+    // Preventing user-user game...
     if ((lplayerName === 'User') && (rplayerName === 'User')) {
       showAlert('This app does not support game between two users.');
+      return
+    }
+    // Preventing computer-computer game...
+    if ((lplayerName !== 'User') && (rplayerName !== 'User')) {
+      showAlert(
+        'This app does not support computer-computer game for the time being.');
       return
     }
     // Updating elements...
@@ -348,6 +394,23 @@
     document.getElementById('scissors').disabled = false;
     document.getElementById('start-stop').textContent = 'Stop'
     // Informing the server...
+    data = {
+      'action': 'start',
+      'left': lplayerName,
+      'right': rplayerName,
+    }
+    startReq = new Request(
+      '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    fetch(startReq)
   }
 
 

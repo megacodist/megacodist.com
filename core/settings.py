@@ -15,8 +15,8 @@ from pathlib import Path
 from jinja2 import Undefined, DebugUndefined
 
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Getting project directory...
+PROJECT_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -61,9 +61,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
-            BASE_DIR / 'templates',
-            BASE_DIR / 'uploaded',
-            BASE_DIR / 'media',
+            PROJECT_DIR / 'templates',
+            PROJECT_DIR / 'uploaded',
+            PROJECT_DIR / 'media',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -77,9 +77,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'templates',
-            BASE_DIR / 'uploaded',
-            BASE_DIR / 'media',
+            PROJECT_DIR / 'templates',
+            PROJECT_DIR / 'uploaded',
+            PROJECT_DIR / 'media',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': PROJECT_DIR / 'db.sqlite3',
     }
 }
 
@@ -140,9 +140,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = 'res/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'res',
-    BASE_DIR / 'templates',
-    BASE_DIR / 'uploaded',
+    PROJECT_DIR / 'res',
+    PROJECT_DIR / 'templates',
+    PROJECT_DIR / 'uploaded',
 ]
 
 
