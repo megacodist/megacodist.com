@@ -218,6 +218,8 @@
       }
     )
     fetch(startReq)
+      .then(response => response.json())
+      .then(data => showAlert(data))
   }
 
 
@@ -411,6 +413,8 @@
       }
     )
     fetch(startReq)
+      .then(response => response.json())
+      .then(data => showAlert(data))
   }
 
 

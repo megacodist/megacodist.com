@@ -7,20 +7,47 @@ from importlib import import_module
 from inspect import isabstract, isclass
 import json
 from pathlib import Path
+import pickle
 
-from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
-from django.http.response import HttpResponse
+from django.contrib.sessions.backends.base import SessionBase
+from django.core.cache import cache
+from django.http import (
+    HttpRequest, HttpResponse, HttpResponseBadRequest, JsonResponse)
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from .rps import Rps, IRpsPlayer
 
 
+_USER = 'User'
+
 RPS_DIR = Path(__file__).resolve().parent
 """The directory of Rock, Paper, Scissors challenge."""
 
 players: dict[str, type[IRpsPlayer]] = {}
 """The mappng between name and implementation of RPS players."""
+
+
+class RpsPlayerInfo:
+    def __init__(
+            self,
+            name: str,
+            history: list[Rps],
+            player: IRpsPlayer | None,
+            ) -> None:
+        self.name = name
+        self.history = history
+        self.player = player
+
+
+class RpsGameInfo:
+    def __init__(
+            self,
+            left: RpsPlayerInfo,
+            right: RpsPlayerInfo,
+            ) -> None:
+        self.left = left
+        self.right = right
 
 
 @require_http_methods(['GET', 'POST'])
@@ -43,12 +70,13 @@ def play(request: HttpRequest) -> HttpResponse: # type: ignore
     if request.method == 'GET':
         _loadPlayers()
         context = {
-            'players': ['User', *players.keys()],}
+            'players': [_USER, *players.keys()],}
         from django.template import engines
         jinja2_engine = engines['jinja2']
         template = jinja2_engine.get_template('challenges/rps/page.j2')
         return HttpResponse(template.render(context))
     if request.method == 'POST':
+        breakpoint()
         # Retrieving data...
         try:
             data = json.loads(request.body)
@@ -60,9 +88,12 @@ def play(request: HttpRequest) -> HttpResponse: # type: ignore
             return HttpResponseBadRequest('no action is specified')
         match data['action']:
             case 'start':
-                return initializeRps(request)
+                if ('left' not in data) or ('right' not in data):
+                    return HttpResponseBadRequest(
+                        "'left' or 'right' not found")
+                return _initRps(data['left'], data['right'], request.session)
             case 'stop':
-                pass
+                return _uninitRps(request.session)
             case 'move':
                 pass
             case _:
@@ -81,7 +112,7 @@ def play(request: HttpRequest) -> HttpResponse: # type: ignore
             request.session['com_score'] = 0
         #
         if userMove > comMove:
-            request.session['winner'] = 'user'
+            request.session['winner'] = _USER
             request.session['user_score'] += 1
         elif comMove > userMove:
             request.session['winner'] = 'com'
@@ -124,20 +155,46 @@ def _loadPlayers() -> None:
                 players[item.name] = item
 
 
-def initializeRps(
-        request: HttpRequest,
-        lplayer: str,
-        rplayer: str,
+def _initRps(
+        lname: str,
+        rname: str,
+        session: SessionBase,
         ) -> HttpResponse:
-    match (lplayer, rplayer):
-        case ('User', 'User',):
-            return HttpResponseBadRequest(
-                'This app does not support game between two users.')
-        case ('User', _,):
-            pass
-        case (_, 'User',):
-            pass
-        case (_, _,):
-            return HttpResponseBadRequest(
-                'This app does not support game between two computer '
-                'algorithms for the time being.')
+    # Declaring variables -------------------------------------------
+    global players
+    # ---------------------------------------------------------------
+    breakpoint()
+    bothPlayers = {lname, rname}
+    if bothPlayers == {_USER}:
+        return HttpResponseBadRequest(
+            'This app does not support game between two users.')
+    elif _USER in bothPlayers:
+        #
+        lHistory = list[Rps]()
+        rHistory = list[Rps]()
+        #
+        try:
+            lPlayer = players[lname](lHistory, rHistory)
+        except KeyError:
+            lPlayer = None
+        try:
+            rPlayer = players[rname](rHistory, lHistory)
+        except KeyError:
+            rPlayer = None
+        #
+        lInfo = RpsPlayerInfo(lname, lHistory, lPlayer)
+        rInfo = RpsPlayerInfo(rname, rHistory, rPlayer)
+        #
+        rpsInfo = RpsGameInfo(lInfo, rInfo)
+        cache.set(session.session_key, pickle.dumps(rpsInfo))
+        # Responding with HTTP 200 OK...
+        return HttpResponse('RPS game initialized')
+    else:
+        return HttpResponseBadRequest(
+            'This app does not support game between two computer '
+            'algorithms for the time being.')
+
+
+def _uninitRps(session: SessionBase) -> HttpResponse:
+    cache.delete(session.session_key)
+    return HttpResponse('The RPS game uninitialized.')

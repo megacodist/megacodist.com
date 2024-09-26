@@ -91,6 +91,9 @@ class IRpsPlayer(ABC):
         self._history = history
         self._rivalHistory = rival_history
     
+    def __call__(self) -> Any:
+        return self.move()
+    
     @abstractmethod
     def move(self) -> Rps:
         pass
