@@ -90,7 +90,6 @@
 
   <!-- Operations -->
   <form id="operations">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="pause">Pause</button>
       <button type="button" class="btn btn-dark" id="rock" data-code="1"><img src="{{ static('challenges/rps/rock.png') }}" style="width: 40px;"></button>
@@ -118,6 +117,9 @@
 {%- block endingScripts %}
   {{ super() }}
   
+  const START = 'Start'
+  const STOP = 'Stop'
+
   document.addEventListener('DOMContentLoaded', onDomLoaded);
 
 
@@ -159,10 +161,10 @@
 
 
   function onStartStopClicked() {
-    const mode = document.getElementById('start-stop').textContent
-    if (mode == 'Start') {
+    const mode = document.getElementById('start-stop').textContent.trim()
+    if (mode == START) {
       startRps()
-    } else if (mode == 'Stop') {
+    } else if (mode == STOP) {
       stopRps()
     }
   }
@@ -199,7 +201,7 @@
     document.getElementById('rock').disabled = false;
     document.getElementById('paper').disabled = false;
     document.getElementById('scissors').disabled = false;
-    document.getElementById('start-stop').textContent = 'Stop'
+    document.getElementById('start-stop').textContent = STOP
     // Informing the server...
     data = {
       'action': 'start',
@@ -207,7 +209,7 @@
       'right': rplayerName,
     }
     startReq = new Request(
-      '/',
+      'challenges/rps/',
       {
         method: 'POST',
         headers: {
@@ -218,8 +220,8 @@
       }
     )
     fetch(startReq)
-      .then(response => response.json())
-      .then(data => showAlert(data))
+      .then(response => response.text())
+      .then(text => alert(text))
   }
 
 
@@ -229,7 +231,7 @@
     document.getElementById('rock').disabled = true;
     document.getElementById('paper').disabled = true;
     document.getElementById('scissors').disabled = true;
-    document.getElementById('start-stop').textContent = 'Start'
+    document.getElementById('start-stop').textContent = START
     // Informing the server...
     const data = {
       'action': 'stop',
@@ -275,7 +277,19 @@
 
 
   function getCsrfToken() {
-    return document.querySelector('[name=csrfmiddlewaretoken]').value
+    keyValues = document.cookie.split(';')
+    for (let i =0; i < keyValues.length; i++) {
+      keyValue = keyValues[i].trim()
+      if (!keyValue.startsWith('csrftoken')) {
+        continue;
+      }
+      eqSep = keyValue.indexOf('=')
+      if (eqSep === -1) {
+        continue;
+      }
+      csrfToken = keyValue.slice(eqSep + 1).trim()
+    }
+    return csrfToken;
   }
 
 
@@ -313,6 +327,9 @@
 
 
 <script>
+  const START = 'Start'
+  const STOP = 'Stop'
+
   document.addEventListener('DOMContentLoaded', onDomLoaded);
 
 
@@ -354,10 +371,10 @@
 
 
   function onStartStopClicked() {
-    const mode = document.getElementById('start-stop').textContent
-    if (mode == 'Start') {
+    const mode = document.getElementById('start-stop').textContent.trim()
+    if (mode == START) {
       startRps()
-    } else if (mode == 'Stop') {
+    } else if (mode == STOP) {
       stopRps()
     }
   }
@@ -394,7 +411,7 @@
     document.getElementById('rock').disabled = false;
     document.getElementById('paper').disabled = false;
     document.getElementById('scissors').disabled = false;
-    document.getElementById('start-stop').textContent = 'Stop'
+    document.getElementById('start-stop').textContent = STOP
     // Informing the server...
     data = {
       'action': 'start',
@@ -402,7 +419,7 @@
       'right': rplayerName,
     }
     startReq = new Request(
-      '/',
+      'challenges/rps/',
       {
         method: 'POST',
         headers: {
@@ -413,8 +430,8 @@
       }
     )
     fetch(startReq)
-      .then(response => response.json())
-      .then(data => showAlert(data))
+      .then(response => response.text())
+      .then(text => alert(text))
   }
 
 
@@ -424,7 +441,7 @@
     document.getElementById('rock').disabled = true;
     document.getElementById('paper').disabled = true;
     document.getElementById('scissors').disabled = true;
-    document.getElementById('start-stop').textContent = 'Start'
+    document.getElementById('start-stop').textContent = START
     // Informing the server...
     const data = {
       'action': 'stop',
@@ -470,7 +487,19 @@
 
 
   function getCsrfToken() {
-    return document.querySelector('[name=csrfmiddlewaretoken]').value
+    keyValues = document.cookie.split(';')
+    for (let i =0; i < keyValues.length; i++) {
+      keyValue = keyValues[i].trim()
+      if (!keyValue.startsWith('csrftoken')) {
+        continue;
+      }
+      eqSep = keyValue.indexOf('=')
+      if (eqSep === -1) {
+        continue;
+      }
+      csrfToken = keyValue.slice(eqSep + 1).trim()
+    }
+    return csrfToken;
   }
 
 

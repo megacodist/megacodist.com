@@ -76,7 +76,6 @@ def play(request: HttpRequest) -> HttpResponse: # type: ignore
         template = jinja2_engine.get_template('challenges/rps/page.j2')
         return HttpResponse(template.render(context))
     if request.method == 'POST':
-        breakpoint()
         # Retrieving data...
         try:
             data = json.loads(request.body)
@@ -188,7 +187,7 @@ def _initRps(
         rpsInfo = RpsGameInfo(lInfo, rInfo)
         cache.set(session.session_key, pickle.dumps(rpsInfo))
         # Responding with HTTP 200 OK...
-        return HttpResponse('RPS game initialized')
+        return HttpResponse('RPS game initialized', content_type='text/plain')
     else:
         return HttpResponseBadRequest(
             'This app does not support game between two computer '
