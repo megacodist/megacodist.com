@@ -8,6 +8,7 @@ from inspect import isabstract, isclass
 import json
 from pathlib import Path
 import pickle
+from typing import Literal
 
 from django.contrib.sessions.backends.base import SessionBase
 from django.core.cache import cache
@@ -94,7 +95,11 @@ def play(request: HttpRequest) -> HttpResponse: # type: ignore
             case 'stop':
                 return _uninitRps(request.session)
             case 'move':
-                pass
+                if 'move' not in data:
+                    return HttpResponseBadRequest('move is not specified')
+                elif data['move'] not in {'1', '2', '3'}:
+                    return HttpResponseBadRequest('bad move value')
+                return _move(data['move'], request.session)
             case _:
                 return HttpResponseBadRequest()
         #
@@ -162,7 +167,6 @@ def _initRps(
     # Declaring variables -------------------------------------------
     global players
     # ---------------------------------------------------------------
-    breakpoint()
     bothPlayers = {lname, rname}
     if bothPlayers == {_USER}:
         return HttpResponseBadRequest(
@@ -197,3 +201,37 @@ def _initRps(
 def _uninitRps(session: SessionBase) -> HttpResponse:
     cache.delete(session.session_key)
     return HttpResponse('The RPS game uninitialized.')
+
+
+def _move(
+        user_move: Literal['1', '2', '3'],
+        session: SessionBase,
+        ) -> HttpResponse:
+    global cache
+    #
+    rpsInfo: RpsGameInfo = cache.get(session.session_key)
+    if not bool(rpsInfo.left.player) ^ bool(rpsInfo.right.player):
+        return HttpResponseBadRequest('user-computer game not detected')
+    if rpsInfo.left.player is None:
+        userInfo = rpsInfo.left
+        comInfo = rpsInfo.right
+    else:
+        userInfo = rpsInfo.right
+        comInfo = rpsInfo.left
+    #
+    userMove = Rps(int(user_move))
+    userInfo.history.append(userMove)
+    comMove = comInfo.player.move() # type: ignore
+    comInfo.history.append(comMove)
+    #
+    if userMove > comMove:
+        result = 'win'
+        userInfo.
+    elif comMove > userMove:
+        result = 'lose'
+    else:
+        result = 'draw'
+    data = {
+        'com': str(comMove.value),
+        'result': result,}
+    return JsonResponse(data)

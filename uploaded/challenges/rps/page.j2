@@ -90,6 +90,7 @@
 
   <!-- Operations -->
   <form id="operations">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="pause">Pause</button>
       <button type="button" class="btn btn-dark" id="rock" data-code="1"><img src="{{ static('challenges/rps/rock.png') }}" style="width: 40px;"></button>
@@ -209,7 +210,7 @@
       'right': rplayerName,
     }
     startReq = new Request(
-      'challenges/rps/',
+      window.location.href,  // The URL of the current page
       {
         method: 'POST',
         headers: {
@@ -273,6 +274,11 @@
       .then(response => response.json())
       .then(response => showMoveRes(response))
       .catch(err => showAlert(err))
+  }
+
+
+  function getCsrfToken2() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value
   }
 
 
@@ -419,7 +425,7 @@
       'right': rplayerName,
     }
     startReq = new Request(
-      'challenges/rps/',
+      window.location.href,  // The URL of the current page
       {
         method: 'POST',
         headers: {
@@ -486,6 +492,11 @@
   }
 
 
+  function getCsrfToken2() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value
+  }
+
+
   function getCsrfToken() {
     keyValues = document.cookie.split(';')
     for (let i =0; i < keyValues.length; i++) {
@@ -503,15 +514,15 @@
   }
 
 
-  function showMoveRes(res) {
+  function showMoveRes(data) {
     //
     lplayerName = document.getElementById('lplayer-name').textContent.trim()
     if (lplayerName === 'User') {
-      document.getElementById('lplayer-score').textContent = res['user_score']
-      document.getElementById('rplayer-score').textContent = res['com_score']
+      document.getElementById('lplayer-score').textContent = data['user_score']
+      document.getElementById('rplayer-score').textContent = data['com_score']
     } else {
-      document.getElementById('lplayer-score').textContent = res['com_score']
-      document.getElementById('rplayer-score').textContent = res['user_score']
+      document.getElementById('lplayer-score').textContent = data['com_score']
+      document.getElementById('rplayer-score').textContent = data['user_score']
     }
   }
 
