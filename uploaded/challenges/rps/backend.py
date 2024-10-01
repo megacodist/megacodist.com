@@ -34,10 +34,12 @@ class RpsPlayerInfo:
             self,
             name: str,
             history: list[Rps],
-            player: IRpsPlayer | None,
+            score: int = 0,
+            player: IRpsPlayer | None = None,
             ) -> None:
         self.name = name
         self.history = history
+        self.score = score
         self.player = player
 
 
@@ -185,8 +187,16 @@ def _initRps(
         except KeyError:
             rPlayer = None
         #
-        lInfo = RpsPlayerInfo(lname, lHistory, lPlayer)
-        rInfo = RpsPlayerInfo(rname, rHistory, rPlayer)
+        lInfo = RpsPlayerInfo(
+            name=lname,
+            history=lHistory,
+            score=0,
+            player=lPlayer)
+        rInfo = RpsPlayerInfo(
+            name=rname,
+            history=rHistory,
+            score=0,
+            player=rPlayer)
         #
         rpsInfo = RpsGameInfo(lInfo, rInfo)
         cache.set(session.session_key, pickle.dumps(rpsInfo))
@@ -207,11 +217,13 @@ def _move(
         user_move: Literal['1', '2', '3'],
         session: SessionBase,
         ) -> HttpResponse:
+    # Declaring variables -------------------------------------------
     global cache
-    #
-    rpsInfo: RpsGameInfo = cache.get(session.session_key)
-    if not bool(rpsInfo.left.player) ^ bool(rpsInfo.right.player):
-        return HttpResponseBadRequest('user-computer game not detected')
+    # ---------------------------------------------------------------
+    rpsInfo: RpsGameInfo = pickle.loads(cache.get(session.session_key))
+    if not (bool(rpsInfo.left.player) ^ bool(rpsInfo.right.player)):
+        return HttpResponseBadRequest(
+            "'move' is only acceptable in user-computer game")
     if rpsInfo.left.player is None:
         userInfo = rpsInfo.left
         comInfo = rpsInfo.right
@@ -226,12 +238,17 @@ def _move(
     #
     if userMove > comMove:
         result = 'win'
-        userInfo.
+        userInfo.score += 1
     elif comMove > userMove:
         result = 'lose'
+        comInfo.score += 1
     else:
         result = 'draw'
+    cache.set(session.session_key, pickle.dumps(rpsInfo),)
+    #
     data = {
         'com': str(comMove.value),
-        'result': result,}
+        'result': result,
+        'user_score': userInfo.score,
+        'com_score': comInfo.score,}
     return JsonResponse(data)

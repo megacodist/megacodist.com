@@ -100,6 +100,11 @@
     </div>
   </form>
 
+  <!-- Notification container -->
+  <div id="notification" class="position-fixed d-none text-center" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div id="notification-message" class="alert alert-dismissible fade show"></div>
+  </div>
+
   <section class="notes">
     <h6>Notes</h6>
     <ul>
@@ -197,227 +202,14 @@
         'This app does not support computer-computer game for the time being.');
       return
     }
-    // Updating elements...
+    // Updating elements to conform the beginning of the game...
     document.getElementById('pause').disabled = false;
     document.getElementById('rock').disabled = false;
     document.getElementById('paper').disabled = false;
     document.getElementById('scissors').disabled = false;
     document.getElementById('start-stop').textContent = STOP
-    // Informing the server...
-    data = {
-      'action': 'start',
-      'left': lplayerName,
-      'right': rplayerName,
-    }
-    startReq = new Request(
-      window.location.href,  // The URL of the current page
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    fetch(startReq)
-      .then(response => response.text())
-      .then(text => alert(text))
-  }
-
-
-  function stopRps() {
-    // Updating elements...
-    document.getElementById('pause').disabled = true;
-    document.getElementById('rock').disabled = true;
-    document.getElementById('paper').disabled = true;
-    document.getElementById('scissors').disabled = true;
-    document.getElementById('start-stop').textContent = START
-    // Informing the server...
-    const data = {
-      'action': 'stop',
-    }
-    stopReq = new Request(
-      '/',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    fetch(stopReq)
-  }
-
-
-  function sendChoice(userMove) {
-    // Preparing data tosend...
-    const data = {
-      'action': 'move',
-      'move': userMove,
-    }
-    choiceReq = new Request(
-      '',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
-        },
-        body: JSON.stringify(data),
-      }
-    )
-    //
-    fetch(choiceReq)
-      .then(response => response.json())
-      .then(response => showMoveRes(response))
-      .catch(err => showAlert(err))
-  }
-
-
-  function getCsrfToken2() {
-    return document.querySelector('[name=csrfmiddlewaretoken]').value
-  }
-
-
-  function getCsrfToken() {
-    keyValues = document.cookie.split(';')
-    for (let i =0; i < keyValues.length; i++) {
-      keyValue = keyValues[i].trim()
-      if (!keyValue.startsWith('csrftoken')) {
-        continue;
-      }
-      eqSep = keyValue.indexOf('=')
-      if (eqSep === -1) {
-        continue;
-      }
-      csrfToken = keyValue.slice(eqSep + 1).trim()
-    }
-    return csrfToken;
-  }
-
-
-  function showMoveRes(res) {
-    //
-    lplayerName = document.getElementById('lplayer-name').textContent.trim()
-    if (lplayerName === 'User') {
-      document.getElementById('lplayer-score').textContent = res['user_score']
-      document.getElementById('rplayer-score').textContent = res['com_score']
-    } else {
-      document.getElementById('lplayer-score').textContent = res['com_score']
-      document.getElementById('rplayer-score').textContent = res['user_score']
-    }
-  }
-
-
-  function showAlert(message, type = 'danger') {
-    // Create the alert HTML
-    const alertHTML = `
-      <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>`;
-    // Append the alert to the body (or a container)
-    document.getElementById('alert-container').innerHTML = alertHTML;
-    // Optionally remove the alert after 5 seconds
-    setTimeout(
-      () => {
-        document.querySelector('.custom-alert').remove();
-      },
-      5000 // 5000 milliseconds = 5 seconds
-    );
-  }
-{%- endblock endingScripts %}
-
-
-<script>
-  const START = 'Start'
-  const STOP = 'Stop'
-
-  document.addEventListener('DOMContentLoaded', onDomLoaded);
-
-
-  function onDomLoaded() {
-    // Showing selected player in the dropdown...
-    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
-    dropdownMenus.forEach((item) => {
-      item.addEventListener(
-        'click',
-        (event) => {
-          // Getting the selected player text...
-          const selectedPlayer = event.target.textContent;
-          const dropdownButton = item.previousElementSibling
-          dropdownButton.textContent = selectedPlayer
-        }
-      )
-    })
-    // Disabling some buttons...
-    document.getElementById('pause').disabled = true;
-    document.getElementById('rock').disabled = true;
-    document.getElementById('paper').disabled = true;
-    document.getElementById('scissors').disabled = true;
-    // Adding click handler for `start-stop` button...
-    document.getElementById('start-stop').addEventListener(
-      'click',
-      onStartStopClicked
-    );
-    // Attaching click event listener to each rock, paper, scissors buttons...
-    var rpsBtns = document.querySelectorAll('#rock, #paper, #scissors');
-    rpsBtns.forEach(
-      (button) => {
-        const choiceCode = button.getAttribute('data-code');
-        button.addEventListener(
-          'click',
-          sendChoice.bind(null, choiceCode))
-      }
-    )
-  }
-
-
-  function onStartStopClicked() {
-    const mode = document.getElementById('start-stop').textContent.trim()
-    if (mode == START) {
-      startRps()
-    } else if (mode == STOP) {
-      stopRps()
-    }
-  }
-
-
-  function startRps() {
-    // Checking if left player is selected...
-    const lplayerName = document.getElementById('lplayer-name').textContent
-      .trim()
-    if (lplayerName.startsWith('Select')) {
-      showAlert('Please select the left player.');
-      return;
-    }
-    // Checking if right player is selected...
-    const rplayerName = document.getElementById('rplayer-name').textContent
-      .trim()
-    if (rplayerName.startsWith('Select')) {
-      showAlert('Please select the right player.');
-      return;
-    }
-    // Preventing user-user game...
-    if ((lplayerName === 'User') && (rplayerName === 'User')) {
-      showAlert('This app does not support game between two users.');
-      return
-    }
-    // Preventing computer-computer game...
-    if ((lplayerName !== 'User') && (rplayerName !== 'User')) {
-      showAlert(
-        'This app does not support computer-computer game for the time being.');
-      return
-    }
-    // Updating elements...
-    document.getElementById('pause').disabled = false;
-    document.getElementById('rock').disabled = false;
-    document.getElementById('paper').disabled = false;
-    document.getElementById('scissors').disabled = false;
-    document.getElementById('start-stop').textContent = STOP
+    document.getElementById('lplayer-score').textContent = 0
+    document.getElementById('rplayer-score').textContent = 0
     // Informing the server...
     data = {
       'action': 'start',
@@ -524,6 +316,250 @@
       document.getElementById('lplayer-score').textContent = data['com_score']
       document.getElementById('rplayer-score').textContent = data['user_score']
     }
+  }
+
+
+  function showAlert(message, type = 'danger') {
+    // Create the alert HTML
+    const alertHTML = `
+      <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
+    // Append the alert to the body (or a container)
+    document.getElementById('alert-container').innerHTML = alertHTML;
+    // Optionally remove the alert after 5 seconds
+    setTimeout(
+      () => {
+        document.querySelector('.custom-alert').remove();
+      },
+      5000 // 5000 milliseconds = 5 seconds
+    );
+  }
+{%- endblock endingScripts %}
+
+
+<script>
+  const START = 'Start'
+  const STOP = 'Stop'
+
+  document.addEventListener('DOMContentLoaded', onDomLoaded);
+
+
+  function onDomLoaded() {
+    // Showing selected player in the dropdown...
+    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+    dropdownMenus.forEach((item) => {
+      item.addEventListener(
+        'click',
+        (event) => {
+          // Getting the selected player text...
+          const selectedPlayer = event.target.textContent;
+          const dropdownButton = item.previousElementSibling
+          dropdownButton.textContent = selectedPlayer
+        }
+      )
+    })
+    // Disabling some buttons...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    // Adding click handler for `start-stop` button...
+    document.getElementById('start-stop').addEventListener(
+      'click',
+      onStartStopClicked
+    );
+    // Attaching click event listener to each rock, paper, scissors buttons...
+    var rpsBtns = document.querySelectorAll('#rock, #paper, #scissors');
+    rpsBtns.forEach(
+      (button) => {
+        const choiceCode = button.getAttribute('data-code');
+        button.addEventListener(
+          'click',
+          sendChoice.bind(null, choiceCode))
+      }
+    )
+  }
+
+
+  function onStartStopClicked() {
+    const mode = document.getElementById('start-stop').textContent.trim()
+    if (mode == START) {
+      startRps()
+    } else if (mode == STOP) {
+      stopRps()
+    }
+  }
+
+
+  function startRps() {
+    // Checking if left player is selected...
+    const lplayerName = document.getElementById('lplayer-name').textContent
+      .trim()
+    if (lplayerName.startsWith('Select')) {
+      showAlert('Please select the left player.');
+      return;
+    }
+    // Checking if right player is selected...
+    const rplayerName = document.getElementById('rplayer-name').textContent
+      .trim()
+    if (rplayerName.startsWith('Select')) {
+      showAlert('Please select the right player.');
+      return;
+    }
+    // Preventing user-user game...
+    if ((lplayerName === 'User') && (rplayerName === 'User')) {
+      showAlert('This app does not support game between two users.');
+      return
+    }
+    // Preventing computer-computer game...
+    if ((lplayerName !== 'User') && (rplayerName !== 'User')) {
+      showAlert(
+        'This app does not support computer-computer game for the time being.');
+      return
+    }
+    // Updating elements to conform the beginning of the game...
+    document.getElementById('pause').disabled = false;
+    document.getElementById('rock').disabled = false;
+    document.getElementById('paper').disabled = false;
+    document.getElementById('scissors').disabled = false;
+    document.getElementById('start-stop').textContent = STOP
+    document.getElementById('lplayer-score').textContent = 0
+    document.getElementById('rplayer-score').textContent = 0
+    // Informing the server...
+    data = {
+      'action': 'start',
+      'left': lplayerName,
+      'right': rplayerName,
+    }
+    startReq = new Request(
+      window.location.href,  // The URL of the current page
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    fetch(startReq)
+      .then(response => response.text())
+      .then(text => alert(text))
+  }
+
+
+  function stopRps() {
+    // Updating elements...
+    document.getElementById('pause').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    document.getElementById('start-stop').textContent = START
+    // Informing the server...
+    const data = {
+      'action': 'stop',
+    }
+    stopReq = new Request(
+      '/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    fetch(stopReq)
+  }
+
+
+  function sendChoice(userMove) {
+    // Preparing data tosend...
+    const data = {
+      'action': 'move',
+      'move': userMove,
+    }
+    choiceReq = new Request(
+      '',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(),
+        },
+        body: JSON.stringify(data),
+      }
+    )
+    //
+    fetch(choiceReq)
+      .then(response => response.json())
+      .then(response => showMoveRes(response))
+      .catch(err => showAlert(err))
+  }
+
+
+  function getCsrfToken2() {
+    return document.querySelector('[name=csrfmiddlewaretoken]').value
+  }
+
+
+  function getCsrfToken() {
+    keyValues = document.cookie.split(';')
+    for (let i =0; i < keyValues.length; i++) {
+      keyValue = keyValues[i].trim()
+      if (!keyValue.startsWith('csrftoken')) {
+        continue;
+      }
+      eqSep = keyValue.indexOf('=')
+      if (eqSep === -1) {
+        continue;
+      }
+      csrfToken = keyValue.slice(eqSep + 1).trim()
+    }
+    return csrfToken;
+  }
+
+
+  function showMoveRes(data) {
+    //
+    lplayerName = document.getElementById('lplayer-name').textContent.trim()
+    // Showing scores...
+    if (lplayerName === 'User') {
+      document.getElementById('lplayer-score').textContent = data['user_score']
+      document.getElementById('rplayer-score').textContent = data['com_score']
+    } else {
+      document.getElementById('lplayer-score').textContent = data['com_score']
+      document.getElementById('rplayer-score').textContent = data['user_score']
+    }
+    // Informing the winner...
+    if (data['result'] === 'win') {
+      //
+    } else if (data['result'] === 'lose') {
+      //
+    }
+    else {
+      //
+    }
+  }
+
+
+  function showNotification(message, type) {
+    const notification = document.getElementById('notification');
+    const notificationMessage = document.getElementById('notification-message');
+    // Setting the notification message...
+    notificationMessage.textContent = message;
+    // Setting the notification type (success, danger, or warning)...
+    notificationMessage.classList = `alert alert-${type} alert-dismissible fade show`;
+    // Showing the notification...
+    notification.classList.remove('d-none');
+    // Hiding the notification after 2 seconds...
+    setTimeout(
+      () => notification.classList.add('d-none'),
+      2000,
+    );
   }
 
 
