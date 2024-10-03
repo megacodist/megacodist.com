@@ -51,6 +51,11 @@ class RpsGameInfo:
             ) -> None:
         self.left = left
         self.right = right
+        self.lastWinner: Literal['user', 'com', 'none',] = 'none'
+        self.nLastWins = 0
+        self.nBeforeWins = 0
+        self.nLastLosses = 0
+        self.nBeofreLosses = 0
 
 
 @require_http_methods(['GET', 'POST'])
@@ -214,7 +219,7 @@ def _uninitRps(session: SessionBase) -> HttpResponse:
 
 
 def _move(
-        user_move: Literal['1', '2', '3'],
+        user_move: Literal['rock', 'paper', 'scissors'],
         session: SessionBase,
         ) -> HttpResponse:
     # Declaring variables -------------------------------------------
@@ -231,9 +236,12 @@ def _move(
         userInfo = rpsInfo.right
         comInfo = rpsInfo.left
     #
-    userMove = Rps(int(user_move))
-    userInfo.history.append(userMove)
+    try:
+        userMove = Rps[user_move]
+    except KeyError:
+        return HttpResponseBadRequest(f'invalid user move: {user_move}')
     comMove = comInfo.player.move() # type: ignore
+    userInfo.history.append(userMove)
     comInfo.history.append(comMove)
     #
     if userMove > comMove:
@@ -247,8 +255,81 @@ def _move(
     cache.set(session.session_key, pickle.dumps(rpsInfo),)
     #
     data = {
-        'com': str(comMove.value),
-        'result': result,
+        'user_move': user_move,
+        'com_move': comMove.name.lower(),
         'user_score': userInfo.score,
-        'com_score': comInfo.score,}
+        'com_score': comInfo.score,
+        'result': result,
+        'message': ''}
     return JsonResponse(data)
+
+
+def _getMessage() -> str:
+    WIN_MSGS = {
+        1: [
+            "Great start!", 
+            "Nice one!", 
+            "Good job!", 
+            "Solid choice!", 
+            "Well done, keep it up!", 
+            "You've got this!",
+        ],
+        2: [
+            "Two in a row, impressive!", 
+            "You're gaining momentum!", 
+            "Nice streak! Keep going!", 
+            "You're on fire!", 
+            "Way to go—two in a row!", 
+            "You're showing some skill!",
+        ],
+        3: [
+            "Three wins! You're on a roll!", 
+            "Victory is becoming your habit!", 
+            "Impressive streak!", 
+            "Well played, you’re unstoppable!", 
+            "Three times the charm!", 
+            "You're crushing it!",
+        ],
+        4: [
+            "Four wins! You're a force to be reckoned with!", 
+            "You're dominating this game!", 
+            "Unstoppable! Keep it going!", 
+            "Incredible streak! Keep winning!", 
+            "You're a Rock-Paper-Scissors legend!", 
+            "Master of the game!"
+        ],
+    }
+    LOSS_MSGS = {
+        1: [
+            "Tough luck, try again!", 
+            "You'll get it next time!", 
+            "Not your best move, but keep going!", 
+            "Don't give up!", 
+            "Stay focused, you'll bounce back!", 
+            "Just a setback, you're still in the game!"
+        ],
+        2: [
+            "Hang in there, you can still turn this around!", 
+            "It’s just a rough patch, keep playing!", 
+            "Losing is part of learning!", 
+            "You’re getting closer, don't stop!", 
+            "Every loss is a step toward improvement!", 
+            "Keep your head up, it's not over yet!"
+        ],
+        3: [
+            "Don't let this get you down, you're learning!", 
+            "You're bound to win the next one!", 
+            "Tough streak, but you're improving!", 
+            "Keep going! Victory is just around the corner!", 
+            "Believe in yourself, you're on the right track!", 
+            "The next win will feel even better after this!"
+        ],
+        4: [
+            "Everyone has a bad streak—don’t give up!", 
+            "You can still make a comeback!", 
+            "Shake it off and focus!", 
+            "You’re getting stronger with every loss!", 
+            "Champions are made by pushing through tough times!", 
+            "Stay resilient—your winning streak will come!"
+        ],
+    }

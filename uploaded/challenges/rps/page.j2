@@ -49,7 +49,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.6);
     z-index: 9999;
     display: none;
     justify-content: center;
@@ -106,9 +106,9 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="pause-resume">Pause</button>
-      <button type="button" class="btn btn-dark" id="rock" data-code="1"><img src="{{ static('challenges/rps/rock.png') }}" style="width: 40px;"></button>
-      <button type="button" class="btn btn-dark" id="paper" data-code="2"><img src="{{ static('challenges/rps/paper.png') }}" style="width: 40px;"></button>
-      <button type="button" class="btn btn-dark" id="scissors" data-code="3"><img src="{{ static('challenges/rps/scissors.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="rock" data-code="rock"><img src="{{ static('challenges/rps/rock.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="paper" data-code="paper"><img src="{{ static('challenges/rps/paper.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="scissors" data-code="scissors"><img src="{{ static('challenges/rps/scissors.png') }}" style="width: 40px;"></button>
       <button type="button" class="btn btn-dark" id="start-stop">Start</button>
     </div>
   </form>
@@ -415,46 +415,6 @@
   const STOP = 'Stop'
   const PAUSE = 'Pause'
   const RESUME = 'Resume'
-  const WIN_PHRASES = [
-    "Nice one!",
-    "Good job!",
-    "You crushed it!",
-    "Well played!",
-    "Victory is yours!",
-    "You’re on fire!",
-    "Brilliant move!",
-    "That’s a win!",
-    "You nailed it!",
-    "You're unstoppable!",
-    "You're on a roll!",
-    "Nice move!",
-    "You've outsmarted your opponent!",
-    "Bravo! You've won this round!",
-    "That was a masterful choice!",
-    "You've got the magic touch!",
-  ]
-  const LOSE_PHRASES = [
-    "Oops, better luck next time!",
-    "Oh no, you lost that round!",
-    "Not your best move!",
-    "That didn’t go as planned!",
-    "You’re out of luck this time!",
-    "Close, but not quite!",
-    "Tough break!",
-    "Ouch, that hurt!",
-    "A valiant effort, but no dice!",
-    "You got outplayed!",
-    "Tough luck!"
-"Better luck next time!"
-"You'll get them in the next round!"
-"That was a close one!"
-"Keep your spirits up!"
-"Don't give up yet!"
-"The tables can turn!"
-"It's only a setback!"
-"You gave it a good go!"
-"The battle's not over!"
-  ]
 
 
   document.addEventListener('DOMContentLoaded', onDomLoaded);
@@ -495,7 +455,7 @@
         const choiceCode = button.getAttribute('data-code');
         button.addEventListener(
           'click',
-          sendChoice.bind(null, choiceCode))
+          sendMove.bind(null, choiceCode))
       }
     )
   }
@@ -586,7 +546,7 @@
     )
     fetch(startReq)
       .then(response => response.text())
-      .then(text => alert(text))
+      .then(text => console.log(text))
   }
 
 
@@ -614,11 +574,14 @@
         body: JSON.stringify(data),
       }
     )
+    //
     fetch(stopReq)
+      .then(response => response.text())
+      .then(text => console.log(text))
   }
 
 
-  function sendChoice(userMove) {
+  function sendMove(userMove) {
     // Preparing data tosend...
     const data = {
       'action': 'move',
