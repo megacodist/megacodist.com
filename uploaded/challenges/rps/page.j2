@@ -143,6 +143,7 @@
   const PAUSE = 'Pause'
   const RESUME = 'Resume'
 
+
   document.addEventListener('DOMContentLoaded', onDomLoaded);
 
 
@@ -181,7 +182,7 @@
         const choiceCode = button.getAttribute('data-code');
         button.addEventListener(
           'click',
-          sendChoice.bind(null, choiceCode))
+          sendMove.bind(null, choiceCode))
       }
     )
   }
@@ -272,7 +273,7 @@
     )
     fetch(startReq)
       .then(response => response.text())
-      .then(text => alert(text))
+      .then(text => console.log(text))
   }
 
 
@@ -300,11 +301,14 @@
         body: JSON.stringify(data),
       }
     )
+    //
     fetch(stopReq)
+      .then(response => response.text())
+      .then(text => console.log(text))
   }
 
 
-  function sendChoice(userMove) {
+  function sendMove(userMove) {
     // Preparing data tosend...
     const data = {
       'action': 'move',
@@ -323,7 +327,16 @@
     )
     //
     fetch(choiceReq)
-      .then(response => response.json())
+      .then(async function(response) {
+        if (response.ok) {
+          // If response is OK (200), parse and return JSON
+          return await response.json();
+        } else {
+          // If response is not OK, get text and throw an error
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+      })
       .then(response => showMoveRes(response))
       .catch(err => showAlert(err))
   }
@@ -363,13 +376,13 @@
       document.getElementById('rplayer-score').textContent = data['user_score']
     }
     // Informing the winner...
-    if (data['result'] === 'win') {
-      showSplashScreen('You won!!', 'success')
-    } else if (data['result'] === 'lose') {
-      showSplashScreen('You lost!!', 'danger')
+    if (data['winner'] === 'user') {
+      showSplashScreen(data['message'], 'success')
+    } else if (data['winner'] === 'com') {
+      showSplashScreen(data['message'], 'danger')
     }
     else {
-      showSplashScreen('Draw!!', 'warning')
+      showSplashScreen(data['message'], 'warning')
     }
   }
 
@@ -600,7 +613,16 @@
     )
     //
     fetch(choiceReq)
-      .then(response => response.json())
+      .then(async function(response) {
+        if (response.ok) {
+          // If response is OK (200), parse and return JSON
+          return await response.json();
+        } else {
+          // If response is not OK, get text and throw an error
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
+      })
       .then(response => showMoveRes(response))
       .catch(err => showAlert(err))
   }
@@ -640,13 +662,13 @@
       document.getElementById('rplayer-score').textContent = data['user_score']
     }
     // Informing the winner...
-    if (data['result'] === 'win') {
-      showSplashScreen('You won!!', 'success')
-    } else if (data['result'] === 'lose') {
-      showSplashScreen('You lost!!', 'danger')
+    if (data['winner'] === 'user') {
+      showSplashScreen(data['message'], 'success')
+    } else if (data['winner'] === 'com') {
+      showSplashScreen(data['message'], 'danger')
     }
     else {
-      showSplashScreen('Draw!!', 'warning')
+      showSplashScreen(data['message'], 'warning')
     }
   }
 
