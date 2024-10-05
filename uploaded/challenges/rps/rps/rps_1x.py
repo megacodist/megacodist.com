@@ -3,56 +3,21 @@
 #
 
 from collections import defaultdict
-from queue import Empty, Queue
-from threading import Thread
 
 from . import IRpsPlayer, Rps
 
 
-class _QuitException(Exception):
-    pass
-
-
-class Spsc10Player(IRpsPlayer, Thread):
-    name = 'SPSC 10'
+class Rps10Player(IRpsPlayer):
+    name = 'RPS 10'
 
     def __init__(
             self,
-            choice: Queue[Rps],
-            rival_choice: Queue[Rps],
             history: list[Rps],
             rival_history: list[Rps],
             ) -> None:
-        super().__init__(choice, rival_choice, history, rival_history)
-        super(IRpsPlayer, self).__init__(
-            None,
-            None,
-            'Rps 10 player',
-            tuple(),
-            None,
-            daemon=True)
-        self._pendingFinish = False
+        super().__init__(history, rival_history,)
     
-    def run(self) -> None:
-        from random import choice as RandomChoice
-        spscLst = list(Rps)
-        self._choice.put(RandomChoice(spscLst))
-        try:
-            while True:
-                # Reading rival choice, checking for quit...
-                while True:
-                    try:
-                        _ = self._rivalChoice.get(True, 0.025)
-                        break
-                    except Empty:
-                        if self._pendingFinish:
-                            raise _QuitException()
-                # Producing next naive choice...
-                self._choice.put(self._getSpsc())
-        except _QuitException:
-            pass
-    
-    def _getSpsc(self) -> Rps:
+    def move(self) -> Rps:
         # Declaring of variables --------------------------
         import random
         # Functioning -------------------------------------
@@ -124,9 +89,3 @@ class Spsc10Player(IRpsPlayer, Thread):
                 highFreq.append(elem)
         if len(highFreq) > 0:
             return tuple(highFreq) # type: ignore
-    
-    def start(self) -> None:
-        super(IRpsPlayer, self).start()
-
-    def finish(self) -> None:
-        self._pendingFinish = True
