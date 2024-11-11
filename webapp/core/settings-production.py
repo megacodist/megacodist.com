@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 from jinja2 import Undefined, DebugUndefined
@@ -22,12 +23,16 @@ PROJECT_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a$8cw2e^qo%z35p$lsxm_w-ml@2pkvx6f(bd@j#43)9tanirk6'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("The DJANGO_SECRET_KEY environment variable is not set.")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'megacodist.com',
+    'www.megacodist.com',]
 
 
 # Application definition
@@ -61,9 +66,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
-            PROJECT_DIR / 'templates',
-            PROJECT_DIR / 'uploaded',
-            PROJECT_DIR / 'media',
+            PROJECT_DIR / 'assets' / 'templates',
+            PROJECT_DIR / 'assets',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -77,9 +81,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            PROJECT_DIR / 'templates',
-            PROJECT_DIR / 'uploaded',
-            PROJECT_DIR / 'media',
+            PROJECT_DIR / 'assets' / 'templates',
+            PROJECT_DIR / 'assets',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -136,6 +139,13 @@ AUTH_PASSWORD_VALIDATORS = [
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 
+# Setting SSL/TLS...
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS  = ['https://megacodist.com/']
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
@@ -146,12 +156,15 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = 'res/'
+STATIC_URL = 'assets/'
 STATICFILES_DIRS = [
-    PROJECT_DIR / 'res',
-    PROJECT_DIR / 'templates',
-    PROJECT_DIR / 'uploaded',
+    PROJECT_DIR / 'assets',
 ]
+
+
+# User-uploaded files...
+MEDIA_URL = '/media/'
+MEDIA_ROOT = PROJECT_DIR / 'media/'
 
 
 #

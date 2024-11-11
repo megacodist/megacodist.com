@@ -1,19 +1,21 @@
-version: "3.8"
+version: '3.8'
 
 services:
   web:
     build: .
+    volumes:
+      - megacodist.com-code:/webapp
+      - megacodist.com-assets:/webapp/assets
+      - megacodist.com-media:/webapp/media
     ports:
       - "8000:8000"
-    depends_on:
-      - db
-  db:
-    image: postgres:14
     environment:
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: mydatabase
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - DJANGO_SETTINGS_MODULE=core.settings
 
 volumes:
-  postgres_data:
+  megacodist.com-code:
+    external: true
+  megacodist.com-assets:
+    external: true
+  megacodist.com-media:
+    external: true

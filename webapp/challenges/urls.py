@@ -8,7 +8,7 @@
 from django.urls import path
 
 from .views import getChallengesIndexPage
-from uploaded.challenges.rps.backend import play as playRps 
+from assets.challenges.rps.backend import play as playRps 
 
 
 app_name = 'challenges'

@@ -6,3 +6,6 @@
 
 # Ignoring Python cache files...
 /**/__pycache__/**
+
+# Ignoring Docker TAR file...
+/megacodist.com.tar
