@@ -40,11 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'challenges',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',    # Supporting for anonymous sessions
     'django.middleware.common.CommonMiddleware',
@@ -155,10 +153,15 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = PROJECT_DIR / 'media/'
 
 
-#
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# Enabling Django Debug Toolbar for development environment...
+if DEBUG:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+    INSTALLED_APPS.append('debug_toolbar')
+    INTERNAL_IPS = [
+        # Allowing access from the localhost...
+        '127.0.0.1',
+        'localhost',
+    ]
 
 
 # Default primary key field type

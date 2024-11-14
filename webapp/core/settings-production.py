@@ -45,11 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'challenges',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',    # Supporting for anonymous sessions
     'django.middleware.common.CommonMiddleware',
@@ -143,7 +141,10 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS  = ['https://megacodist.com/']
+CSRF_TRUSTED_ORIGINS  = [
+    'https://megacodist.com/',
+    'https://www.megacodist.com/',]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https',)
 
 
 # Internationalization
@@ -167,10 +168,11 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = PROJECT_DIR / 'media/'
 
 
-#
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
+# Enabling Django Debug Toolbar for development environment...
+if DEBUG:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+    INSTALLED_APPS.append('debug_toolbar')
+    INTERNAL_IPS = ['172.17.0.3',]
 
 
 # Default primary key field type

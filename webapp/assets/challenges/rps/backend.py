@@ -96,7 +96,7 @@ _LOSS_MSGS = {
 }
 
 players: dict[str, type[IRpsPlayer]] = {}
-"""The mappng between name and implementation of RPS players."""
+"""The mappng between names and implementations of RPS players."""
 
 
 class RpsPlayerInfo:
@@ -210,7 +210,7 @@ def _loadPlayers() -> None:
     for fileName in filesNames:
         try:
             modObj = import_module(
-                f'uploaded.challenges.rps.rps.{fileName.stem}')
+                f'assets.challenges.rps.rps.{fileName.stem}')
         except Exception:
             continue
         for item in dir(modObj):

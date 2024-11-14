@@ -37,5 +37,6 @@ docker run -d -p 8000:8000 \
   -v megacodist.com-code:/webapp/ \
   -v megacodist.com-assets:/webapp/assets/ \
   -v megacodist.com-media:/webapp/media/ \
+  -p DJANGO_SECRET_KEY='your-djnago-secret-key-of-choice'
   megacodist.com:2.0.3
 ```

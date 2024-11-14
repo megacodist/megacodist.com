@@ -106,9 +106,9 @@
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="pause-resume">Pause</button>
-      <button type="button" class="btn btn-dark" id="rock" data-code="rock"><img src="{{ static('challenges/rps/rock.png') }}" style="width: 40px;"></button>
-      <button type="button" class="btn btn-dark" id="paper" data-code="paper"><img src="{{ static('challenges/rps/paper.png') }}" style="width: 40px;"></button>
-      <button type="button" class="btn btn-dark" id="scissors" data-code="scissors"><img src="{{ static('challenges/rps/scissors.png') }}" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="rock" data-code="rock"><img src="{{ static('challenges/rps/rock.png') }}" title="Rock" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="paper" data-code="paper"><img src="{{ static('challenges/rps/paper.png') }}" title="Paper" style="width: 40px;"></button>
+      <button type="button" class="btn btn-dark" id="scissors" data-code="scissors"><img src="{{ static('challenges/rps/scissors.png') }}" title="Scissors" style="width: 40px;"></button>
       <button type="button" class="btn btn-dark" id="start-stop">Start</button>
     </div>
   </form>
@@ -142,6 +142,7 @@
   const STOP = 'Stop'
   const PAUSE = 'Pause'
   const RESUME = 'Resume'
+  const CSRF_FAILURE = 'An error occurred. If error persists, consult Technical Support.'
 
 
   document.addEventListener('DOMContentLoaded', onDomLoaded);
@@ -260,13 +261,18 @@
       'left': lplayerName,
       'right': rplayerName,
     }
+    const csrfToken = getCsrfToken()
+    if (csrfToken === null) {
+      showCsrfFailure();
+      return;
+    }
     startReq = new Request(
       window.location.href,  // The URL of the current page
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
+          'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
       }
@@ -290,13 +296,18 @@
     const data = {
       'action': 'stop',
     }
+    const csrfToken = getCsrfToken()
+    if (csrfToken === null) {
+      showCsrfFailure();
+      return;
+    }
     stopReq = new Request(
       '/',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
+          'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
       }
@@ -314,13 +325,18 @@
       'action': 'move',
       'move': userMove,
     }
+    const csrfToken = getCsrfToken()
+    if (csrfToken === null) {
+      showCsrfFailure();
+      return;
+    }
     choiceReq = new Request(
       '',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
+          'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
       }
@@ -347,20 +363,32 @@
   }
 
 
+  /**
+  * @function getCsrfToken
+  * @returns {string|null} Returns a string or null.
+  */
   function getCsrfToken() {
-    keyValues = document.cookie.split(';')
+    let csrfToken = null;
+    const keyValues = document.cookie.split(';')
     for (let i =0; i < keyValues.length; i++) {
-      keyValue = keyValues[i].trim()
+      const keyValue = keyValues[i].trim()
       if (!keyValue.startsWith('csrftoken')) {
         continue;
       }
-      eqSep = keyValue.indexOf('=')
+      const eqSep = keyValue.indexOf('=')
       if (eqSep === -1) {
         continue;
       }
       csrfToken = keyValue.slice(eqSep + 1).trim()
+      break;
     }
     return csrfToken;
+  }
+
+
+  function showCsrfFailure() {
+    console.log('Failed to read CSRF token.');
+    showAlert(CSRF_FAILURE, 'danger');
   }
 
 
@@ -428,6 +456,7 @@
   const STOP = 'Stop'
   const PAUSE = 'Pause'
   const RESUME = 'Resume'
+  const CSRF_FAILURE = 'An error occurred. If error persists, consult Technical Support.'
 
 
   document.addEventListener('DOMContentLoaded', onDomLoaded);
@@ -546,13 +575,18 @@
       'left': lplayerName,
       'right': rplayerName,
     }
+    const csrfToken = getCsrfToken()
+    if (csrfToken === null) {
+      showCsrfFailure();
+      return;
+    }
     startReq = new Request(
       window.location.href,  // The URL of the current page
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
+          'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
       }
@@ -576,13 +610,18 @@
     const data = {
       'action': 'stop',
     }
+    const csrfToken = getCsrfToken()
+    if (csrfToken === null) {
+      showCsrfFailure();
+      return;
+    }
     stopReq = new Request(
       '/',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
+          'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
       }
@@ -600,13 +639,18 @@
       'action': 'move',
       'move': userMove,
     }
+    const csrfToken = getCsrfToken()
+    if (csrfToken === null) {
+      showCsrfFailure();
+      return;
+    }
     choiceReq = new Request(
       '',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCsrfToken(),
+          'X-CSRFToken': csrfToken,
         },
         body: JSON.stringify(data),
       }
@@ -633,20 +677,32 @@
   }
 
 
+  /**
+  * @function getCsrfToken
+  * @returns {string|null} Returns a string or null.
+  */
   function getCsrfToken() {
-    keyValues = document.cookie.split(';')
+    let csrfToken = null;
+    const keyValues = document.cookie.split(';')
     for (let i =0; i < keyValues.length; i++) {
-      keyValue = keyValues[i].trim()
+      const keyValue = keyValues[i].trim()
       if (!keyValue.startsWith('csrftoken')) {
         continue;
       }
-      eqSep = keyValue.indexOf('=')
+      const eqSep = keyValue.indexOf('=')
       if (eqSep === -1) {
         continue;
       }
       csrfToken = keyValue.slice(eqSep + 1).trim()
+      break;
     }
     return csrfToken;
+  }
+
+
+  function showCsrfFailure() {
+    console.log('Failed to read CSRF token.');
+    showAlert(CSRF_FAILURE, 'danger');
   }
 
 
