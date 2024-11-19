@@ -10,24 +10,48 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from jinja2 import Undefined, DebugUndefined
+from utils.funcs import toBool
 
 
 # Getting project directory...
-PROJECT_DIR = Path(__file__).resolve().parent.parent
+DJANGO_DIR = Path(__file__).resolve().parent.parent
+PROJECT_DIR = DJANGO_DIR.parent
+
+
+# Loading the `.env` file...
+load_dotenv(dotenv_path=PROJECT_DIR / '.env', override=True)
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+try:
+    DEBUG = toBool(os.environ['DEBUG'])
+except KeyError as err:
+    raise KeyError('DEBUG setting is not set') from err
+except ValueError as err:
+    raise ValueError('DEBUG value is invalid') from err
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a$8cw2e^qo%z35p$lsxm_w-ml@2pkvx6f(bd@j#43)9tanirk6'
+try:
+    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+except KeyError as err:
+    raise KeyError('DJANGO_SECRET_KEY setting is not set') from err
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+#
+if DEBUG:
+    ALLOWED_HOSTS = []
+else:
+    ALLOWED_HOSTS = [
+        'megacodist.com',
+        'www.megacodist.com',]
 
 
 # Application definition
@@ -132,6 +156,18 @@ AUTH_PASSWORD_VALIDATORS = [
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 
+# Setting SSL/TLS...
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    CSRF_TRUSTED_ORIGINS  = [
+        'https://megacodist.com/',
+        'https://www.megacodist.com/',]
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https',)
+    CSRF_COOKIE_DOMAIN = '.megacodist.com'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
@@ -157,11 +193,7 @@ MEDIA_ROOT = PROJECT_DIR / 'media/'
 if DEBUG:
     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
     INSTALLED_APPS.append('debug_toolbar')
-    INTERNAL_IPS = [
-        # Allowing access from the localhost...
-        '127.0.0.1',
-        'localhost',
-    ]
+    INTERNAL_IPS = ['172.17.0.3',]
 
 
 # Default primary key field type

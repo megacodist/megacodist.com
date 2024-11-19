@@ -1,8 +1,16 @@
-__pycache__
+# Ignoring Python cache files & folders...
+/**/__pycache__/**
 *.pyc
 *.pyo
 *.pyd
 *.db
-.env
-.git
-core\settings-development.py
+
+# Ignoring settings & environment variables...
+/.env
+
+# Ignoring Git files & folders...
+/.git
+/.dockerignore
+
+#
+/webapp/core/settings-development.py
