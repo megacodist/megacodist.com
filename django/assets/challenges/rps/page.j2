@@ -387,7 +387,7 @@
 
 
   function showCsrfFailure() {
-    console.log('Failed to read CSRF token.');
+    console.error('Failed to read CSRF token.');
     showAlert(CSRF_FAILURE, 'danger');
   }
 
@@ -533,6 +533,32 @@
   }
 
 
+  function updateGuiRpsBegun() {
+    // Updating elements to conform the beginning of the game...
+    document.getElementById('pause-resume').disabled = false;
+    document.getElementById('rock').disabled = false;
+    document.getElementById('paper').disabled = false;
+    document.getElementById('scissors').disabled = false;
+    document.getElementById('start-stop').textContent = STOP
+    document.getElementById('lplayer-name').disabled = true;
+    document.getElementById('rplayer-name').disabled = true;
+    document.getElementById('lplayer-score').textContent = 0;
+    document.getElementById('rplayer-score').textContent = 0;
+  }
+
+
+  function updateGuiRpsStopped() {
+    // Updating elements...
+    document.getElementById('pause-resume').disabled = true;
+    document.getElementById('rock').disabled = true;
+    document.getElementById('paper').disabled = true;
+    document.getElementById('scissors').disabled = true;
+    document.getElementById('start-stop').textContent = START
+    document.getElementById('lplayer-name').disabled = false;
+    document.getElementById('rplayer-name').disabled = false;
+  }
+
+
   function startRps() {
     // Checking if left player is selected...
     const lplayerName = document.getElementById('lplayer-name').textContent
@@ -559,16 +585,6 @@
         'This app does not support computer-computer game for the time being.');
       return
     }
-    // Updating elements to conform the beginning of the game...
-    document.getElementById('pause-resume').disabled = false;
-    document.getElementById('rock').disabled = false;
-    document.getElementById('paper').disabled = false;
-    document.getElementById('scissors').disabled = false;
-    document.getElementById('start-stop').textContent = STOP
-    document.getElementById('lplayer-name').disabled = true;
-    document.getElementById('rplayer-name').disabled = true;
-    document.getElementById('lplayer-score').textContent = 0
-    document.getElementById('rplayer-score').textContent = 0
     // Informing the server...
     data = {
       'action': 'start',
@@ -580,6 +596,7 @@
       showCsrfFailure();
       return;
     }
+    updateGuiRpsBegun()
     startReq = new Request(
       window.location.href,  // The URL of the current page
       {
@@ -598,14 +615,6 @@
 
 
   function stopRps() {
-    // Updating elements...
-    document.getElementById('pause-resume').disabled = true;
-    document.getElementById('rock').disabled = true;
-    document.getElementById('paper').disabled = true;
-    document.getElementById('scissors').disabled = true;
-    document.getElementById('start-stop').textContent = START
-    document.getElementById('lplayer-name').disabled = false;
-    document.getElementById('rplayer-name').disabled = false;
     // Informing the server...
     const data = {
       'action': 'stop',
@@ -615,6 +624,7 @@
       showCsrfFailure();
       return;
     }
+    updateGuiRpsStopped()
     stopReq = new Request(
       '/',
       {
@@ -701,7 +711,7 @@
 
 
   function showCsrfFailure() {
-    console.log('Failed to read CSRF token.');
+    console.error('Failed to read CSRF token.');
     showAlert(CSRF_FAILURE, 'danger');
   }
 

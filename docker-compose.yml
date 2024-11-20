@@ -1,16 +1,42 @@
 version: '3.8'
 
 services:
-  web:
-    build: .
+  redis:
+    image: redis:7.4.1-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: .
+    container_name: celery
+    depends_on:
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - .:/app
+    command: celery -A myproject worker --loglevel=info
+
+  webapp:
+    build:
+      context: ./django
+      dockerfile: Dockerfile
+    container_name: django
     volumes:
       - megacodist.com-code:/webapp
       - megacodist.com-assets:/webapp/assets
       - megacodist.com-media:/webapp/media
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - redis
     ports:
       - "8000:8000"
     environment:
       - DJANGO_SETTINGS_MODULE=core.settings
+
 
 volumes:
   megacodist.com-code:
