@@ -20,11 +20,10 @@ from utils.funcs import toBool
 
 # Getting project directory...
 DJANGO_DIR = Path(__file__).resolve().parent.parent
-PROJECT_DIR = DJANGO_DIR.parent
 
 
 # Loading the `.env` file...
-load_dotenv(dotenv_path=PROJECT_DIR / '.env', override=True)
+load_dotenv(dotenv_path=DJANGO_DIR / '.env', override=True)
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -83,8 +82,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
         'DIRS': [
-            PROJECT_DIR / 'assets' / 'templates',
-            PROJECT_DIR / 'assets',
+            DJANGO_DIR / 'assets' / 'templates',
+            DJANGO_DIR / 'assets',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -98,8 +97,8 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            PROJECT_DIR / 'assets' / 'templates',
-            PROJECT_DIR / 'assets',
+            DJANGO_DIR / 'assets' / 'templates',
+            DJANGO_DIR / 'assets',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -121,7 +120,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': PROJECT_DIR / 'db.sqlite3',
+        'NAME': DJANGO_DIR / 'db.sqlite3',
     }
 }
 
@@ -180,13 +179,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 STATIC_URL = 'assets/'
 STATICFILES_DIRS = [
-    PROJECT_DIR / 'assets',
+    DJANGO_DIR / 'assets',
 ]
 
 
 # User-uploaded files...
 MEDIA_URL = '/media/'
-MEDIA_ROOT = PROJECT_DIR / 'media/'
+MEDIA_ROOT = DJANGO_DIR / 'media/'
 
 
 # Enabling Django Debug Toolbar for development environment...
@@ -202,9 +201,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # Celery settings...
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 CELERY_ACCEPT_CONTENT = ['application/json',]
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_WORKER_STATE_DB = None
 CELERY_TIMEZONE = TIME_ZONE

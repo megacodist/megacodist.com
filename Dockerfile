@@ -8,14 +8,11 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Setting working directory...
-WORKDIR /webapp
+WORKDIR /django
 
 # Making port 8000 available to the world outside this container...
 EXPOSE 8000
 
 # Installing dependencies...
-COPY requirements.txt /webapp/
+COPY requirements.txt /django/
 RUN pip install --no-cache-dir -r requirements.txt
-
-# Running Django's server...
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

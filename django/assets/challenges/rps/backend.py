@@ -159,8 +159,8 @@ def play(request: HttpRequest) -> HttpResponse: # type: ignore
         context = {
             'players': [_USER, *players.keys()],}
         from django.template import engines
-        jinja2_engine = engines['jinja2']
-        template = jinja2_engine.get_template('challenges/rps/page.j2')
+        jinja2Engine = engines['jinja2']
+        template = jinja2Engine.get_template('challenges/rps/page.j2')
         return HttpResponse(template.render(context))
     if request.method == 'POST':
         # Retrieving data...
