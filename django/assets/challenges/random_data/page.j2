@@ -22,10 +22,11 @@
       <button type="button" class="btn btn-dark" id="start-stop">Start</button>
     </div>
   </form>
+  <div id="rand-ints"></div>
 
 {% endblock main %}
 
-{%- block endingScripts %}
+{%- block endJsFiles %}
   {{ super() }}
-  <script src="{{ static('challenges/random_data/script.js') }}"></script>
-{%- endblock endingScripts %}
+  <script defer src="{{ static('challenges/random_data/script.js') }}"></script>
+{%- endblock endJsFiles %}

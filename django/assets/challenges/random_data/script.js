@@ -1,6 +1,11 @@
-const START = 'Start'
-const STOP = 'Stop'
-const CSRF_FAILURE = 'failed to read CSRF token'
+const START = 'Start';
+const STOP = 'Stop';
+const CSRF_FAILURE = 'failed to read CSRF token';
+const UNKNOWN_ERR  = 'An unknown error occurred: %s';
+const HTTP_ERROR = 'HTTP %s\n%s';
+
+let randIntStream;
+let randomIntStream;
 
 
 class CsrfTokenError extends Error {
@@ -25,21 +30,22 @@ function onDomLoaded() {
 
 function onStartStopClicked() {
   const curState = document.getElementById('pause-resume').textContent.trim();
+  alert(curState);
   if (curState === START) {
+    // Requesting 
     try {
       requestStreamStart();
     } catch (err) {
       if (err instanceof CsrfTokenError) {
         showError(err.message);
       } else {
-        showError()
+        showError(UNKNOWN_ERR.replace('%s', err.message))
       }
       changeGuiStoped();
     }
   } else if (curState === STOP) {
     //
-  }
-  else {
+  } else {
     console.log(`expected '${START}' or '${STOP}' but got ${curState}`);
   }
 }
@@ -51,7 +57,7 @@ function onStartStopClicked() {
  * * `CsrfTokenError`: fails to read SCRF token
  * @returns {undefined}
  */
-function requestStreamStart() {
+async function requestStreamStart() {
   // Informing the server...
   const data = {
     'action': 'start',
@@ -62,7 +68,8 @@ function requestStreamStart() {
     throw new CsrfTokenError(CSRF_FAILURE);
   }
   updateGuiRpsStopped();
-  stopReq = new Request(
+  // Requesting the server to initiate the stream of random integers...
+  let startStreamReq = new Request(
     '/',
     {
       method: 'POST',
@@ -72,11 +79,32 @@ function requestStreamStart() {
       },
       body: JSON.stringify(data),
     }
-  )
-  //
-  fetch(stopReq)
-    .then(response => response.text())
-    .then(text => console.log(text))
+  );
+  fetch(startStreamReq)
+    .then(response => {
+      if (!response.ok) {
+        // Reading the body of the response if it's not successful...
+        return response.text().then(text => {
+          let msg = sprintf()
+          throw new Error(``)
+        })
+      }
+      // Reading SSE...
+      randIntStream = new EventSource(window.location.href)  // The URL of the current page
+      randIntStream.onmessage = event => {}
+      randIntStream.onerror = err => {}
+      randIntStream.onopen = () => {}
+    })
+
+
+  try {
+    let startStreamResp = await fetch(startStreamReq);
+    if (!startStreamResp.ok) {
+      throw new Error(UNKNOWN_ERR.replace('%s', ))
+    }
+  } catch (err) {
+    //
+  }
 }
 
 

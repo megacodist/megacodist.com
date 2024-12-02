@@ -74,8 +74,11 @@
 
   {# Including JS scripts the end of page ------------------------------  -#}
   <script>
-    {%- block endingScripts %}
-    {%- endblock endingScripts %}
+    {%- block endScripts %}
+    {%- endblock endScripts %}
   </script>
+
+  {% block endJsFiles %}
+  {% endblock endJsFiles %}
 </body>
 </html>
