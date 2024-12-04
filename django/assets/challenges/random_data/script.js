@@ -67,6 +67,7 @@ async function requestStreamStart() {
     showError();
     throw new CsrfTokenError(CSRF_FAILURE);
   }
+  // Informing the user...
   updateGuiRpsStopped();
   // Requesting the server to initiate the stream of random integers...
   let startStreamReq = new Request(
