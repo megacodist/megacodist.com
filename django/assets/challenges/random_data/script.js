@@ -29,20 +29,20 @@ function onDomLoaded() {
 
 
 function onStartStopClicked() {
-  const curState = document.getElementById('pause-resume').textContent.trim();
+  const curState = document.getElementById('start-stop').textContent.trim();
   alert(curState);
   if (curState === START) {
     // Requesting 
-    try {
-      requestStreamStart();
-    } catch (err) {
-      if (err instanceof CsrfTokenError) {
-        showError(err.message);
-      } else {
-        showError(UNKNOWN_ERR.replace('%s', err.message))
-      }
-      changeGuiStoped();
-    }
+    requestStreamStart()
+      .catch(function (err) {
+        //
+        if (err instanceof CsrfTokenError) {
+          showError(CSRF_FAILURE);
+        } else {
+          showError(UNKNOWN_ERR.replace('%s', err.message))
+        }
+        changeGuiStopped();
+      })
   } else if (curState === STOP) {
     //
   } else {
@@ -52,9 +52,9 @@ function onStartStopClicked() {
 
 
 /**
- * Request the server to start streaming of random data.
+ * Asynchronously request the server to start streaming of random data.
  * ### Exceptions
- * * `CsrfTokenError`: fails to read SCRF token
+ * * `CsrfTokenError`: fails to read CSRF token
  * @returns {undefined}
  */
 async function requestStreamStart() {
@@ -68,7 +68,7 @@ async function requestStreamStart() {
     throw new CsrfTokenError(CSRF_FAILURE);
   }
   // Informing the user...
-  updateGuiRpsStopped();
+  changeGuiStarted();
   // Requesting the server to initiate the stream of random integers...
   let startStreamReq = new Request(
     '/',
@@ -86,15 +86,16 @@ async function requestStreamStart() {
       if (!response.ok) {
         // Reading the body of the response if it's not successful...
         return response.text().then(text => {
-          let msg = sprintf()
-          throw new Error(``)
+          let msg = HTTP_ERROR.replace('%s', response.status)
+            .replace('%s', text)
+          throw new Error(msg)
         })
       }
       // Reading SSE...
       randIntStream = new EventSource(window.location.href)  // The URL of the current page
       randIntStream.onmessage = event => {}
       randIntStream.onerror = err => {}
-      randIntStream.onopen = () => {}
+      randIntStream.onopen = onConnEstablished;
     })
 
 
@@ -109,12 +110,38 @@ async function requestStreamStart() {
 }
 
 
+/**
+ * Triggered when this page is connected to the `megacodist.com` endpoint
+ * for producing random integers stream.
+ */
+function onConnEstablished() {
+  //
+}
+
+
+/**
+ * Triggered upon the arrival of any message from `megacodist.com` endpoint.
+ * @param {MessageEvent} msg 
+ */
+function onDataReceived(msg) {
+  //
+}
+
+
+/**
+ * Changes the page so that the user can feel the operation started.
+ * @returns {undefined}
+ */
 function changeGuiStarted() {
   document.getElementById('start-stop').textContent = STOP;
 }
 
 
-function changeGuiStoped() {
+/**
+ * Changes the page so that the user can feel the operation stopped.
+ * @returns {undefined}
+ */
+function changeGuiStopped() {
   document.getElementById('start-stop').textContent = START;
 }
 

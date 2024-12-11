@@ -16,6 +16,12 @@ from celery import shared_task
 import redis
 
 
+RAND_INT_CONTROLLER = 'RAND_INT_STREAM'
+"""The name of the cached varibales which controls the production of the
+stream of random integers.
+"""
+
+
 @require_http_methods(['GET', 'POST'])
 def play(request: HttpRequest) -> HttpResponse:
     if request.method == 'GET':
@@ -47,22 +53,25 @@ def play(request: HttpRequest) -> HttpResponse:
                     f'invalid action: {data['action']}')
 
 
-def _startStreamingRandInts(request: HttpRequest) -> HttpResponse:
+def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
+    # Declaring variables -----------------------------
+    import random
+    import time
+    global RAND_INT_CONTROLLER
+    MAX_INT = 100
+    # Function ----------------------------------------
     def generator() -> Generator[Any, Any, int]:
-        import random
-        import time
-        MAX_INT = 100
-        cache.set('RAND_INT_STREAM', True,)
-        while cache.get('RAND_INT_STREAM'):
+        cache.set(RAND_INT_CONTROLLER, True,)
+        while cache.get(RAND_INT_CONTROLLER):
             yield random.randrange(0, MAX_INT)
             time.sleep(0.8)
-        cache.delete('RAND_INT_STREAM')
+        cache.delete(RAND_INT_CONTROLLER)
         return random.randrange(0, MAX_INT)
     return StreamingHttpResponse(generator())
 
 
 def _stopStreamingRandInts() -> None:
-    cache.set('RAND_INT_STREAM', False,)
+    cache.set(RAND_INT_CONTROLLER, False,)
 
 
 @shared_task
