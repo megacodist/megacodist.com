@@ -1,8 +1,9 @@
 const START = 'Start';
 const STOP = 'Stop';
+const STOPPING = 'Stopping...';
 const CSRF_FAILURE = 'failed to read CSRF token';
 const UNKNOWN_ERR  = 'An unknown error occurred: %s';
-const HTTP_ERROR = 'HTTP %s\n%s';
+const CONN_ESTABLISHED = 'Connected to the end point';
 
 let randIntStream;
 let randomIntStream;
@@ -85,28 +86,68 @@ async function requestStreamStart() {
     .then(response => {
       if (!response.ok) {
         // Reading the body of the response if it's not successful...
-        return response.text().then(text => {
-          let msg = HTTP_ERROR.replace('%s', response.status)
-            .replace('%s', text)
-          throw new Error(msg)
+        return response.text().then(errMsg => {
+          throw new Error(httpToStr(response.status, errMsg))
         })
       }
       // Reading SSE...
       randIntStream = new EventSource(window.location.href)  // The URL of the current page
-      randIntStream.onmessage = event => {}
-      randIntStream.onerror = err => {}
+      randIntStream.onmessage = onMsgReceived
+      randIntStream.onerror = onErrOccurred
       randIntStream.onopen = onConnEstablished;
     })
-
-
-  try {
-    let startStreamResp = await fetch(startStreamReq);
-    if (!startStreamResp.ok) {
-      throw new Error(UNKNOWN_ERR.replace('%s', ))
-    }
-  } catch (err) {
+  .catch(err => {
     //
+    let unknownErrMsg = UNKNOWN_ERR.replace('%s', err)
+    showError(unknownErrMsg);
+    changeGuiStopped();
+  })
+}
+
+
+/**
+ * Asynchronously requests the `megacodist.com` endpoint of producing
+ * random integers to stop generating.
+ */
+async function requestStreamStop() {
+  // Informing the server...
+  const data = {
+    'action': 'stop',
   }
+  const csrfToken = getCsrfToken();
+  if (csrfToken === null) {
+    showError(CSRF_FAILURE);
+    return;
+  }
+  // Informing the user...
+  changeGuiStopping();
+  // Requesting the server to initiate the stream of random integers...
+  let stopStreamReq = new Request(
+    '/',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+  fetch(stopStreamReq)
+    .then(response => {
+      //
+      if (!response.ok) {
+        //
+        return response.text().then(
+          errMsg => new Error(httpToStr(response.status, errMsg)))
+      }
+      //
+      changeGuiStopped();
+    })
+    .catch(err => {
+      //
+      showError(UNKNOWN_ERR.replace('%s', err))
+    })
 }
 
 
@@ -116,14 +157,26 @@ async function requestStreamStart() {
  */
 function onConnEstablished() {
   //
+  console.log(CONN_ESTABLISHED)
 }
 
 
 /**
- * Triggered upon the arrival of any message from `megacodist.com` endpoint.
- * @param {MessageEvent} msg 
+ * Triggered upon the arrival of any message from `megacodist.com`
+ * random data stream endpoint.
+ * @param {MessageEvent} event 
  */
-function onDataReceived(msg) {
+function onMsgReceived(event) {
+  //
+}
+
+
+/**
+ * Triggered upon connection issues or server errors of `megacodist.com`
+ * random data stream endpoint.
+ * @param {MessageEvent} event 
+ */
+function onErrOccurred(event) {
   //
 }
 
@@ -147,8 +200,32 @@ function changeGuiStopped() {
 
 
 /**
- * @function getCsrfToken
- * @returns {string|null} Returns a string or null.
+ * Changes the page so that the user can feel the operation is stopping.
+ * @returns {undefined}
+ */
+function changeGuiStopping() {
+  document.getElementById('start-stop').textContent = STOPPING;
+}
+
+
+/**
+ * Accepts an HTTP status code and a message to format the user-friendly
+ * message.
+ * @param {int} code The HTTP status code
+ * @param {string} msg The message related to the status code or returned
+ * by the server.
+ * @returns {string}
+ */
+function httpToStr(code, msg) {
+  //
+  const HTTP_MSG = 'HTTP %s\n%s';
+  return HTTP_MSG.replace('%s', code).replace('%s', msg)
+}
+
+
+/**
+ * Returns CSRF token as a string or null it fails.
+ * @returns {string|null}
  */
 function getCsrfToken() {
   let csrfToken = null;
@@ -171,7 +248,8 @@ function getCsrfToken() {
 
 /**
  * Shows the error to the user and logs it into the browser.
- * @param {message} message - The message to show. 
+ * @param {string} message - The error message to be shown.
+ * @returns {undefined}
  */
 function showError(message) {
   console.error(message);
