@@ -1,0 +1,18 @@
+INFO 2024-12-19 17:03:11,859 autoreload 6 140271608920960
+Watching for file changes with StatReloader
+
+INFO 2024-12-19 17:05:09,674 autoreload 7 140227589598080
+Watching for file changes with StatReloader
+
+INFO 2024-12-19 17:05:35,913 autoreload 7 140227589598080
+/django/core/settings.py changed, reloading.
+
+INFO 2024-12-19 17:05:53,123 autoreload 9 140204157619072
+Watching for file changes with StatReloader
+
+INFO 2024-12-19 17:06:13,345 autoreload 7 140113334471552
+Watching for file changes with StatReloader
+
+INFO 2024-12-19 17:06:31,599 basehttp 7 140113260578496
+"GET / HTTP/1.1" 200 19043
+

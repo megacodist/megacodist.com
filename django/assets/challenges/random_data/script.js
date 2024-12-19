@@ -31,7 +31,6 @@ function onDomLoaded() {
 
 function onStartStopClicked() {
   const curState = document.getElementById('start-stop').textContent.trim();
-  alert(curState);
   if (curState === START) {
     // Requesting 
     requestStreamStart()
@@ -91,9 +90,9 @@ async function requestStreamStart() {
         })
       }
       // Reading SSE...
-      randIntStream = new EventSource(window.location.href)  // The URL of the current page
-      randIntStream.onmessage = onMsgReceived
-      randIntStream.onerror = onErrOccurred
+      randIntStream = new EventSource('/challenges/random-data/'); // The URL of the current page
+      randIntStream.onmessage = onMsgReceived;
+      randIntStream.onerror = onErrOccurred;
       randIntStream.onopen = onConnEstablished;
     })
   .catch(err => {
@@ -168,6 +167,9 @@ function onConnEstablished() {
  */
 function onMsgReceived(event) {
   //
+  const newIntDiv = document.createElement('div')
+  newIntDiv.textContent = event.data
+  document.getElementById('rand-ints').appendChild(newIntDiv)
 }
 
 
@@ -178,6 +180,8 @@ function onMsgReceived(event) {
  */
 function onErrOccurred(event) {
   //
+  console.error(event);
+  changeGuiStopped();
 }
 
 

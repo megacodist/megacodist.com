@@ -67,7 +67,9 @@ def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
             time.sleep(0.8)
         cache.delete(RAND_INT_CONTROLLER)
         return random.randrange(0, MAX_INT)
-    return StreamingHttpResponse(generator())
+    return StreamingHttpResponse(
+        generator(),
+        content_type='text/event-stream',)
 
 
 def _stopStreamingRandInts() -> None:

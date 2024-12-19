@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import logging
 import os
 from pathlib import Path
 
@@ -22,8 +23,48 @@ from utils.funcs import toBool
 DJANGO_DIR = Path(__file__).resolve().parent.parent
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': (
+                '{levelname} {asctime} {module} {process:d} '
+                '{thread:d}\n{message}\n'),
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': DJANGO_DIR / 'log.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file', 'console',],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+logging.info('Hello World!!!')
+
 # Loading the `.env` file...
-load_dotenv(dotenv_path=DJANGO_DIR / '.env', override=True)
+_loaded = load_dotenv(dotenv_path=DJANGO_DIR / '.env', override=True)
+if not _loaded:
+    logging.warning('probably failed to load `.env` file')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -111,6 +152,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
