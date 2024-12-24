@@ -1,0 +1,20 @@
+/* 
+   Style name: Random data styles
+   Author: Megacodist
+   Description: Custom styles for random data page of megacodist.com
+   Version: 1.0.0
+*/
+
+#alert-container {
+  position: fixed;
+  top: 20px; /* Adjust the vertical position as needed */
+  right: 20px; /* Adjust the horizontal position as needed */
+  z-index: 1050; /* Ensure it's above other elements */
+  width: auto; /* You can set a specific width if required */
+}
+
+.numbers-container {
+  /* Makes the numbers wrap to the next column after 10 */
+  flex-wrap: wrap;
+  max-height: calc(10 * (1em + 10px)); /* Height for 10 numbers if each has a 10px margin bottom */
+}

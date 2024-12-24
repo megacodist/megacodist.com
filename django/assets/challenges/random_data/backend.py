@@ -3,12 +3,13 @@
 #
 
 import json
+import logging
 from typing import Any, Generator
 
 from django.core.cache import cache
 from django.http import (
     HttpRequest, HttpResponse, HttpResponseBadRequest,
-    StreamingHttpResponse,)
+    StreamingHttpResponse, )
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -22,35 +23,38 @@ stream of random integers.
 """
 
 
-@require_http_methods(['GET', 'POST'])
+@require_http_methods(['GET', 'POST',])
 def play(request: HttpRequest) -> HttpResponse:
+    """This view function does the following:
+    1. Loads the page itself: Using a GET method with no query string.
+    """
     if request.method == 'GET':
-        context = {}
-        return render(
-            request,
-            'challenges/random_data/page.j2',
-            context=context)
-    if request.method == 'POST':
-        # Retrieving data...
-        try:
-            data = json.loads(request.body)
-        except Exception:
-            return HttpResponseBadRequest(
-                'could not retrieve data')
-        # Determining the requested action...
-        if 'action' not in data:
-            return HttpResponseBadRequest('no action is specified')
-        match data['action']:
-            case 'start':
-                return _startStreamingRandInts(request)
-            case 'stop':
-                _stopStreamingRandInts()
-                return HttpResponse(
-                    'Streaming random integers stopped.',
-                    content_type='text/plain',) 
-            case _:
-                return HttpResponseBadRequest(
-                    f'invalid action: {data['action']}')
+        if 'data-type' in request.GET:
+            match request.GET['data-type']:
+                case 'int':
+                    return _startStreamingRandInts(request)
+                case _:
+                    return HttpResponseBadRequest(
+                        "unsupported type of random data: "
+                        f"{request.GET['data-type']}")
+        else:
+            return render(
+                request,
+                'challenges/random_data/page.j2',
+                context={},)
+    elif request.method == 'POST':
+        data = json.loads(request.body)
+        if 'action' in data and data['action'] == 'stop':
+            _stopStreamingRandInts()
+            return HttpResponse(
+                'Streaming random integers stopped.',
+                content_type='text/plain', )
+        else:
+            msg = f'unknown POST request for random data endpoint'
+            logging.warning(msg)
+    else:
+        return HttpResponseBadRequest(
+            f'unsupported HTTP method: {request.method}')
 
 
 def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
@@ -63,13 +67,13 @@ def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
     def generator() -> Generator[Any, Any, int]:
         cache.set(RAND_INT_CONTROLLER, True,)
         while cache.get(RAND_INT_CONTROLLER):
-            yield random.randrange(0, MAX_INT)
+            yield f"data: {random.randrange(0, MAX_INT)}\n\n"
             time.sleep(0.8)
         cache.delete(RAND_INT_CONTROLLER)
         return random.randrange(0, MAX_INT)
     return StreamingHttpResponse(
         generator(),
-        content_type='text/event-stream',)
+        content_type='text/event-stream', )
 
 
 def _stopStreamingRandInts() -> None:

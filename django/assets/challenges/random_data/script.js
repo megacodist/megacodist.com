@@ -32,19 +32,21 @@ function onDomLoaded() {
 function onStartStopClicked() {
   const curState = document.getElementById('start-stop').textContent.trim();
   if (curState === START) {
-    // Requesting 
-    requestStreamStart()
-      .catch(function (err) {
-        //
-        if (err instanceof CsrfTokenError) {
-          showError(CSRF_FAILURE);
-        } else {
-          showError(UNKNOWN_ERR.replace('%s', err.message))
-        }
-        changeGuiStopped();
-      })
+    // Requesting stream of integers...
+    try {
+      requestStreamStart()
+    } catch(err) {
+      //
+      if (err instanceof CsrfTokenError) {
+        showError(CSRF_FAILURE);
+      } else {
+        showError(UNKNOWN_ERR.replace('%s', err.message))
+      }
+      changeGuiStopped();
+    }
   } else if (curState === STOP) {
     //
+    requestStreamStop()
   } else {
     console.log(`expected '${START}' or '${STOP}' but got ${curState}`);
   }
@@ -52,16 +54,13 @@ function onStartStopClicked() {
 
 
 /**
- * Asynchronously request the server to start streaming of random data.
+ * Requests the server to start streaming of random data.
  * ### Exceptions
  * * `CsrfTokenError`: fails to read CSRF token
  * @returns {undefined}
  */
-async function requestStreamStart() {
+function requestStreamStart() {
   // Informing the server...
-  const data = {
-    'action': 'start',
-  }
   const csrfToken = getCsrfToken();
   if (csrfToken === null) {
     showError();
@@ -70,37 +69,10 @@ async function requestStreamStart() {
   // Informing the user...
   changeGuiStarted();
   // Requesting the server to initiate the stream of random integers...
-  let startStreamReq = new Request(
-    '/',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken,
-      },
-      body: JSON.stringify(data),
-    }
-  );
-  fetch(startStreamReq)
-    .then(response => {
-      if (!response.ok) {
-        // Reading the body of the response if it's not successful...
-        return response.text().then(errMsg => {
-          throw new Error(httpToStr(response.status, errMsg))
-        })
-      }
-      // Reading SSE...
-      randIntStream = new EventSource('/challenges/random-data/'); // The URL of the current page
-      randIntStream.onmessage = onMsgReceived;
-      randIntStream.onerror = onErrOccurred;
-      randIntStream.onopen = onConnEstablished;
-    })
-  .catch(err => {
-    //
-    let unknownErrMsg = UNKNOWN_ERR.replace('%s', err)
-    showError(unknownErrMsg);
-    changeGuiStopped();
-  })
+  randIntStream = new EventSource('/challenges/random-data?data-type=int'); // The URL of the current page
+  randIntStream.onmessage = onMsgReceived;
+  randIntStream.onerror = onErrOccurred;
+  randIntStream.onopen = onConnEstablished;
 }
 
 

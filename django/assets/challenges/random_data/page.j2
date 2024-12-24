@@ -13,8 +13,16 @@
 
 {% block title %} Random data - {{ super() }} {% endblock title %}
 
+{% block head %}
+  {{ super() }}
+  {# Linking the 'style.css' of this page... -#}
+  <link rel="stylesheet" href="{{ static('challenges/random_data/style.css') }}">
+{% endblock head %}
+
 {% block main %}
   {{ super() }}
+  <!-- Alerts box -->
+  <div id="alert-container"></div>
   <!-- Operations -->
   <form id="operations">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
