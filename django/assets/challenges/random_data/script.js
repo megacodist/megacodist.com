@@ -73,6 +73,8 @@ function requestStreamStart() {
   randIntStream.onmessage = onMsgReceived;
   randIntStream.onerror = onErrOccurred;
   randIntStream.onopen = onConnEstablished;
+  // Clearing the random data `div`...
+  clearRandData()
 }
 
 
@@ -114,6 +116,7 @@ async function requestStreamStop() {
       }
       //
       changeGuiStopped();
+      randIntStream.close
     })
     .catch(err => {
       //
@@ -138,10 +141,7 @@ function onConnEstablished() {
  * @param {MessageEvent} event 
  */
 function onMsgReceived(event) {
-  //
-  const newIntDiv = document.createElement('div')
-  newIntDiv.textContent = event.data
-  document.getElementById('rand-ints').appendChild(newIntDiv)
+  addRandData(event.data)
 }
 
 
@@ -196,6 +196,39 @@ function httpToStr(code, msg) {
   //
   const HTTP_MSG = 'HTTP %s\n%s';
   return HTTP_MSG.replace('%s', code).replace('%s', msg)
+}
+
+
+/**
+ * Adds the provided data, of type `string`, to the random data `div` element.
+ * @param {string} data 
+ */
+function addRandData(data) {
+  // Creating new element for received data...
+  const newData = document.createElement('div');
+  newData.textContent = data;
+  newData.className = 'rand-data'
+  // Adding to the DOM...
+  const randContainer = document.getElementById('rand-data-container');
+  let lastCol = randContainer.lastElementChild;
+  if ((lastCol == null) || (lastCol.childElementCount >= 10)) {
+    // Creating a new column...
+    const newCol = document.createElement('div');
+    newCol.className = 'rand-data-col';
+    randContainer.appendChild(newCol)
+    lastCol = newCol;
+  }
+  lastCol.appendChild(newData);
+}
+
+
+/**
+ * Clears all received random data from the server.
+ */
+function clearRandData() {
+  //
+  const randDataDiv = document.getElementById('rand-data-container');
+  randDataDiv.innerHTML = '';
 }
 
 

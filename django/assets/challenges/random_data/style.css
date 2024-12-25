@@ -13,8 +13,28 @@
   width: auto; /* You can set a specific width if required */
 }
 
-.numbers-container {
-  /* Makes the numbers wrap to the next column after 10 */
-  flex-wrap: wrap;
-  max-height: calc(10 * (1em + 10px)); /* Height for 10 numbers if each has a 10px margin bottom */
+#rand-data-container {
+  /* Create a flex container */
+  display: flex;
+  /* Set flex direction to row (horizontal) */
+  flex-direction: row;
+  /* Add horizontal scrollbar when content overflows */
+  overflow-x: auto;
+  /* Prevents the flex container from growing beyond its parent or viewport */
+  max-width: 100%; /* or you can set a specific width if needed */
+  /* Allows the container to shrink if there's not enough space */
+  flex-shrink: 1;
+  /* Optional: Remove default margin and padding */
+  margin: 0;
+  padding: 0;
+}
+
+.rand-data-col {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+}
+
+.rand-data {
+  display: block;
 }

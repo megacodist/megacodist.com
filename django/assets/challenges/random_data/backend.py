@@ -52,9 +52,11 @@ def play(request: HttpRequest) -> HttpResponse:
         else:
             msg = f'unknown POST request for random data endpoint'
             logging.warning(msg)
+            return HttpResponseBadRequest(msg)
     else:
-        return HttpResponseBadRequest(
-            f'unsupported HTTP method: {request.method}')
+        msg = f'unsupported HTTP method: {request.method}'
+        logging.warning(msg)
+        return HttpResponseBadRequest(msg)
 
 
 def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:

@@ -33,7 +33,7 @@ docker volume create \
 
 ## Creating the Django container
 ```
-docker run -d -p 8000:8000 \
+docker run -d -p 8000:8000 -p 5678:5678\
   --name megacodist-blog \
   -v D:/Mohsen/Programming/Django/megacodist.com/django:/django/ \
   -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ \
