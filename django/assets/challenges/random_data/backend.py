@@ -79,6 +79,7 @@ def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
 
 
 def _stopStreamingRandInts() -> None:
+    logging.warning('mmm')
     cache.set(RAND_INT_CONTROLLER, False,)
 
 

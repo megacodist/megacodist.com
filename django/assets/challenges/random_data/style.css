@@ -13,28 +13,22 @@
   width: auto; /* You can set a specific width if required */
 }
 
-#rand-data-container {
-  /* Create a flex container */
-  display: flex;
-  /* Set flex direction to row (horizontal) */
-  flex-direction: row;
-  /* Add horizontal scrollbar when content overflows */
-  overflow-x: auto;
-  /* Prevents the flex container from growing beyond its parent or viewport */
-  max-width: 100%; /* or you can set a specific width if needed */
-  /* Allows the container to shrink if there's not enough space */
-  flex-shrink: 1;
-  /* Optional: Remove default margin and padding */
-  margin: 0;
-  padding: 0;
+#rand-data-grid {
+  display: grid; /* Sets the element as a grid container */
+  grid-auto-flow: row; /* Specifies that items should be placed in columns. */
+  grid-template-columns: repeat(auto-fill, 2rem); /* Creates 10 rows in the grid, each row will have a height that adapts to its content. */
 }
 
-.rand-data-col {
-  display: flex;
-  flex-direction: column;
-  margin-right: 20px;
+#grid-container {
+  display: block;
+  overflow-y: auto; /* The vertical scrollbar apears when necessary. */
+  max-height: 40vh; /* Sets the maximum height to 40% of the viewport */
+  width: 100%;
+  border: 4 solid rgb(184, 136, 33);
+  border-radius: 5px;
 }
 
 .rand-data {
   display: block;
+  padding: 0.5rem;
 }

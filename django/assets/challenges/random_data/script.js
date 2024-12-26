@@ -116,7 +116,7 @@ async function requestStreamStop() {
       }
       //
       changeGuiStopped();
-      randIntStream.close
+      //randIntStream.close()
     })
     .catch(err => {
       //
@@ -171,7 +171,9 @@ function changeGuiStarted() {
  * @returns {undefined}
  */
 function changeGuiStopped() {
-  document.getElementById('start-stop').textContent = START;
+  const startStopBtn = document.getElementById('start-stop');
+  startStopBtn.textContent = START;
+  startStopBtn.disabled = false;
 }
 
 
@@ -180,7 +182,9 @@ function changeGuiStopped() {
  * @returns {undefined}
  */
 function changeGuiStopping() {
-  document.getElementById('start-stop').textContent = STOPPING;
+  const startStopBtn = document.getElementById('start-stop');
+  startStopBtn.textContent = STOPPING;
+  startStopBtn.disabled = true;
 }
 
 
@@ -209,16 +213,8 @@ function addRandData(data) {
   newData.textContent = data;
   newData.className = 'rand-data'
   // Adding to the DOM...
-  const randContainer = document.getElementById('rand-data-container');
-  let lastCol = randContainer.lastElementChild;
-  if ((lastCol == null) || (lastCol.childElementCount >= 10)) {
-    // Creating a new column...
-    const newCol = document.createElement('div');
-    newCol.className = 'rand-data-col';
-    randContainer.appendChild(newCol)
-    lastCol = newCol;
-  }
-  lastCol.appendChild(newData);
+  const randDataGrid = document.getElementById('rand-data-grid');
+  randDataGrid.prepend(newData);
 }
 
 
@@ -227,7 +223,7 @@ function addRandData(data) {
  */
 function clearRandData() {
   //
-  const randDataDiv = document.getElementById('rand-data-container');
+  const randDataDiv = document.getElementById('rand-data-grid');
   randDataDiv.innerHTML = '';
 }
 
