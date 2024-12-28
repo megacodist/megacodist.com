@@ -1,12 +1,12 @@
 const START = 'Start';
 const STOP = 'Stop';
 const STOPPING = 'Stopping...';
+const CONNECTING = 'Connecting...';
 const CSRF_FAILURE = 'failed to read CSRF token';
 const UNKNOWN_ERR  = 'An unknown error occurred: %s';
 const CONN_ESTABLISHED = 'Connected to the end point';
 
 let randIntStream;
-let randomIntStream;
 
 
 class CsrfTokenError extends Error {
@@ -42,7 +42,7 @@ function onStartStopClicked() {
       } else {
         showError(UNKNOWN_ERR.replace('%s', err.message))
       }
-      changeGuiStopped();
+      updatePageStopped();
     }
   } else if (curState === STOP) {
     //
@@ -60,21 +60,14 @@ function onStartStopClicked() {
  * @returns {undefined}
  */
 function requestStreamStart() {
-  // Informing the server...
-  const csrfToken = getCsrfToken();
-  if (csrfToken === null) {
-    showError();
-    throw new CsrfTokenError(CSRF_FAILURE);
-  }
-  // Informing the user...
-  changeGuiStarted();
+  // Updating page accordingly...
+  clearRandData();
+  updatePageConnecting();
   // Requesting the server to initiate the stream of random integers...
   randIntStream = new EventSource('/challenges/random-data?data-type=int'); // The URL of the current page
   randIntStream.onmessage = onMsgReceived;
   randIntStream.onerror = onErrOccurred;
   randIntStream.onopen = onConnEstablished;
-  // Clearing the random data `div`...
-  clearRandData()
 }
 
 
@@ -96,7 +89,7 @@ async function requestStreamStop() {
   changeGuiStopping();
   // Requesting the server to initiate the stream of random integers...
   let stopStreamReq = new Request(
-    '/',
+    window.location.href,  // The URL of the current page
     {
       method: 'POST',
       headers: {
@@ -115,23 +108,13 @@ async function requestStreamStop() {
           errMsg => new Error(httpToStr(response.status, errMsg)))
       }
       //
-      changeGuiStopped();
-      //randIntStream.close()
+      updatePageStopped();
+      randIntStream.close();
     })
     .catch(err => {
       //
       showError(UNKNOWN_ERR.replace('%s', err))
     })
-}
-
-
-/**
- * Triggered when this page is connected to the `megacodist.com` endpoint
- * for producing random integers stream.
- */
-function onConnEstablished() {
-  //
-  console.log(CONN_ESTABLISHED)
 }
 
 
@@ -153,16 +136,30 @@ function onMsgReceived(event) {
 function onErrOccurred(event) {
   //
   console.error(event);
-  changeGuiStopped();
+  updatePageStopped();
+  randIntStream.close();
 }
 
 
 /**
- * Changes the page so that the user can feel the operation started.
- * @returns {undefined}
+ * Triggered when this page is connected to the `megacodist.com` endpoint
+ * for producing random integers stream.
  */
-function changeGuiStarted() {
-  document.getElementById('start-stop').textContent = STOP;
+function onConnEstablished() {
+  //
+  const startStopBtn = document.getElementById('start-stop');
+  startStopBtn.textContent = STOP;
+  startStopBtn.disabled = false;
+}
+
+
+/**
+ * Changes the page so that the user can feel the connection is establishing.
+ */
+function updatePageConnecting() {
+  const startStopBtn = document.getElementById('start-stop');
+  startStopBtn.textContent = CONNECTING;
+  startStopBtn.disabled = true;
 }
 
 
@@ -170,7 +167,7 @@ function changeGuiStarted() {
  * Changes the page so that the user can feel the operation stopped.
  * @returns {undefined}
  */
-function changeGuiStopped() {
+function updatePageStopped() {
   const startStopBtn = document.getElementById('start-stop');
   startStopBtn.textContent = START;
   startStopBtn.disabled = false;

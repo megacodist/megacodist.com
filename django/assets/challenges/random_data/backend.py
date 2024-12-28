@@ -17,7 +17,7 @@ from celery import shared_task
 import redis
 
 
-RAND_INT_CONTROLLER = 'RAND_INT_STREAM'
+RAND_INT_STOPPED = 'RAND_INT_STREAM'
 """The name of the cached varibales which controls the production of the
 stream of random integers.
 """
@@ -61,26 +61,36 @@ def play(request: HttpRequest) -> HttpResponse:
 
 def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
     # Declaring variables -----------------------------
+    import json
     import random
     import time
-    global RAND_INT_CONTROLLER
+    global RAND_INT_STOPPED
     MAX_INT = 100
     # Function ----------------------------------------
-    def generator() -> Generator[Any, Any, int]:
-        cache.set(RAND_INT_CONTROLLER, True,)
-        while cache.get(RAND_INT_CONTROLLER):
-            yield f"data: {random.randrange(0, MAX_INT)}\n\n"
+    def generator() -> Generator[bytes, None, None]:
+        while not cache.get(RAND_INT_STOPPED):
+            yield f'data: {random.randrange(0, MAX_INT)}\n\n'.encode()
             time.sleep(0.8)
-        cache.delete(RAND_INT_CONTROLLER)
-        return random.randrange(0, MAX_INT)
-    return StreamingHttpResponse(
+        cache.delete(RAND_INT_STOPPED)
+    #
+    logging.info('_startStream')
+    cache.set(RAND_INT_STOPPED, False,)
+    sseResp = StreamingHttpResponse(
         generator(),
-        content_type='text/event-stream', )
+        content_type='text/event-stream',)
+    sseResp['Cache-Control'] = 'no-cache' 
+    return sseResp
 
 
 def _stopStreamingRandInts() -> None:
-    logging.warning('mmm')
-    cache.set(RAND_INT_CONTROLLER, False,)
+    import inspect
+    currFrame = inspect.currentframe()
+    if currFrame:
+        funcName = currFrame.f_code.co_name
+        logging.info(f'{funcName}() is called.')
+    else:
+        logging.warning('failed to get the function name.')
+    cache.set(RAND_INT_STOPPED, True,)
 
 
 @shared_task

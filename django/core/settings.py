@@ -40,12 +40,12 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'WARNING',
+            'level': 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
         'file': {
-            'level': 'WARNING',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': DJANGO_DIR / 'log.log',
             'formatter': 'verbose',
@@ -54,12 +54,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file', 'console',],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': True,
         },
     },
 }
-logging.info('Hello World!!!')
+logging.info('Django logger has configured.')
 
 # Loading the `.env` file...
 _loaded = load_dotenv(dotenv_path=DJANGO_DIR / '.env', override=True)

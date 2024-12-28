@@ -22,9 +22,10 @@
 #grid-container {
   display: block;
   overflow-y: auto; /* The vertical scrollbar apears when necessary. */
+  min-height: 10vw;
   max-height: 40vh; /* Sets the maximum height to 40% of the viewport */
   width: 100%;
-  border: 4 solid rgb(184, 136, 33);
+  border: 2px solid rgb(184, 136, 33);
   border-radius: 5px;
 }
 
