@@ -6,7 +6,15 @@ const CSRF_FAILURE = 'failed to read CSRF token';
 const UNKNOWN_ERR  = 'An unknown error occurred: %s';
 const CONN_ESTABLISHED = 'Connected to the end point';
 
+/**
+ * @type {EventSource}
+ */
 let randIntStream;
+/**
+ * @type {boolean} Specifies whether the server was asked to stop sending
+ * random integers.
+ */
+let randIntClosing = false;
 
 
 class CsrfTokenError extends Error {
@@ -32,20 +40,10 @@ function onDomLoaded() {
 function onStartStopClicked() {
   const curState = document.getElementById('start-stop').textContent.trim();
   if (curState === START) {
-    // Requesting stream of integers...
-    try {
-      requestStreamStart()
-    } catch(err) {
-      //
-      if (err instanceof CsrfTokenError) {
-        showError(CSRF_FAILURE);
-      } else {
-        showError(UNKNOWN_ERR.replace('%s', err.message))
-      }
-      updatePageStopped();
-    }
+    // Requesting the server to start the stream of integers...
+    requestStreamStart();
   } else if (curState === STOP) {
-    //
+    // Requesting the server to stop the stream of integers...
     requestStreamStop()
   } else {
     console.log(`expected '${START}' or '${STOP}' but got ${curState}`);
@@ -60,14 +58,19 @@ function onStartStopClicked() {
  * @returns {undefined}
  */
 function requestStreamStart() {
-  // Updating page accordingly...
-  clearRandData();
-  updatePageConnecting();
-  // Requesting the server to initiate the stream of random integers...
-  randIntStream = new EventSource('/challenges/random-data?data-type=int'); // The URL of the current page
-  randIntStream.onmessage = onMsgReceived;
-  randIntStream.onerror = onErrOccurred;
-  randIntStream.onopen = onConnEstablished;
+  try {
+    updatePageConnecting();
+    //
+    randIntStream = new EventSource('/challenges/random-data?data-type=int'); // The URL of the current page
+    randIntStream.onmessage = onMsgReceived;
+    randIntStream.onerror = onErrOccurred;
+    randIntStream.onopen = onConnEstablished;
+    //
+    clearRandData();
+  } catch(err) {
+    showError(UNKNOWN_ERR.replace('%s', err))
+    updatePageStopped();
+  }
 }
 
 
@@ -76,7 +79,7 @@ function requestStreamStart() {
  * random integers to stop generating.
  */
 async function requestStreamStop() {
-  // Informing the server...
+  // Creating the POST request...
   const data = {
     'action': 'stop',
   }
@@ -85,9 +88,6 @@ async function requestStreamStop() {
     showError(CSRF_FAILURE);
     return;
   }
-  // Informing the user...
-  changeGuiStopping();
-  // Requesting the server to initiate the stream of random integers...
   let stopStreamReq = new Request(
     window.location.href,  // The URL of the current page
     {
@@ -99,6 +99,8 @@ async function requestStreamStop() {
       body: JSON.stringify(data),
     }
   );
+  // Requesting the server to stop the stream of random integers...
+  updatePageStopping();
   fetch(stopStreamReq)
     .then(response => {
       //
@@ -114,6 +116,7 @@ async function requestStreamStop() {
     .catch(err => {
       //
       showError(UNKNOWN_ERR.replace('%s', err))
+      updatePageStarted();
     })
 }
 
@@ -135,9 +138,15 @@ function onMsgReceived(event) {
  */
 function onErrOccurred(event) {
   //
-  console.error(event);
-  updatePageStopped();
-  randIntStream.close();
+  if (randIntClosing) {
+    // The server closed the SSE channel. So closing the SSE...
+    updatePageStopped();
+    randIntStream.close();
+  }
+  else {
+    // An error occurred. Logging the error & reconnecting...
+    console.error(event);
+  }
 }
 
 
@@ -147,9 +156,7 @@ function onErrOccurred(event) {
  */
 function onConnEstablished() {
   //
-  const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = STOP;
-  startStopBtn.disabled = false;
+  updatePageStarted();
 }
 
 
@@ -178,10 +185,20 @@ function updatePageStopped() {
  * Changes the page so that the user can feel the operation is stopping.
  * @returns {undefined}
  */
-function changeGuiStopping() {
+function updatePageStopping() {
   const startStopBtn = document.getElementById('start-stop');
   startStopBtn.textContent = STOPPING;
   startStopBtn.disabled = true;
+}
+
+
+/**
+ * Changes the page so that the user can feel the operation is started.
+ */
+function updatePageStarted() {
+  const startStopBtn = document.getElementById('start-stop');
+  startStopBtn.textContent = STOP;
+  startStopBtn.disabled = false;
 }
 
 

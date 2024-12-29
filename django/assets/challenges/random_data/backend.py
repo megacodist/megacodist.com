@@ -8,8 +8,7 @@ from typing import Any, Generator
 
 from django.core.cache import cache
 from django.http import (
-    HttpRequest, HttpResponse, HttpResponseBadRequest,
-    StreamingHttpResponse, )
+    HttpRequest, HttpResponse, StreamingHttpResponse, JsonResponse,)
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
@@ -34,29 +33,56 @@ def play(request: HttpRequest) -> HttpResponse:
                 case 'int':
                     return _startStreamingRandInts(request)
                 case _:
-                    return HttpResponseBadRequest(
-                        "unsupported type of random data: "
-                        f"{request.GET['data-type']}")
+                    # Returning HTTP 400 Bad Request...
+                    return JsonResponse(
+                        {
+                            'status': 'error',
+                            'reason': (
+                                'unsupported type of random data: ',
+                                f"{request.GET['data-type']}"),
+                        },
+                        status=400,)
         else:
             return render(
                 request,
                 'challenges/random_data/page.j2',
                 context={},)
     elif request.method == 'POST':
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError as err:
+            # Returning HTTP 400 Bad Request...
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'reason': f'failed to read JSON object: {err}',
+                },
+                status=400,)
         if 'action' in data and data['action'] == 'stop':
             _stopStreamingRandInts()
-            return HttpResponse(
-                'Streaming random integers stopped.',
-                content_type='text/plain', )
+            return JsonResponse(
+                {'status': 'ok',},
+                status=200,)
         else:
-            msg = f'unknown POST request for random data endpoint'
+            # Returning HTTP 400 Bad Request...
+            msg = 'unknown POST request for random data endpoint'
             logging.warning(msg)
-            return HttpResponseBadRequest(msg)
+            return JsonResponse(
+                {
+                    'status': 'error',
+                    'reason': msg,
+                },
+                status=400,)
     else:
+        # Returning HTTP 400 Bad Request...
         msg = f'unsupported HTTP method: {request.method}'
         logging.warning(msg)
-        return HttpResponseBadRequest(msg)
+        return JsonResponse(
+                {
+                    'status': 'error',
+                    'reason': msg,
+                },
+                status=400,)
 
 
 def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
