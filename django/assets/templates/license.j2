@@ -1,0 +1,50 @@
+{#-
+  This template extends 'base.j2' to serve as License page for
+  Megacodist Coding Blog.
+
+  environment = {
+    'app_name': # The name of the web application
+  }
+
+  No special context is needed.
+-#}
+
+{% extends 'base.j2' %}
+
+{% block title %} License - {{ super() }} {% endblock title %}
+
+{% block main %}
+  {{ super() }}
+  <h3>
+    <i class="fa-brands fa-creative-commons" style="font-size: 40px;"></i>
+    <i class="fa-brands fa-creative-commons-by" style="font-size: 40px;"></i>
+  </h3>
+  <p>
+    megacodist.com is available under
+    <a class="interface external" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution License 4.0</a>
+    unless otherwise mentioned.
+  </p>
+
+  <h3>
+    <i class="fa-brands fa-python" style="font-size: 40px;"></i>
+    <i class="bx bxl-django" style="font-size: 40px;"></i>
+  </h3>
+  <p>
+    This website was developed using
+    <a class="interface external" target="_blank" href="https://www.djangoproject.com/">Django web framework</a>
+    of
+    <a class="interface external" target="_blank" href="https://www.python.org/">Python language</a>
+    .
+  </p>
+
+  <h3>
+    Icon libraries
+  </h3>
+  <p>
+    Many icons of this website are borrowd from
+    <a class="interface external" target="_blank" href="https://fontawesome.com/">Font Awesome</a>
+    and
+    <a class="interface external" target="_blank" href="https://boxicons.com/">Boxicons</a>
+    .
+  </p>
+{% endblock main %}

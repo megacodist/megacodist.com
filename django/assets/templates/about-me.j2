@@ -1,0 +1,14 @@
+{#-
+  This template extends 'base.j2' to serve as About me page for
+  Megacodist Coding Blog.
+
+  environment = {
+    'app_name': # The name of the web application
+  }
+
+  No special context is needed.
+-#}
+
+{% extends 'base.j2' %}
+
+{% block title %} About me - {{ super() }} {% endblock title %}

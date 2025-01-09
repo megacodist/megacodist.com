@@ -1,0 +1,41 @@
+/*
+	======================================================================================================================================
+	
+	This CSS file is the casecade style sheet for the footer of Megacodist web site, hence it is named after its functionality (footer.css).
+
+	======================================================================================================================================
+*/
+
+footer {
+    background-color: rgb(77, 77, 77);
+    border-top: 5px solid orange;
+}
+footer ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+footer div.copyright {
+    color: orange;
+    text-align: center;
+    font-size: 80%;
+    font-weight: 300;
+    margin: 0px;
+    margin-bottom: 1rem;
+    padding: 0px;
+}
+footer a.interface:link {
+    color: orange;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 18%;
+}
+footer a.interface:visited {
+    color: orange;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 18%;
+}
+footer a.interface:hover {
+    color: yellow;
+    text-decoration-line: solid;
+}

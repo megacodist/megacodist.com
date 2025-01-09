@@ -1,0 +1,43 @@
+/*
+	======================================================================================================================================
+	
+	This CSS file is the main casecade style sheet for the entire Megacodist web site, hence it is named after this truth (main.css).
+
+	======================================================================================================================================
+*/
+
+html {
+  height: 100vh;
+}
+body {
+	min-height: 100vh;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	grid-template-columns: 100%;
+	grid-template-areas:  "header"
+	                      "main"
+						            "footer";
+	margin: 0;
+}
+
+/* Customizing anchor elements */
+a.link {
+	color: rgb(224, 147, 4) !important;
+  text-decoration-line: underline !important;
+  text-decoration-style: dotted !important;
+  text-decoration-thickness: 12% !important;
+}
+a.link:hover {
+	color: rgb(224, 224, 0) !important;
+  cursor: pointer;
+  text-decoration-line: underline !important;
+  text-decoration-style: solid !important;
+}
+a.external[target="_blank"]:after {
+  font-family: 'FontAwesome';
+  content: " \f08e";
+  size: 0.5rem;
+}
+section.notes {
+  font-size: small;
+}

@@ -1,0 +1,35 @@
+/* 
+   Style name: Random data styles
+   Author: Megacodist
+   Description: Custom styles for random data page of megacodist.com
+   Version: 1.0.0
+*/
+
+#alert-container {
+  position: fixed;
+  top: 20px; /* Adjust the vertical position as needed */
+  right: 20px; /* Adjust the horizontal position as needed */
+  z-index: 1050; /* Ensure it's above other elements */
+  width: auto; /* You can set a specific width if required */
+}
+
+#rand-data-grid {
+  display: grid; /* Sets the element as a grid container */
+  grid-auto-flow: row; /* Specifies that items should be placed in columns. */
+  grid-template-columns: repeat(auto-fill, 2rem); /* Creates 10 rows in the grid, each row will have a height that adapts to its content. */
+}
+
+#grid-container {
+  display: block;
+  overflow-y: auto; /* The vertical scrollbar apears when necessary. */
+  min-height: 10vw;
+  max-height: 40vh; /* Sets the maximum height to 40% of the viewport */
+  width: 100%;
+  border: 2px solid rgb(184, 136, 33);
+  border-radius: 5px;
+}
+
+.rand-data {
+  display: block;
+  padding: 0.5rem;
+}

@@ -1,0 +1,46 @@
+
+
+
+
+# How to run megacodist.com
+## Creating necessary volumes
+```Bash
+docker volume create \
+  --driver local \
+  --opt type=none \
+  --opt o=bind \
+  --opt device=/path/on/host/code \
+  megacodist.com-code
+
+docker volume create \
+  --driver local \
+  --opt type=none \
+  --opt o=bind \
+  --opt device=/path/on/host/assets \
+  megacodist.com-assets
+
+docker volume create \
+  --driver local \
+  --opt type=none \
+  --opt o=bind \
+  --opt device=/path/on/host/media \
+  megacodist.com-media
+```
+
+* `--driver local`: Specifies the local driver, meaning the volume is managed within the host's file system.
+* `--opt type=none`: This option is used to specify the type of filesystem to use for the volume. In this case, none means that Docker won't create a new filesystem, but instead will use an existing directory on the host machine.
+* `--opt o=bind`: This option specifies the mount options for the volume. In this case, bind means that the volume will be mounted as a bind mount, which allows the container to access the host directory directly.
+
+## Creating the Django container
+```
+docker run -d -p 8000:8000 -p 5678:5678\
+  --name megacodist-blog \
+  -v D:/Mohsen/Programming/Django/megacodist.com/django:/django/ \
+  -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ \
+  megacodist.com:2.0.4 python manage.py runserver 0.0.0.0:8000
+```
+
+## Creating the Celery process
+```
+docker run -d --name celery_process -v D:/Mohsen/Programming/Django/megacodist.com/django:/django/ -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ megacodist.com:2.0.4 celery -A core worker --loglevel=info
+```

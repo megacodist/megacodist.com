@@ -1,0 +1,42 @@
+{#-
+  This template extends 'base.j2' to serve as .
+
+  environment = {
+  'app_name': # The name of the web application
+  }
+
+  context = {
+  }
+-#}
+
+{% extends 'base.j2' %}
+
+{% block title %} Random data - {{ super() }} {% endblock title %}
+
+{% block head %}
+  {{ super() }}
+  {# Linking the 'style.css' of this page... -#}
+  <link rel="stylesheet" href="{{ static('challenges/random_data/style.css') }}">
+{% endblock head %}
+
+{% block main %}
+  {{ super() }}
+  <!-- Alerts box -->
+  <div id="alert-container"></div>
+  <!-- Operations -->
+  <form id="operations">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
+      <button type="button" class="btn btn-dark" id="start-stop">Start</button>
+    </div>
+  </form>
+  <!-- Received random data -->
+  <div id="grid-container">
+    <div id="rand-data-grid"></div>
+  </div>
+{% endblock main %}
+
+{%- block endJsFiles %}
+  {{ super() }}
+  <script defer src="{{ static('challenges/random_data/script.js') }}"></script>
+{%- endblock endJsFiles %}
