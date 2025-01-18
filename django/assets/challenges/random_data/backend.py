@@ -2,9 +2,10 @@
 # 
 #
 
+import asyncio
 import json
 import logging
-from typing import Generator
+from typing import AsyncGenerator
 
 from django.core.cache import cache
 from django.http import (
@@ -25,7 +26,7 @@ stream of random integers.
 
 
 @require_http_methods(['GET', 'POST',])
-def play(request: HttpRequest) -> HttpResponse:
+async def play(request: HttpRequest) -> HttpResponse:
     """This view function does the following:
     1. Loads the page itself: Using a GET method with no query string.
     """
@@ -34,7 +35,7 @@ def play(request: HttpRequest) -> HttpResponse:
         if 'data-type' in request.GET:
             match request.GET['data-type']:
                 case 'int':
-                    return _startStreamingRandInts(request)
+                    return await _startStreamingRandInts(request)
                 case _:
                     # Returning HTTP 400 Bad Request...
                     return JsonResponse(
@@ -46,7 +47,8 @@ def play(request: HttpRequest) -> HttpResponse:
                         },
                         status=400,)
         else:
-            return render(
+            return await asyncio.to_thread(
+                render,
                 request,
                 'challenges/random_data/page.j2',
                 context={},)
@@ -88,7 +90,9 @@ def play(request: HttpRequest) -> HttpResponse:
                 status=400,)
 
 
-def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
+async def _startStreamingRandInts(
+        request: HttpRequest,
+        ) -> StreamingHttpResponse:
     # Declaring variables -----------------------------
     import json
     import random
@@ -96,10 +100,10 @@ def _startStreamingRandInts(request: HttpRequest) -> StreamingHttpResponse:
     global RAND_INT_STOPPED
     MAX_INT = 100
     # Function ----------------------------------------
-    def generator() -> Generator[bytes, None, None]:
+    async def generator() -> AsyncGenerator[bytes, None]:
         while not cache.get(RAND_INT_STOPPED):
             yield f'data: {random.randrange(0, MAX_INT)}\n\n'.encode()
-            time.sleep(0.8)
+            await asyncio.sleep(0.8)
         cache.delete(RAND_INT_STOPPED)
     #
     _logger.info('_startStream')

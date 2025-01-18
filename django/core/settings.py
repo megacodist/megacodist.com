@@ -14,6 +14,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
+import sys
 
 from dotenv import load_dotenv
 from jinja2 import Undefined, DebugUndefined
@@ -48,13 +49,13 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'megacodist': {
+        'megacodist_format': {
             'format': (
                 'Megacodist {levelname}: {asctime} {module} {process:d} '
                 '{thread:d}\n{message}\n'),
             'style': '{',
         },
-        'general': {
+        'general_format': {
             'format': (
                 '{levelname}: {asctime} {module} {process:d} {thread:d}\n'
                 '{message}\n'),
@@ -66,13 +67,13 @@ LOGGING = {
             'class': 'logging.FileHandler',
             'filename': DJANGO_DIR / 'log.log',
             'encoding': 'utf-8',
-            'formatter': 'general',
+            'formatter': 'general_format',
         },
         'megacodist_file': {
             'class': 'logging.FileHandler',
             'filename': DJANGO_DIR / 'log.log',
             'encoding': 'utf-8',
-            'formatter': 'megacodist',
+            'formatter': 'megacodist_format',
         },
     },
     'loggers': {
@@ -91,7 +92,7 @@ LOGGING = {
         # Defining Megacodist-specific logger...
         'megacodist': {
             'handlers': ['megacodist_file',],
-            'level': 'INFO',
+            'level': 'DEBUG',
             'propagate': True,
         },
     },
@@ -101,7 +102,7 @@ LOGGING = {
 # Loading the `.env` file...
 _loaded = load_dotenv(dotenv_path=DJANGO_DIR / '.env', override=True)
 if not _loaded:
-    logging.warning('probably failed to load `.env` file')
+    sys.stderr.write('probably failed to load `.env` file in settings.py\n')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -147,6 +148,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+if DEBUG:
+    MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'core.urls'
 

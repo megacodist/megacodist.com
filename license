@@ -3,7 +3,12 @@
 
 
 # How to run megacodist.com
-## Creating necessary volumes
+## Create `megacodist.com` Docker image
+```Bash
+docker build -t megacodist.com:2.1.1 .
+```
+
+## Create necessary volumes
 ```Bash
 docker volume create \
   --driver local \
@@ -31,16 +36,31 @@ docker volume create \
 * `--opt type=none`: This option is used to specify the type of filesystem to use for the volume. In this case, none means that Docker won't create a new filesystem, but instead will use an existing directory on the host machine.
 * `--opt o=bind`: This option specifies the mount options for the volume. In this case, bind means that the volume will be mounted as a bind mount, which allows the container to access the host directory directly.
 
-## Creating the Django container
+## Create the Django container
+### For development environment
 ```
 docker run -d -p 8000:8000 -p 5678:5678\
   --name megacodist-blog \
+  --log-driver json-file --log-opt max-size=10m --log-opt max-file=1 \
   -v D:/Mohsen/Programming/Django/megacodist.com/django:/django/ \
   -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ \
-  megacodist.com:2.0.4 python manage.py runserver 0.0.0.0:8000
+  megacodist.com:2.1.0 uvicorn core.asgi:application --host 0.0.0.0 --port 8000 --reload
 ```
 
-## Creating the Celery process
+### For production environment
 ```
-docker run -d --name celery_process -v D:/Mohsen/Programming/Django/megacodist.com/django:/django/ -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ megacodist.com:2.0.4 celery -A core worker --loglevel=info
+docker run -d -p 8000:8000 -p 5678:5678\
+  --name megacodist-blog \
+  --log-driver json-file --log-opt max-size=10m --log-opt max-file=1 \
+  -v /home/megacodist/megacodist.com/django/:/django/ \
+  -v /home/megacodist/megacodist.com/django/utils/:/django/utils/ \
+  megacodist.com:2.1.0 python -m uvicorn core.asgi:application --host 0.0.0.0 --port 8000
+```
+
+## Create the Celery process
+```
+docker run -d --name celery_process \
+  -v D:/Mohsen/Programming/Django/megacodist.com/django:/django/ \
+  -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ \
+  megacodist.com:2.0.4 celery -A core worker --loglevel=info
 ```
