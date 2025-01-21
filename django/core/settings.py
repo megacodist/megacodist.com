@@ -49,16 +49,22 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'megacodist_format': {
-            'format': (
-                'Megacodist {levelname}: {asctime} {module} {process:d} '
-                '{thread:d}\n{message}\n'),
-            'style': '{',
-        },
         'general_format': {
             'format': (
                 '{levelname}: {asctime} {module} {process:d} {thread:d}\n'
                 '{message}\n'),
+            'style': '{',
+        },
+        'django_format': {
+            'format': (
+                'Django {levelname}: {asctime} {module} {process:d} {thread:d}\n'
+                '{message}\n'),
+            'style': '{',
+        },
+        'megacodist_format': {
+            'format': (
+                'Megacodist {levelname}: {asctime} {module} {process:d} '
+                '{thread:d}\n{message}\n'),
             'style': '{',
         },
     },
@@ -68,6 +74,12 @@ LOGGING = {
             'filename': DJANGO_DIR / 'log.log',
             'encoding': 'utf-8',
             'formatter': 'general_format',
+        },
+        'django_file': {
+            'class': 'logging.FileHandler',
+            'filename': DJANGO_DIR / 'log.log',
+            'encoding': 'utf-8',
+            'formatter': 'django_format',
         },
         'megacodist_file': {
             'class': 'logging.FileHandler',
@@ -85,8 +97,8 @@ LOGGING = {
         },
         # Defining the Django logger...
         'django': {
-            'handlers': ['general_file',],
-            'level': 'INFO',
+            'handlers': ['django_file',],
+            'level': 'DEBUG',
             'propagate': True,
         },
         # Defining Megacodist-specific logger...

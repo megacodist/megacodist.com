@@ -9,7 +9,7 @@ from django.urls import path
 
 from .views import getChallengesIndexPage
 from assets.challenges.rps.backend import play as playRps
-from assets.challenges.random_data.backend import play as playRandom
+from assets.challenges.random_ints.backend import play as playRandom
 
 
 app_name = 'challenges'
@@ -17,5 +17,5 @@ app_name = 'challenges'
 urlpatterns = [
     path('', getChallengesIndexPage, name='index-page'),
     path('rps', playRps, name='rps'),
-    path('random-data', playRandom, name='random-data'),
+    path('random-ints', playRandom, name='random-ints'),
 ]

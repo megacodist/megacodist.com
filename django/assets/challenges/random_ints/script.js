@@ -2,6 +2,9 @@ const START = 'Start';
 const STOP = 'Stop';
 const STOPPING = 'Stopping...';
 const CONNECTING = 'Connecting...';
+const LOWER_INT_MISSING = 'Please enter the start integer.';
+const UPPER_INT_MISSING = 'Please enter the end integer.';
+const BAD_INTERVAL = 'Start integer must be less than the other.';
 const CSRF_FAILURE = 'failed to read CSRF token';
 const UNKNOWN_ERR  = 'An unknown error occurred: %s';
 const CONN_ESTABLISHED = 'Connected to the end point';
@@ -58,10 +61,27 @@ function onStartStopClicked() {
  * @returns {undefined}
  */
 function requestStreamStart() {
+  // Checking interval...
+  lowerInt = document.getElementById('start-int').value;
+  if (lowerInt === '') {
+    showAlert(LOWER_INT_MISSING);
+    return;
+  }
+  upperInt = document.getElementById('end-int').value;
+  if (upperInt === '') {
+    showAlert(UPPER_INT_MISSING);
+    return;
+  }
+  if (parseInt(lowerInt) >= parseInt(upperInt)) {
+    showAlert(BAD_INTERVAL);
+    return;
+  }
+  // Making the request...
   try {
     updatePageConnecting();
     //
-    randIntStream = new EventSource('/challenges/random-data?data-type=int'); // The URL of the current page
+    const URL = `/challenges/random-ints?lower-int=${lowerInt}&upperInt=${upperInt}`;
+    randIntStream = new EventSource(URL);
     randIntStream.onmessage = onMsgReceived;
     randIntStream.onerror = onErrOccurred;
     randIntStream.onopen = onConnEstablished;
@@ -227,9 +247,9 @@ function addRandData(data) {
   // Creating new element for received data...
   const newData = document.createElement('div');
   newData.textContent = data;
-  newData.className = 'rand-data'
+  newData.className = 'rand-int'
   // Adding to the DOM...
-  const randDataGrid = document.getElementById('rand-data-grid');
+  const randDataGrid = document.getElementById('rand-ints-grid');
   randDataGrid.prepend(newData);
 }
 
@@ -239,7 +259,7 @@ function addRandData(data) {
  */
 function clearRandData() {
   //
-  const randDataDiv = document.getElementById('rand-data-grid');
+  const randDataDiv = document.getElementById('rand-ints-grid');
   randDataDiv.innerHTML = '';
 }
 

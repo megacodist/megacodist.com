@@ -32,26 +32,35 @@ async def play(request: HttpRequest) -> HttpResponse:
     """
     _logger.debug('random data stream request is received')
     if request.method == 'GET':
-        if 'data-type' in request.GET:
-            match request.GET['data-type']:
-                case 'int':
-                    return await _startStreamingRandInts(request)
-                case _:
-                    # Returning HTTP 400 Bad Request...
-                    return JsonResponse(
-                        {
-                            'status': 'error',
-                            'reason': (
-                                'unsupported type of random data: ',
-                                f"{request.GET['data-type']}"),
-                        },
-                        status=400,)
-        else:
-            return await asyncio.to_thread(
-                render,
-                request,
-                'challenges/random_data/page.j2',
-                context={},)
+        match ('lower-int' in request.GET, 'upper-int' in request.GET,):
+            case (True, True,):
+                return await _startStreamingRandInts(
+                    request,
+                    int(request.GET['lower-int']),
+                    int(request.GET['upper-int']))
+            case (True, False,):
+                return JsonResponse(
+                    {
+                        'status': 'error',
+                        'reason': 'upper bound missing: ',
+                    },
+                    status=400,)
+            case (False, True,):
+                return JsonResponse(
+                    {
+                        'status': 'error',
+                        'reason': 'lower bound missing: ',
+                    },
+                    status=400,)
+            case (False, False,):
+                # Returning the page...
+                return await asyncio.to_thread(
+                    render,
+                    request,
+                    'challenges/random_ints/page.j2',
+                    context={},)
+            case _:
+                _logger.error('E-1')
     elif request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -70,7 +79,7 @@ async def play(request: HttpRequest) -> HttpResponse:
                 status=200,)
         else:
             # Returning HTTP 400 Bad Request...
-            msg = 'unknown POST request for random data endpoint'
+            msg = 'unknown POST request for random integers endpoint'
             _logger.warning(msg)
             return JsonResponse(
                 {
@@ -92,20 +101,25 @@ async def play(request: HttpRequest) -> HttpResponse:
 
 async def _startStreamingRandInts(
         request: HttpRequest,
+        lower: int,
+        upper: int,
+        wait: float = 0.75,
         ) -> StreamingHttpResponse:
+    """Returns a `StreamingHttpResponse` (response to a request to
+    establish an SSE connection) to produce random integers between `lower`
+    and `upper` at an interval of `wait` seconds.
+    """
     # Declaring variables -----------------------------
     import json
     import random
     import time
     global RAND_INT_STOPPED
-    MAX_INT = 100
     # Function ----------------------------------------
     async def generator() -> AsyncGenerator[bytes, None]:
         while not cache.get(RAND_INT_STOPPED):
-            randInt = random.randrange(0, MAX_INT)
-            _logger.debug(f'rand int: {randInt}')
+            randInt = random.randrange(lower, upper)
             yield f'data: {randInt}\n\n'.encode()
-            await asyncio.sleep(0.8)
+            await asyncio.sleep(wait)
         cache.delete(RAND_INT_STOPPED)
         _logger.debug('exiting the rand int generator.')
     #

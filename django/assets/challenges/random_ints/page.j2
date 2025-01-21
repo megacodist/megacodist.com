@@ -1,0 +1,56 @@
+{#-
+  This template extends 'base.j2' to serve as .
+
+  environment = {
+  'app_name': # The name of the web application
+  }
+
+  context = {
+  }
+-#}
+
+{% extends 'base.j2' %}
+
+{% block title %} Random integers - {{ super() }} {% endblock title %}
+
+{% block head %}
+  {{ super() }}
+  {# Linking the 'style.css' of this page... -#}
+  <link rel="stylesheet" href="{{ static('challenges/random_ints/style.css') }}">
+{% endblock head %}
+
+{% block main %}
+  {{ super() }}
+  <!-- Alerts box -->
+  <div id="alert-container"></div>
+  <!-- The end of Alerts box -->
+
+  <!-- Title of the page -->
+  <h1>Random integers</h1>
+  <h2>Get random integers through Server-Sent Events (SSE)</h2>
+  <!-- The end of title of the page -->
+
+  <!-- Options & operations available -->
+  <form id="operations">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <div>
+      <input type="number" id="start-int" name="start-int" required  placeholder="Enter start integer">
+      <input type="number" id="end-int" name="end-int" required  placeholder="Enter end integer">
+    </div>
+    <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
+      <button type="button" class="btn btn-dark" id="start-stop">Start</button>
+    </div>
+  </form>
+  <!-- The end of options & operations available -->
+
+  <!-- Received random integers box -->
+  <div id="grid-container">
+    <div id="rand-ints-grid"></div>
+  </div>
+  <!-- The end of received random integers box -->
+{% endblock main %}
+
+{%- block endJsFiles %}
+  {{ super() }}
+  <script defer src="{{ static('challenges/random_ints/script.js') }}"></script>
+{%- endblock endJsFiles %}
