@@ -19,6 +19,14 @@
   grid-template-columns: repeat(auto-fill, 2rem); /* Creates 10 rows in the grid, each row will have a height that adapts to its content. */
 }
 
+#rand-ints-grid > div:nth-child(odd) {
+  background-color: lightblue; /* Color for odd rows */
+}
+
+.grid > div:nth-child(even) {
+  background-color: lightgreen; /* Color for even rows */
+}
+
 #grid-container {
   display: block;
   overflow-y: auto; /* The vertical scrollbar apears when necessary. */
@@ -32,4 +40,8 @@
 .rand-int {
   display: block;
   padding: 0.5rem;
+}
+
+#start-int, #end-int {
+  width: 6rem;
 }

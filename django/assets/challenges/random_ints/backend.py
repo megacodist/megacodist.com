@@ -42,14 +42,14 @@ async def play(request: HttpRequest) -> HttpResponse:
                 return JsonResponse(
                     {
                         'status': 'error',
-                        'reason': 'upper bound missing: ',
+                        'reason': 'upper bound missing',
                     },
                     status=400,)
             case (False, True,):
                 return JsonResponse(
                     {
                         'status': 'error',
-                        'reason': 'lower bound missing: ',
+                        'reason': 'lower bound missing',
                     },
                     status=400,)
             case (False, False,):

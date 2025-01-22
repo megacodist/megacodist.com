@@ -1,23 +1,30 @@
 const START = 'Start';
 const STOP = 'Stop';
 const STOPPING = 'Stopping...';
-const CONNECTING = 'Connecting...';
+const CONNECTING = 'Connecting %s/%s...';
 const LOWER_INT_MISSING = 'Please enter the start integer.';
 const UPPER_INT_MISSING = 'Please enter the end integer.';
 const BAD_INTERVAL = 'Start integer must be less than the other.';
 const CSRF_FAILURE = 'failed to read CSRF token';
 const UNKNOWN_ERR  = 'An unknown error occurred: %s';
 const CONN_ESTABLISHED = 'Connected to the end point';
+const CONN_FAILED = 'Failed to coonect to the server.';
+const MAX_RECONN_TRY = 8;
 
 /**
  * @type {EventSource} The `EventSource` object to interact with the server.
  */
 let randIntStream;
 /**
- * @type {boolean} Specifies whether the server was asked to stop sending
- * random integers.
+ * @type {boolean} Specifies whether the client asked the server to stop
+ * sending random integers.
  */
-let randIntClosing = false;
+let clientClosedSse = false;
+/**
+ * @type {int} Specifies how many times the `randIntStream` tried to connect
+ * to the server.
+ */
+let nConnectionTry = 1;
 
 
 class CsrfTokenError extends Error {
@@ -80,7 +87,8 @@ function requestStreamStart() {
   try {
     updatePageConnecting();
     //
-    const URL = `/challenges/random-ints?lower-int=${lowerInt}&upperInt=${upperInt}`;
+    nConnectionTry = 1;
+    const URL = `/challenges/random-ints?lower-int=${lowerInt}&upper-int=${upperInt}`;
     randIntStream = new EventSource(URL);
     randIntStream.onmessage = onMsgReceived;
     randIntStream.onerror = onErrOccurred;
@@ -88,7 +96,7 @@ function requestStreamStart() {
     //
     clearRandData();
   } catch(err) {
-    showError(UNKNOWN_ERR.replace('%s', err))
+    showError(UNKNOWN_ERR.replace('%s', err));
     updatePageStopped();
   }
 }
@@ -121,7 +129,7 @@ async function requestStreamStop() {
   );
   // Requesting the server to stop the stream of random integers...
   updatePageStopping();
-  randIntClosing = true;
+  clientClosedSse = true;
   fetch(stopStreamReq)
     .then(response => {
       //
@@ -138,7 +146,7 @@ async function requestStreamStop() {
       //
       showError(UNKNOWN_ERR.replace('%s', err));
       updatePageStarted();
-      randIntClosing = false;
+      clientClosedSse = false;
     })
 }
 
@@ -149,7 +157,7 @@ async function requestStreamStop() {
  * @param {MessageEvent} event 
  */
 function onMsgReceived(event) {
-  addRandData(event.data);
+  addRandInt(event.data);
 }
 
 
@@ -159,15 +167,30 @@ function onMsgReceived(event) {
  * @param {MessageEvent} event 
  */
 function onErrOccurred(event) {
-  //
-  if (randIntClosing) {
-    // The server closed the SSE channel. So closing the SSE...
-    updatePageStopped();
-    randIntStream.close();
+  if (randIntStream.readyState === EventSource.CLOSED) {
+    if (clientClosedSse) {
+      // onClientClosed...
+      updatePageStopped();
+      randIntStream.close();
+      nConnectionTry = 0;
+    }
+    else {
+      // onServerClosed...
+      randIntStream.close();
+      errMsg = UNKNOWN_ERR.replace('%s', event.data);
+      showError(errMsg);
+      updatePageStopped();
+    }
   }
-  else {
-    // An error occurred. Logging the error & reconnecting...
-    console.error(event);
+  else if (randIntStream.readyState === EventSource.CONNECTING) {
+    // onConnectionTries...
+    if (nConnectionTry >= MAX_RECONN_TRY) {
+      showError(CONN_FAILED);
+      updatePageStopped()
+    } else {
+      nConnectionTry++;
+      updatePageConnecting();
+    }
   }
 }
 
@@ -187,7 +210,8 @@ function onConnEstablished() {
  */
 function updatePageConnecting() {
   const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = CONNECTING;
+  startStopBtn.textContent = CONNECTING.replace('%s', nConnectionTry)
+    .replace('%s', MAX_RECONN_TRY);
   startStopBtn.disabled = true;
 }
 
@@ -240,10 +264,11 @@ function httpToStr(code, msg) {
 
 
 /**
- * Adds the provided data, of type `string`, to the random data `div` element.
+ * Adds the provided integer, of type `string`, to the random integers `div`
+ * element.
  * @param {string} data 
  */
-function addRandData(data) {
+function addRandInt(data) {
   // Creating new element for received data...
   const newData = document.createElement('div');
   newData.textContent = data;
@@ -310,7 +335,10 @@ function showAlert(message, type = 'danger') {
   // Optionally remove the alert after 5 seconds
   setTimeout(
     () => {
-      document.querySelector('.custom-alert').remove();
+      alertBox = document.querySelector('.custom-alert');
+      if (alertBox) {
+        alertBox.remove();
+      }
     },
     5000 // 5000 milliseconds = 5 seconds
   );

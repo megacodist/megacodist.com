@@ -27,15 +27,17 @@
 
   <!-- Title of the page -->
   <h1>Random integers</h1>
-  <h2>Get random integers through Server-Sent Events (SSE)</h2>
+  <p>Get random integers through Server-Sent Events (SSE). Try it out.</p>
   <!-- The end of title of the page -->
 
   <!-- Options & operations available -->
   <form id="operations">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div>
-      <input type="number" id="start-int" name="start-int" required  placeholder="Enter start integer">
-      <input type="number" id="end-int" name="end-int" required  placeholder="Enter end integer">
+      <label for="start-int">Integers from:</label>
+      <input type="number" id="start-int" name="start-int" required  placeholder="Start integer" size="8">
+      <label for="end-int">to:</label>
+      <input type="number" id="end-int" name="end-int" required  placeholder="End integer" size="8">
     </div>
     <div class="btn-group" role="group" aria-label="Operations of Rock, Paper, Scissors game">
       <button type="button" class="btn btn-dark" id="start-stop">Start</button>
