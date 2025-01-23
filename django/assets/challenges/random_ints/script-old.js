@@ -1,178 +1,36 @@
-//
-//
-//
-
-const STRS = {
-  START: 'Start',
-  STOP: 'Stop',
-  STOPPING: 'Stopping...',
-  LOWER_INT_MISSING: 'Please enter the start integer.',
-  UPPER_INT_MISSING: 'Please enter the end integer.',
-  BAD_INTERVAL: 'Start integer must be less than the end integer.',
-  CSRF_FAILURE: 'Failed to read CSRF token',
-  UNKNOWN_ERR: 'An unknown error occurred: %s',
-  CONN_ESTABLISHED: 'Connected to the end point',
-  CONN_FAILED: 'Failed to connect to the server.',
-  SERVER_CLOSED: 'The server closed the connection',
-  MAX_RECONN_TRY_REACHED: 'Failed to connect after multiple tries.',
-};
-
+const START = 'Start';
+const STOP = 'Stop';
+const STOPPING = 'Stopping...';
+const CONNECTING = 'Connecting %s/%s...';
+const LOWER_INT_MISSING = 'Please enter the start integer.';
+const UPPER_INT_MISSING = 'Please enter the end integer.';
+const BAD_INTERVAL = 'Start integer must be less than the other.';
+const CSRF_FAILURE = 'failed to read CSRF token';
+const UNKNOWN_ERR  = 'An unknown error occurred: %s';
+const CONN_ESTABLISHED = 'Connected to the end point';
+const CONN_FAILED = 'Failed to coonect to the server.';
+const MAX_RECONN_TRY = 8;
 
 /**
- * @type {RandIntStream | null} The object for connecting to the server.
+ * @type {EventSource} The `EventSource` object to interact with the server.
  */
-let randIntStream = null;
+let randIntStream;
+/**
+ * @type {boolean} Specifies whether the client asked the server to stop
+ * sending random integers.
+ */
+let clientClosedSse = false;
+/**
+ * @type {int} Specifies how many times the `randIntStream` tried to connect
+ * to the server.
+ */
+let nConnectionTry = 1;
 
 
 class CsrfTokenError extends Error {
   constructor(message) {
     super(message);
     this.name = 'CsrfTokenError';
-  }
-}
-
-
-class RandIntStream {
-  static MAX_TRIES = 10;
-  /**
-   * @type {EventSource} The underlying `EventSource` object for getting
-   * incoming stream.
-   */
-  #eventSource;
-  /**
-   * @type {boolean} Specifies whether the client asked the closure of the
-   * integer stream.
-   */
-  #clientClosedSse;
-  /**
-   * @type {int} Specifies the current iteration of trying to connect to
-   * the server.
-   */
-  #nTry;
-  #endpoint;
-  #onConnecting;
-  #onConnFailed;
-  #onConnSuccess;
-  #onIntReceived;
-  #onError;
-  #onClientClosed;
-  #onServerClosed
-
-  /**
-   * Instatiates a new instance of the class.
-   */
-  constructor(
-      endpoint,
-      onConnecting = (n, max) => {},
-      onConnFailed = (err) => {},
-      onConnSuccess = () => {},
-      onIntReceived = (event) => {},
-      onError = (event) => {},
-      onClientClosed = () => {},
-      onServerClosed = () => {},
-    ) {
-    this.#eventSource = null;
-    this.#clientClosedSse = false;
-    this.#nTry = 0;
-    this.#endpoint = endpoint;
-    this.#onConnecting = onConnecting;
-    this.#onConnFailed = onConnFailed;
-    this.#onConnSuccess = onConnSuccess;
-    this.#onIntReceived = onIntReceived;
-    this.#onError = onError;
-    this.#onClientClosed = onClientClosed;
-    this.#onServerClosed = onServerClosed;
-  }
-
-  /**
-   * Tries to establish a connection with the endpoint.
-   * @param {string} endpoint 
-   */
-  start() {
-    // Making the request...
-    try {
-      this.#nTry = 1;
-      this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
-      //
-      this.#eventSource = new EventSource(this.#endpoint);
-      this.#eventSource.onmessage = this.#onMsgReceived.bind(this);
-      this.#eventSource.onerror = this.#onErrOccurred.bind(this);
-      this.#eventSource.onopen = this.#onOpen.bind(this);
-    } catch(err) {
-      this.#onConnFailed(err);
-    }
-  }
-
-  /**
-   * 
-   * @param {Request} req 
-   */
-  close (req) {
-    //
-    fetch(stopStreamReq)
-      .then(response => {
-        //
-        if (!response.ok) {
-          //
-          return response.json().then(
-            data => new Error(httpToStr(response.status, data.reason)))
-        }
-        //
-        updatePageStopped();
-        randIntStream.close();
-      })
-      .catch(err => {
-        //
-        showError(UNKNOWN_ERR.replace('%s', err));
-        updatePageStarted();
-        clientClosedSse = false;
-      })
-  }
-
-
-  /**
-   * 
-   * @param {Event} event 
-   */
-  #onOpen(event) {
-    this.#onConnSuccess();
-  }
-
-
-  /**
-   * @param {MessageEvent} event 
-   */
-  #onMsgReceived(event) {
-    this.#onIntReceived(event.data);
-  }
-
-
-  /**
-   * 
-   * @param {Event} event 
-   */
-  #onErrOccurred(event) {
-    if (this.#eventSource.readyState === EventSource.CLOSED) {
-      if (this.#clientClosedSse) {
-        // onClientClosed...
-        this.#onClientClosed();
-      }
-      else {
-        // onServerClosed...
-        this.#onServerClosed();
-      }
-      this.#nTry = 0;
-      this.#eventSource.close();
-    }
-    else if (randIntStream.readyState === EventSource.CONNECTING) {
-      // onConnectionTries...
-      if (nConnectionTry >= RandIntStream.MAX_TRIES) {
-        this.#onConnFailed(event);
-      } else {
-        nConnectionTry++;
-        this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
-      }
-    }
   }
 }
 
@@ -225,18 +83,22 @@ function requestStreamStart() {
     showAlert(BAD_INTERVAL);
     return;
   }
-  // Making the request to start the stream of integers...
+  // Making the request...
+  try {
+    updatePageConnecting();
+    //
+    nConnectionTry = 1;
+    const URL = `/challenges/random-ints?lower-int=${lowerInt}&upper-int=${upperInt}`;
+    randIntStream = new EventSource(URL);
+    randIntStream.onmessage = updatePageMsgReceived;
+    randIntStream.onerror = onErrOccurred;
+    randIntStream.onopen = updatePageConnSuccess;
+    //
     clearRandData();
-    const ENDPOINT = `/challenges/random-ints?lower-int=${lowerInt}&upper-int=${upperInt}`;
-    randIntStream = new RandIntStream(
-      ENDPOINT,
-      updatePageConnecting,
-      updatePageConnFailed,
-      updatePageConnSuccess,
-      updatePageIntReceived,
-      onErrOccurred,
-      updatePageClientClosed,
-      updatePageServerClosed,);
+  } catch(err) {
+    showError(UNKNOWN_ERR.replace('%s', err));
+    updatePageStopped();
+  }
 }
 
 
@@ -267,17 +129,35 @@ async function requestStreamStop() {
   );
   // Requesting the server to stop the stream of random integers...
   updatePageStoppingBtn();
-  randIntStream.close(stopStreamReq);
   clientClosedSse = true;
+  fetch(stopStreamReq)
+    .then(response => {
+      //
+      if (!response.ok) {
+        //
+        return response.json().then(
+          data => new Error(httpToStr(response.status, data.reason)))
+      }
+      //
+      updatePageStopped();
+      randIntStream.close();
+    })
+    .catch(err => {
+      //
+      showError(UNKNOWN_ERR.replace('%s', err));
+      updatePageStarted();
+      clientClosedSse = false;
+    })
 }
 
 
 /**
- * Updates the page so user can see the newly-arrived integer.
- * @param {string} data The data (integer) received from the server.
+ * Triggered upon the arrival of any message from `megacodist.com`
+ * random data stream endpoint.
+ * @param {MessageEvent} event 
  */
-function updatePageIntReceived(data) {
-  addRandInt(data);
+function updatePageMsgReceived(event) {
+  addRandInt(event.data);
 }
 
 
@@ -290,7 +170,7 @@ function onErrOccurred(event) {
   if (randIntStream.readyState === EventSource.CLOSED) {
     if (clientClosedSse) {
       // onClientClosed...
-      updatePageStartBtn();
+      updatePageStopped();
       randIntStream.close();
       nConnectionTry = 0;
     }
@@ -299,14 +179,14 @@ function onErrOccurred(event) {
       randIntStream.close();
       errMsg = UNKNOWN_ERR.replace('%s', event.data);
       showError(errMsg);
-      updatePageStartBtn();
+      updatePageStopped();
     }
   }
   else if (randIntStream.readyState === EventSource.CONNECTING) {
     // onConnectionTries...
     if (nConnectionTry >= MAX_RECONN_TRY) {
       showError(CONN_FAILED);
-      updatePageStartBtn()
+      updatePageStopped()
     } else {
       nConnectionTry++;
       updatePageConnecting();
@@ -316,56 +196,31 @@ function onErrOccurred(event) {
 
 
 /**
- * Updates the page so user can understand connection was established.
+ * Triggered when this page is connected to the `megacodist.com` endpoint
+ * for producing random integers stream.
  */
 function updatePageConnSuccess() {
-  const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = STOP;
-  startStopBtn.disabled = false;
+  //
+  updatePageStarted();
 }
 
 
 /**
- * Updates the page so that the user can feel the connection is establishing.
- * @param {int} n 
- * @param {int} max 
+ * Changes the page so that the user can feel the connection is establishing.
  */
-function updatePageConnecting(n, max) {
+function updatePageConnecting() {
   const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = CONNECTING.replace('%s', n).replace('%s', max);
+  startStopBtn.textContent = CONNECTING.replace('%s', nConnectionTry)
+    .replace('%s', MAX_RECONN_TRY);
   startStopBtn.disabled = true;
 }
 
 
 /**
- * Updates the page so user can understand connecting to the server failed
- * with a brief reason.
- * @param {*} err 
- */
-function updatePageConnFailed(err) {
-  showError(UNKNOWN_ERR.replace('%s', err));
-  updatePageStartBtn();
-}
-
-
-function updatePageClientClosed() {
-  //
-  updatePageStartBtn();
-}
-
-
-function updatePageServerlosed() {
-  //
-  showError(SERVER_CLOSED);
-  updatePageStartBtn();
-}
-
-
-/**
- * Updates the page so that start-stop button becomes `Start`.
+ * Changes the page so that the user can feel the operation stopped.
  * @returns {undefined}
  */
-function updatePageStartBtn() {
+function updatePageStopped() {
   const startStopBtn = document.getElementById('start-stop');
   startStopBtn.textContent = START;
   startStopBtn.disabled = false;
@@ -373,13 +228,23 @@ function updatePageStartBtn() {
 
 
 /**
- * Updates the page so that the start-stop button shows stopping.
+ * Changes the page so that the user can feel the operation is stopping.
  * @returns {undefined}
  */
 function updatePageStoppingBtn() {
   const startStopBtn = document.getElementById('start-stop');
   startStopBtn.textContent = STOPPING;
   startStopBtn.disabled = true;
+}
+
+
+/**
+ * Changes the page so that the user can feel the operation is started.
+ */
+function updatePageStarted() {
+  const startStopBtn = document.getElementById('start-stop');
+  startStopBtn.textContent = STOP;
+  startStopBtn.disabled = false;
 }
 
 
