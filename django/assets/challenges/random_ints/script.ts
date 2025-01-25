@@ -11,17 +11,18 @@ const STRS = {
   BAD_INTERVAL: 'Start integer must be less than the end integer.',
   CSRF_FAILURE: 'Failed to read CSRF token',
   UNKNOWN_ERR: 'An unknown error occurred: %s',
+  CONNECTING: 'Connecting to the endpoint %s/%s...',
   CONN_ESTABLISHED: 'Connected to the end point',
   CONN_FAILED: 'Failed to connect to the server.',
-  SERVER_CLOSED: 'The server closed the connection',
   MAX_RECONN_TRY_REACHED: 'Failed to connect after multiple tries.',
+  ACCESS_FAILED: 'E2 - %s',
 };
 
 
 /**
  * @type {RandIntStream | null} The object for connecting to the server.
  */
-let randIntStream = null;
+let randIntStream: RandIntStream | null = null;
 
 
 class CsrfTokenError extends Error {
@@ -45,31 +46,29 @@ class RandIntStream {
    */
   #clientClosedSse;
   /**
-   * @type {int} Specifies the current iteration of trying to connect to
+   * @type {number} Specifies the current iteration of trying to connect to
    * the server.
    */
-  #nTry;
-  #endpoint;
-  #onConnecting;
-  #onConnFailed;
-  #onConnSuccess;
-  #onIntReceived;
-  #onError;
-  #onClientClosed;
-  #onServerClosed
+  #nTry: number;
+  #endpoint: string;
+  #onConnecting: (a: number, b: number) => void;
+  #onConnFailed: (err: any) => void;
+  #onConnSuccess: () => void;
+  #onIntReceived: (num: string) => void;
+  #onClientClosed: () => void;
+  #onError: (msg: string) => void;
 
   /**
    * Instatiates a new instance of the class.
    */
   constructor(
-      endpoint,
-      onConnecting = (n, max) => {},
-      onConnFailed = (err) => {},
+      endpoint: string,
+      onConnecting = (n: number, max: number) => {},
+      onConnFailed = (err: any) => {},
       onConnSuccess = () => {},
-      onIntReceived = (event) => {},
-      onError = (event) => {},
+      onIntReceived = (num: string) => {},
       onClientClosed = () => {},
-      onServerClosed = () => {},
+      onError = () => {},
     ) {
     this.#eventSource = null;
     this.#clientClosedSse = false;
@@ -79,9 +78,8 @@ class RandIntStream {
     this.#onConnFailed = onConnFailed;
     this.#onConnSuccess = onConnSuccess;
     this.#onIntReceived = onIntReceived;
-    this.#onError = onError;
     this.#onClientClosed = onClientClosed;
-    this.#onServerClosed = onServerClosed;
+    this.#onError = onError;
   }
 
   /**
@@ -92,6 +90,7 @@ class RandIntStream {
     // Making the request...
     try {
       this.#nTry = 1;
+      this.#clientClosedSse = false;
       this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
       //
       this.#eventSource = new EventSource(this.#endpoint);
@@ -104,22 +103,24 @@ class RandIntStream {
   }
 
   /**
-   * 
+   * Closes connection to the endpoint by sending the `req` AJAX request.
    * @param {Request} req 
+   * @returns {void}
    */
-  close (req) {
+  close (req: Request): void {
     //
-    fetch(stopStreamReq)
+    this.#clientClosedSse = true;
+    fetch(req)
       .then(response => {
         //
         if (!response.ok) {
           //
           return response.json().then(
-            data => new Error(httpToStr(response.status, data.reason)))
+            data => new Error(this.#httpToStr(response.status, data.reason)))
         }
         //
-        updatePageStopped();
-        randIntStream.close();
+        //this.#onClientClosed();
+        //this.#eventSource.close();
       })
       .catch(err => {
         //
@@ -133,16 +134,18 @@ class RandIntStream {
   /**
    * 
    * @param {Event} event 
+   * @returns {void}
    */
-  #onOpen(event) {
+  #onOpen(event: Event): void {
     this.#onConnSuccess();
   }
 
 
   /**
    * @param {MessageEvent} event 
+   * @returns {void}
    */
-  #onMsgReceived(event) {
+  #onMsgReceived(event: MessageEvent): void {
     this.#onIntReceived(event.data);
   }
 
@@ -151,7 +154,7 @@ class RandIntStream {
    * 
    * @param {Event} event 
    */
-  #onErrOccurred(event) {
+  #onErrOccurred(event: Event): void {
     if (this.#eventSource.readyState === EventSource.CLOSED) {
       if (this.#clientClosedSse) {
         // onClientClosed...
@@ -159,20 +162,26 @@ class RandIntStream {
       }
       else {
         // onServerClosed...
-        this.#onServerClosed();
+        this.#onError('maybe server closed connection');
       }
       this.#nTry = 0;
       this.#eventSource.close();
     }
-    else if (randIntStream.readyState === EventSource.CONNECTING) {
+    else if (this.#eventSource.readyState === EventSource.CONNECTING) {
       // onConnectionTries...
-      if (nConnectionTry >= RandIntStream.MAX_TRIES) {
+      if (this.#nTry >= RandIntStream.MAX_TRIES) {
         this.#onConnFailed(event);
       } else {
-        nConnectionTry++;
+        this.#nTry++;
         this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
       }
     }
+  }
+
+  #httpToStr(code: number, msg: string): string {
+    //
+    const HTTP_MSG = 'HTTP %s %s';
+    return HTTP_MSG.replace('%s', code.toString()).replace('%s', msg);
   }
 }
 
@@ -182,7 +191,12 @@ document.addEventListener('DOMContentLoaded', onDomLoaded);
 
 function onDomLoaded() {
   // Adding click handler for `start-stop` button...
-  document.getElementById('start-stop').addEventListener(
+  let startStopBtn = document.getElementById('start-stop');
+  if (!startStopBtn) {
+    showElemAccessErr('start-stop');
+    return;
+  }
+  startStopBtn.addEventListener(
     'click',
     onStartStopClicked
   );
@@ -190,15 +204,19 @@ function onDomLoaded() {
 
 
 function onStartStopClicked() {
-  const curState = document.getElementById('start-stop').textContent.trim();
-  if (curState === START) {
+  const currState = document.getElementById('start-stop')?.textContent?.trim();
+  if (currState === undefined) {
+    showElemAccessErr('start-stop');
+    return;
+  }
+  if (currState === STRS.START) {
     // Requesting the server to start the stream of integers...
     requestStreamStart();
-  } else if (curState === STOP) {
+  } else if (currState === STRS.STOP) {
     // Requesting the server to stop the stream of integers...
     requestStreamStop()
   } else {
-    console.log(`expected '${START}' or '${STOP}' but got ${curState}`);
+    console.log(`expected '${STRS.START}' or '${STRS.STOP}' but got ${currState}`);
   }
 }
 
@@ -207,36 +225,46 @@ function onStartStopClicked() {
  * Requests the server to start streaming of random data.
  * ### Exceptions
  * * `CsrfTokenError`: fails to read CSRF token
- * @returns {undefined}
+ * @returns {void}
  */
-function requestStreamStart() {
+function requestStreamStart(): void {
+  let msg: string;
   // Checking interval...
-  lowerInt = document.getElementById('start-int').value;
-  if (lowerInt === '') {
-    showAlert(LOWER_INT_MISSING);
+  // @ts-ignore
+  let lowerInt = document.getElementById('start-int')?.value;
+  if (lowerInt === undefined) {
+    showElemAccessErr('start-int');
     return;
   }
-  upperInt = document.getElementById('end-int').value;
+  if (lowerInt === '') {
+    showAlert(STRS.LOWER_INT_MISSING);
+    return;
+  }
+  // @ts-ignore
+  let upperInt = document.getElementById('end-int')?.value;
+  if (upperInt === undefined) {
+    showElemAccessErr('end-int');
+    return;
+  }
   if (upperInt === '') {
-    showAlert(UPPER_INT_MISSING);
+    showAlert(STRS.UPPER_INT_MISSING);
     return;
   }
   if (parseInt(lowerInt) >= parseInt(upperInt)) {
-    showAlert(BAD_INTERVAL);
+    showAlert(STRS.BAD_INTERVAL);
     return;
   }
   // Making the request to start the stream of integers...
-    clearRandData();
-    const ENDPOINT = `/challenges/random-ints?lower-int=${lowerInt}&upper-int=${upperInt}`;
-    randIntStream = new RandIntStream(
-      ENDPOINT,
-      updatePageConnecting,
-      updatePageConnFailed,
-      updatePageConnSuccess,
-      updatePageIntReceived,
-      onErrOccurred,
-      updatePageClientClosed,
-      updatePageServerClosed,);
+  clearRandData();
+  const ENDPOINT = `/challenges/random-ints?lower-number=${lowerInt}&upper-number=${upperInt}`;
+  randIntStream = new RandIntStream(
+    ENDPOINT,
+    updatePageConnecting,
+    updatePageConnFailed,
+    updatePageConnSuccess,
+    updatePageIntReceived,
+    updatePageClientClosed,
+    updatePageErrOccurred,);
 }
 
 
@@ -251,7 +279,7 @@ async function requestStreamStop() {
   }
   const csrfToken = getCsrfToken();
   if (csrfToken === null) {
-    showError(CSRF_FAILURE);
+    showError(STRS.CSRF_FAILURE);
     return;
   }
   let stopStreamReq = new Request(
@@ -267,51 +295,18 @@ async function requestStreamStop() {
   );
   // Requesting the server to stop the stream of random integers...
   updatePageStoppingBtn();
+  // @ts-ignore
   randIntStream.close(stopStreamReq);
-  clientClosedSse = true;
 }
 
 
 /**
  * Updates the page so user can see the newly-arrived integer.
  * @param {string} data The data (integer) received from the server.
+ * @returns {void}
  */
-function updatePageIntReceived(data) {
+function updatePageIntReceived(data: string): void {
   addRandInt(data);
-}
-
-
-/**
- * Triggered upon connection issues or server errors of `megacodist.com`
- * random data stream endpoint.
- * @param {MessageEvent} event 
- */
-function onErrOccurred(event) {
-  if (randIntStream.readyState === EventSource.CLOSED) {
-    if (clientClosedSse) {
-      // onClientClosed...
-      updatePageStartBtn();
-      randIntStream.close();
-      nConnectionTry = 0;
-    }
-    else {
-      // onServerClosed...
-      randIntStream.close();
-      errMsg = UNKNOWN_ERR.replace('%s', event.data);
-      showError(errMsg);
-      updatePageStartBtn();
-    }
-  }
-  else if (randIntStream.readyState === EventSource.CONNECTING) {
-    // onConnectionTries...
-    if (nConnectionTry >= MAX_RECONN_TRY) {
-      showError(CONN_FAILED);
-      updatePageStartBtn()
-    } else {
-      nConnectionTry++;
-      updatePageConnecting();
-    }
-  }
 }
 
 
@@ -320,19 +315,32 @@ function onErrOccurred(event) {
  */
 function updatePageConnSuccess() {
   const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = STOP;
+  if (startStopBtn === null) {
+    showElemAccessErr('start-stop');
+    return;
+  }
+  startStopBtn.textContent = STRS.STOP;
+  // @ts-ignore
   startStopBtn.disabled = false;
 }
 
 
 /**
- * Updates the page so that the user can feel the connection is establishing.
- * @param {int} n 
- * @param {int} max 
+ * Updates the page so that the user can understand that the connection is
+ * establishing.
+ * @param {number} n 
+ * @param {number} max 
+ * @returns {void}
  */
-function updatePageConnecting(n, max) {
+function updatePageConnecting(n: number, max: number): void {
   const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = CONNECTING.replace('%s', n).replace('%s', max);
+  if (startStopBtn === null) {
+    showElemAccessErr('start-stop');
+    return;
+  }
+  startStopBtn.textContent = STRS.CONNECTING.replace('%s', n.toString())
+    .replace('%s', max.toString());
+  // @ts-ignore
   startStopBtn.disabled = true;
 }
 
@@ -343,7 +351,7 @@ function updatePageConnecting(n, max) {
  * @param {*} err 
  */
 function updatePageConnFailed(err) {
-  showError(UNKNOWN_ERR.replace('%s', err));
+  showError(STRS.UNKNOWN_ERR.replace('%s', err));
   updatePageStartBtn();
 }
 
@@ -354,31 +362,41 @@ function updatePageClientClosed() {
 }
 
 
-function updatePageServerlosed() {
+function updatePageErrOccurred(msg: string): void {
   //
-  showError(SERVER_CLOSED);
+  showError(msg);
   updatePageStartBtn();
 }
 
 
 /**
  * Updates the page so that start-stop button becomes `Start`.
- * @returns {undefined}
+ * @returns {void}
  */
-function updatePageStartBtn() {
+function updatePageStartBtn(): void {
   const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = START;
+  if (startStopBtn === null) {
+    showElemAccessErr('start-stop');
+    return;
+  }
+  startStopBtn.textContent = STRS.START;
+  // @ts-ignore
   startStopBtn.disabled = false;
 }
 
 
 /**
  * Updates the page so that the start-stop button shows stopping.
- * @returns {undefined}
+ * @returns {void}
  */
-function updatePageStoppingBtn() {
+function updatePageStoppingBtn(): void {
   const startStopBtn = document.getElementById('start-stop');
-  startStopBtn.textContent = STOPPING;
+  if (startStopBtn === null) {
+    showElemAccessErr('start-stop');
+    return;
+  }
+  startStopBtn.textContent = STRS.STOPPING;
+  // @ts-ignore
   startStopBtn.disabled = true;
 }
 
@@ -386,30 +404,30 @@ function updatePageStoppingBtn() {
 /**
  * Accepts an HTTP status code and a message to format the user-friendly
  * message.
- * @param {int} code The HTTP status code
+ * @param {number} code The HTTP status code
  * @param {string} msg The message related to the status code or returned
  * by the server.
  * @returns {string}
  */
-function httpToStr(code, msg) {
-  //
-  const HTTP_MSG = 'HTTP %s\n%s';
-  return HTTP_MSG.replace('%s', code).replace('%s', msg)
-}
 
 
 /**
  * Adds the provided integer, of type `string`, to the random integers `div`
  * element.
- * @param {string} data 
+ * @param {string} num 
+ * @returns {void}
  */
-function addRandInt(data) {
+function addRandInt(num: string): void {
   // Creating new element for received data...
   const newData = document.createElement('div');
-  newData.textContent = data;
-  newData.className = 'rand-int'
+  newData.textContent = num;
+  newData.className = 'rand-int';
   // Adding to the DOM...
   const randDataGrid = document.getElementById('rand-ints-grid');
+  if (randDataGrid === null) {
+    showElemAccessErr('rand-ints-grid');
+    return;
+  }
   randDataGrid.prepend(newData);
 }
 
@@ -419,8 +437,12 @@ function addRandInt(data) {
  */
 function clearRandData() {
   //
-  const randDataDiv = document.getElementById('rand-ints-grid');
-  randDataDiv.innerHTML = '';
+  const randDataGrid = document.getElementById('rand-ints-grid');
+  if (randDataGrid === null) {
+    showElemAccessErr('rand-ints-grid');
+    return;
+  }
+  randDataGrid.innerHTML = '';
 }
 
 
@@ -429,7 +451,7 @@ function clearRandData() {
  * @returns {string|null}
  */
 function getCsrfToken() {
-  let csrfToken = null;
+  let csrfToken: string | null = null;
   const keyValues = document.cookie.split(';')
   for (let i =0; i < keyValues.length; i++) {
     const keyValue = keyValues[i].trim()
@@ -448,17 +470,33 @@ function getCsrfToken() {
 
 
 /**
+ * Shows and logs that the sprcified element was not found.
+ * @param id The `id` or name of the element.
+ */
+function showElemAccessErr(id: string): void {
+  //
+  let msg = STRS.ACCESS_FAILED.replace('%s', id);
+  showError(msg);
+}
+
+
+/**
  * Shows the error to the user and logs it into the browser.
  * @param {string} message - The error message to be shown.
- * @returns {undefined}
+ * @returns {void}
  */
-function showError(message) {
+function showError(message: string): void {
   console.error(message);
   showAlert(message, 'danger');
 }
 
 
 function showAlert(message, type = 'danger') {
+  let alertContainer = document.getElementById('alert-container');
+  if (alertContainer === null) {
+    showElemAccessErr('alert-container');
+    return;
+  }
   // Create the alert HTML
   const alertHTML = `
     <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
@@ -466,11 +504,11 @@ function showAlert(message, type = 'danger') {
       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>`;
   // Append the alert to the body (or a container)
-  document.getElementById('alert-container').innerHTML = alertHTML;
+  alertContainer.innerHTML = alertHTML;
   // Optionally remove the alert after 5 seconds
   setTimeout(
     () => {
-      alertBox = document.querySelector('.custom-alert');
+      let alertBox = document.querySelector('.custom-alert');
       if (alertBox) {
         alertBox.remove();
       }
