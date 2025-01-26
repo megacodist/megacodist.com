@@ -41,45 +41,42 @@ class RandIntStream {
    */
   #eventSource;
   /**
-   * @type {boolean} Specifies whether the client asked the closure of the
+   * @type {boolean} Specifies whether the client asked to close of the
    * integer stream.
    */
-  #clientClosedSse;
+  #clientClosing;
   /**
    * @type {number} Specifies the current iteration of trying to connect to
    * the server.
    */
   #nTry: number;
   #endpoint: string;
-  #onConnecting: (a: number, b: number) => void;
-  #onConnFailed: (err: any) => void;
-  #onConnSuccess: () => void;
   #onIntReceived: (num: string) => void;
-  #onClientClosed: () => void;
-  #onError: (msg: string) => void;
+  #onConnecting: (n: number, max: number) => void;
+  #onConnSuccess: () => void;
+  #onConnClosed: () => void;
+  #onErrOccurred: (msg: string) => void;
 
   /**
    * Instatiates a new instance of the class.
    */
   constructor(
       endpoint: string,
-      onConnecting = (n: number, max: number) => {},
-      onConnFailed = (err: any) => {},
-      onConnSuccess = () => {},
       onIntReceived = (num: string) => {},
-      onClientClosed = () => {},
-      onError = () => {},
+      onConnecting = (n: number, max: number) => {},
+      onConnSuccess = () => {},
+      onConnClosed = () => {},
+      onErrOccurred = (msg: string) => {},
     ) {
     this.#eventSource = null;
-    this.#clientClosedSse = false;
+    this.#clientClosing = false;
     this.#nTry = 0;
     this.#endpoint = endpoint;
-    this.#onConnecting = onConnecting;
-    this.#onConnFailed = onConnFailed;
-    this.#onConnSuccess = onConnSuccess;
     this.#onIntReceived = onIntReceived;
-    this.#onClientClosed = onClientClosed;
-    this.#onError = onError;
+    this.#onConnecting = onConnecting;
+    this.#onConnSuccess = onConnSuccess;
+    this.#onConnClosed = onConnClosed;
+    this.#onErrOccurred = onErrOccurred;
   }
 
   /**
@@ -90,15 +87,15 @@ class RandIntStream {
     // Making the request...
     try {
       this.#nTry = 1;
-      this.#clientClosedSse = false;
+      this.#clientClosing = false;
       this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
       //
       this.#eventSource = new EventSource(this.#endpoint);
-      this.#eventSource.onmessage = this.#onMsgReceived.bind(this);
-      this.#eventSource.onerror = this.#onErrOccurred.bind(this);
-      this.#eventSource.onopen = this.#onOpen.bind(this);
+      this.#eventSource.onmessage = this.#evsrcOnMsg.bind(this);
+      this.#eventSource.onerror = this.#evsrcOnErr.bind(this);
+      this.#eventSource.onopen = this.#evsrcOnOpen.bind(this);
     } catch(err) {
-      this.#onConnFailed(err);
+      this.#onErrOccurred(err.toString());
     }
   }
 
@@ -109,7 +106,7 @@ class RandIntStream {
    */
   close (req: Request): void {
     //
-    this.#clientClosedSse = true;
+    this.#clientClosing = true;
     fetch(req)
       .then(response => {
         //
@@ -119,14 +116,13 @@ class RandIntStream {
             data => new Error(this.#httpToStr(response.status, data.reason)))
         }
         //
-        //this.#onClientClosed();
-        //this.#eventSource.close();
+        this.#eventSource.close();
+        this.#onConnClosed();
       })
       .catch(err => {
         //
-        showError(UNKNOWN_ERR.replace('%s', err));
-        updatePageStarted();
-        clientClosedSse = false;
+        this.#onErrOccurred(err.toString())
+        this.#clientClosing = false;
       })
   }
 
@@ -136,7 +132,7 @@ class RandIntStream {
    * @param {Event} event 
    * @returns {void}
    */
-  #onOpen(event: Event): void {
+  #evsrcOnOpen(event: Event): void {
     this.#onConnSuccess();
   }
 
@@ -145,7 +141,7 @@ class RandIntStream {
    * @param {MessageEvent} event 
    * @returns {void}
    */
-  #onMsgReceived(event: MessageEvent): void {
+  #evsrcOnMsg(event: MessageEvent): void {
     this.#onIntReceived(event.data);
   }
 
@@ -154,34 +150,50 @@ class RandIntStream {
    * 
    * @param {Event} event 
    */
-  #onErrOccurred(event: Event): void {
+  #evsrcOnErr(event: Event): void {
     if (this.#eventSource.readyState === EventSource.CLOSED) {
-      if (this.#clientClosedSse) {
-        // onClientClosed...
-        this.#onClientClosed();
+      if (this.#clientClosing) {
+        // The client successfully closed the connection...
+        this.#onConnClosed();
       }
       else {
-        // onServerClosed...
-        this.#onError('maybe server closed connection');
+        //  The connection was closed unexpectedly (e.g., network issues,
+        // server issues, or server closing the connection)...
+        this.#onErrOccurred('Something closed the connection');
       }
       this.#nTry = 0;
       this.#eventSource.close();
     }
     else if (this.#eventSource.readyState === EventSource.CONNECTING) {
-      // onConnectionTries...
+      // The connection try failed...
       if (this.#nTry >= RandIntStream.MAX_TRIES) {
-        this.#onConnFailed(event);
+        this.#onErrOccurred('failed to connect to the server');
       } else {
         this.#nTry++;
         this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
       }
     }
+    else if (this.#eventSource.readyState == EventSource.OPEN) {
+      // A rare condition happened...
+    }
   }
 
+  /**
+   * Accepts an HTTP status code and a message to format the user-friendly
+   * message.
+   * @param {number} code The HTTP status code
+   * @param {string} msg The message related to the status code or returned
+   * by the server.
+   * @returns {string}
+   */
   #httpToStr(code: number, msg: string): string {
     //
     const HTTP_MSG = 'HTTP %s %s';
     return HTTP_MSG.replace('%s', code.toString()).replace('%s', msg);
+  }
+
+  toString(): string {
+    return `<RandIntStream object endpoint=${this.#endpoint}>`
   }
 }
 
@@ -259,12 +271,12 @@ function requestStreamStart(): void {
   const ENDPOINT = `/challenges/random-ints?lower-number=${lowerInt}&upper-number=${upperInt}`;
   randIntStream = new RandIntStream(
     ENDPOINT,
-    updatePageConnecting,
-    updatePageConnFailed,
-    updatePageConnSuccess,
     updatePageIntReceived,
-    updatePageClientClosed,
+    updatePageConnecting,
+    updatePageConnSuccess,
+    updatePageConnClosed,
     updatePageErrOccurred,);
+  randIntStream.start();
 }
 
 
@@ -348,15 +360,15 @@ function updatePageConnecting(n: number, max: number): void {
 /**
  * Updates the page so user can understand connecting to the server failed
  * with a brief reason.
- * @param {*} err 
+ * @param {string} err 
  */
-function updatePageConnFailed(err) {
+function updatePageConnFailed(err: string) {
   showError(STRS.UNKNOWN_ERR.replace('%s', err));
   updatePageStartBtn();
 }
 
 
-function updatePageClientClosed() {
+function updatePageConnClosed() {
   //
   updatePageStartBtn();
 }
@@ -399,16 +411,6 @@ function updatePageStoppingBtn(): void {
   // @ts-ignore
   startStopBtn.disabled = true;
 }
-
-
-/**
- * Accepts an HTTP status code and a message to format the user-friendly
- * message.
- * @param {number} code The HTTP status code
- * @param {string} msg The message related to the status code or returned
- * by the server.
- * @returns {string}
- */
 
 
 /**

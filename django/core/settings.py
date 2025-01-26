@@ -98,14 +98,14 @@ LOGGING = {
         # Defining the Django logger...
         'django': {
             'handlers': ['django_file',],
-            'level': 'DEBUG',
-            'propagate': True,
+            'level': 'INFO',
+            'propagate': False,
         },
         # Defining Megacodist-specific logger...
         'megacodist': {
             'handlers': ['megacodist_file',],
             'level': 'DEBUG',
-            'propagate': True,
+            'propagate': False,
         },
     },
 }
