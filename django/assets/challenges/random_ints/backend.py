@@ -30,9 +30,8 @@ async def play(request: HttpRequest) -> HttpResponse:
     """This view function does the following:
     1. Loads the page itself: Using a GET method with no query string.
     """
-    _logger.debug('random data stream request is received')
     if request.method == 'GET':
-        match ('lower-int' in request.GET, 'upper-int' in request.GET,):
+        match ('lower-int' in request.GET, 'upper-int' in request.GET):
             case (True, True,):
                 return await _startStreamingRandInts(
                     request,

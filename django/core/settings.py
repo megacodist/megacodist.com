@@ -49,19 +49,19 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'general_format': {
+        'root_formatter': {
             'format': (
-                '{levelname}: {asctime} {module} {process:d} {thread:d}\n'
+                'ROOT{levelname}: {asctime} {module} {process:d} {thread:d}\n'
                 '{message}\n'),
             'style': '{',
         },
-        'django_format': {
+        'django_formatter': {
             'format': (
                 'Django {levelname}: {asctime} {module} {process:d} {thread:d}\n'
                 '{message}\n'),
             'style': '{',
         },
-        'megacodist_format': {
+        'megacodist_formatter': {
             'format': (
                 'Megacodist {levelname}: {asctime} {module} {process:d} '
                 '{thread:d}\n{message}\n'),
@@ -69,29 +69,29 @@ LOGGING = {
         },
     },
     'handlers': {
-        'general_file': {
+        'root_file': {
             'class': 'logging.FileHandler',
             'filename': DJANGO_DIR / 'log.log',
             'encoding': 'utf-8',
-            'formatter': 'general_format',
+            'formatter': 'root_formatter',
         },
         'django_file': {
             'class': 'logging.FileHandler',
             'filename': DJANGO_DIR / 'log.log',
             'encoding': 'utf-8',
-            'formatter': 'django_format',
+            'formatter': 'django_formatter',
         },
         'megacodist_file': {
             'class': 'logging.FileHandler',
             'filename': DJANGO_DIR / 'log.log',
             'encoding': 'utf-8',
-            'formatter': 'megacodist_format',
+            'formatter': 'megacodist_formatter',
         },
     },
     'loggers': {
         # Defining the root logger...
         '': {
-            'handlers': ['general_file',],
+            'handlers': ['root_file',],
             'level': 'DEBUG',
             'propagate': True,
         },

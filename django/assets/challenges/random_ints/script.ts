@@ -26,7 +26,7 @@ let randIntStream: RandIntStream | null = null;
 
 
 class CsrfTokenError extends Error {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = 'CsrfTokenError';
   }
@@ -39,18 +39,18 @@ class RandIntStream {
    * @type {EventSource} The underlying `EventSource` object for getting
    * incoming stream.
    */
-  #eventSource;
+  // @ts-ignore
+  #eventSource: EventSource;
   /**
    * @type {boolean} Specifies whether the client asked to close of the
    * integer stream.
    */
-  #clientClosing;
+  #clientClosing: boolean;
   /**
    * @type {number} Specifies the current iteration of trying to connect to
    * the server.
    */
   #nTry: number;
-  #endpoint: string;
   #onIntReceived: (num: string) => void;
   #onConnecting: (n: number, max: number) => void;
   #onConnSuccess: () => void;
@@ -58,7 +58,7 @@ class RandIntStream {
   #onErrOccurred: (msg: string) => void;
 
   /**
-   * Instatiates a new instance of the class.
+   * Instatiates a new instance of the class and starts connecting.
    */
   constructor(
       endpoint: string,
@@ -68,33 +68,23 @@ class RandIntStream {
       onConnClosed = () => {},
       onErrOccurred = (msg: string) => {},
     ) {
-    this.#eventSource = null;
-    this.#clientClosing = false;
-    this.#nTry = 0;
-    this.#endpoint = endpoint;
+    // Setting callbacks...
     this.#onIntReceived = onIntReceived;
     this.#onConnecting = onConnecting;
     this.#onConnSuccess = onConnSuccess;
     this.#onConnClosed = onConnClosed;
     this.#onErrOccurred = onErrOccurred;
-  }
-
-  /**
-   * Tries to establish a connection with the endpoint.
-   * @param {string} endpoint 
-   */
-  start() {
-    // Making the request...
+    // Connecting...
+    this.#clientClosing = false;
+    this.#nTry = 1;
+    this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
     try {
-      this.#nTry = 1;
-      this.#clientClosing = false;
-      this.#onConnecting(this.#nTry, RandIntStream.MAX_TRIES);
-      //
-      this.#eventSource = new EventSource(this.#endpoint);
+      this.#eventSource = new EventSource(endpoint);
       this.#eventSource.onmessage = this.#evsrcOnMsg.bind(this);
       this.#eventSource.onerror = this.#evsrcOnErr.bind(this);
       this.#eventSource.onopen = this.#evsrcOnOpen.bind(this);
-    } catch(err) {
+    } catch(err: unknown) {
+      // @ts-ignore
       this.#onErrOccurred(err.toString());
     }
   }
@@ -193,7 +183,7 @@ class RandIntStream {
   }
 
   toString(): string {
-    return `<RandIntStream object endpoint=${this.#endpoint}>`
+    return `<RandIntStream object endpoint=${this.#eventSource.url}>`
   }
 }
 
@@ -268,7 +258,7 @@ function requestStreamStart(): void {
   }
   // Making the request to start the stream of integers...
   clearRandData();
-  const ENDPOINT = `/challenges/random-ints?lower-number=${lowerInt}&upper-number=${upperInt}`;
+  const ENDPOINT = `/challenges/random-ints?lower-int=${lowerInt}&upper-int=${upperInt}`;
   randIntStream = new RandIntStream(
     ENDPOINT,
     updatePageIntReceived,
@@ -276,7 +266,6 @@ function requestStreamStart(): void {
     updatePageConnSuccess,
     updatePageConnClosed,
     updatePageErrOccurred,);
-  randIntStream.start();
 }
 
 
@@ -493,7 +482,7 @@ function showError(message: string): void {
 }
 
 
-function showAlert(message, type = 'danger') {
+function showAlert(message: string, type = 'danger') {
   let alertContainer = document.getElementById('alert-container');
   if (alertContainer === null) {
     showElemAccessErr('alert-container');

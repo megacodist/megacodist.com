@@ -45,3 +45,11 @@
 #start-int, #end-int {
   width: 6rem;
 }
+
+.txt-alt-1 {
+  color: blue;
+}
+
+.txt-alt-2 {
+  color: brown;
+}
