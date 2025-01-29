@@ -6,10 +6,23 @@
 	======================================================================================================================================
 */
 
+/* Default light theme */
+:root {
+	--bg-clr: rgba(202, 185, 167, 0.932);
+	--txt-clr: rgb(73, 48, 0);
+}
+
+/* Dark theme */
+[data-theme='dark'] {
+	--bg-clr: rgba(54, 50, 46, 0.932);
+	--txt-clr: rgb(224, 147, 4);
+}
+
 html {
   height: 100vh;
 }
 body {
+	/*  */
 	min-height: 100vh;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
@@ -18,7 +31,31 @@ body {
 	                        "main"
 						    "footer";
 	margin: 0;
+	/*  */
+	background-color: var(--bg-clr);
+	color: var(--txt-clr);
 }
+
+
+/* Customizing theme toggler button */
+#theme-toggler {
+	appearance: none;
+	position: fixed; /* Fixes the button's position */
+	bottom: 20px;    /* Distance from the bottom of the screen */
+	right: 20px;     /* Distance from the right of the screen */
+	cursor: pointer;
+	width: 40px;
+  	height: 40px;
+	border-radius: 20px;
+
+	background-size: cover; /* or contain, depending on your images */
+	background-repeat: no-repeat;
+	background-image: url("../img/dark-mode.png"); /* Image for the "off" state */
+}
+#theme-toggler:checked {
+	background-image: url("../img/light-mode.png"); /* Image for the "on" state */
+}
+
 
 /* Customizing anchor elements */
 a.link {
@@ -29,15 +66,17 @@ a.link {
 }
 a.link:hover {
 	color: rgb(224, 224, 0) !important;
-  cursor: pointer;
-  text-decoration-line: underline !important;
-  text-decoration-style: solid !important;
+  	cursor: pointer;
+  	text-decoration-line: underline !important;
+  	text-decoration-style: solid !important;
 }
 a.external[target="_blank"]:after {
   font-family: 'FontAwesome';
   content: " \f08e";
   size: 0.5rem;
 }
+
+
 section.notes {
   font-size: small;
 }

@@ -48,13 +48,16 @@
     {%- endblock style %}
   </style>
 </head>
-<body>
+<body data-theme="light">
   {#- Including header --------------------------------------------------------------------------------- #}
   {%- include 'header.j2' %}
 
   <main class="container">
     {% block main %}
     {% endblock main %}
+
+    {# The theme toggler #}
+    <button id="theme-toggler"></button>
   </main>
 
   {# Including footer---------------------------------------------------- -#}
