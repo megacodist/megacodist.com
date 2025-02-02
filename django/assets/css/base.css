@@ -50,10 +50,9 @@ body {
 
 	background-size: cover; /* or contain, depending on your images */
 	background-repeat: no-repeat;
-	background-image: url("../img/dark-mode.png"); /* Image for the "off" state */
-}
-#theme-toggler:checked {
-	background-image: url("../img/light-mode.png"); /* Image for the "on" state */
+	
+	/* background-image: url("../img/dark-mode.png");   Image for the "off" state */
+	/* background-image: url("../img/light-mode.png");  Image for the "on" state */
 }
 
 

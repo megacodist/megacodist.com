@@ -1,3 +1,4 @@
+"use strict";
 //
 //
 //
@@ -126,7 +127,7 @@ class RandIntStream {
                 this.#onConnClosed();
             }
             else {
-                //  The connection was closed unexpectedly (e.g., network issues,
+                //   The connection was closed unexpectedly (e.g., network issues,
                 // server issues, or server closing the connection)...
                 this.#onErrOccurred('Something closed the connection');
             }
@@ -165,8 +166,8 @@ class RandIntStream {
     }
 }
 _a = RandIntStream;
-document.addEventListener('DOMContentLoaded', onDomLoaded);
-function onDomLoaded() {
+document.addEventListener('DOMContentLoaded', base_onDomLoaded);
+function base_onDomLoaded() {
     // Adding click handler for `start-stop` button...
     let startStopBtn = document.getElementById('start-stop');
     if (!startStopBtn) {
@@ -176,7 +177,8 @@ function onDomLoaded() {
     startStopBtn.addEventListener('click', onStartStopClicked);
 }
 function onStartStopClicked() {
-    const currState = document.getElementById('start-stop')?.textContent?.trim();
+    const currState = document.getElementById('start-stop')?.textContent
+        ?.trim();
     if (currState === undefined) {
         showElemAccessErr('start-stop');
         return;
@@ -422,10 +424,10 @@ function showAlert(message, type = 'danger') {
     }
     // Create the alert HTML
     const alertHTML = `
-    <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>`;
+      <div class="alert alert-${type} alert-dismissible fade show custom-alert" role="alert">
+         ${message}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>`;
     // Append the alert to the body (or a container)
     alertContainer.innerHTML = alertHTML;
     // Optionally remove the alert after 5 seconds
@@ -437,3 +439,4 @@ function showAlert(message, type = 'danger') {
     }, 5000 // 5000 milliseconds = 5 seconds
     );
 }
+//# sourceMappingURL=script.js.map
