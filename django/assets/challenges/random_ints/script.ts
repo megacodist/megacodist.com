@@ -2,6 +2,9 @@
 //
 //
 
+import MSGS from '@utils/msgs.json';
+
+
 const STRS = {
    START: 'Start',
    STOP: 'Stop',
@@ -25,12 +28,22 @@ const STRS = {
 let randIntStream: RandIntStream | null = null;
 
 
-class CsrfTokenError extends Error {
-   constructor(message: string) {
-      super(message);
-      this.name = 'CsrfTokenError';
+// Checking browser support of private class fields...
+try {
+   class Test {
+      #privateField = 42;
    }
-}
+   // Private class fields are supported. Going on...
+ } catch (error) {
+   if (error instanceof SyntaxError) {
+      // Private class fields are not supported in the browser.
+      // Showing a message to the user to update it...
+      alert(MSGS.errors.outdatedBrowser);
+   } else {
+      // Handling unexpected errors...
+      alert(MSGS.errors.errTryLater);
+   }
+ }
 
 
 class RandIntStream {
@@ -227,8 +240,6 @@ function onStartStopClicked() {
 
 /**
  * Requests the server to start streaming of random data.
- * ### Exceptions
- * * `CsrfTokenError`: fails to read CSRF token
  * @returns {void}
  */
 function requestStreamStart(): void {
