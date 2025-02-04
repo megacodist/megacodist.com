@@ -54,5 +54,5 @@
 
 {%- block endJsFiles %}
   {{ super() }}
-  <script defer src="{{ static('challenges/random_ints/script.js') }}"></script>
+  <script defer type="module" src="{{ static('challenges/random_ints/script.js') }}"></script>
 {%- endblock endJsFiles %}

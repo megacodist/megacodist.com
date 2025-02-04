@@ -1,12 +1,6 @@
-"use strict";
 //
 //
 //
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCsrfToken = getCsrfToken;
-exports.showElemAccessErr = showElemAccessErr;
-exports.showError = showError;
-exports.showAlert = showAlert;
 const STRS = {
     ACCESS_FAILED: 'E2 - %s',
 };
@@ -14,7 +8,7 @@ const STRS = {
  * Returns CSRF token as a string or null it fails.
  * @returns {string|null}
  */
-function getCsrfToken() {
+export function getCsrfToken() {
     let csrfToken = null;
     const keyValues = document.cookie.split(';');
     for (let i = 0; i < keyValues.length; i++) {
@@ -35,7 +29,7 @@ function getCsrfToken() {
  * Shows and logs that the sprcified element was not found.
  * @param id The `id` or name of the element.
  */
-function showElemAccessErr(id) {
+export function showElemAccessErr(id) {
     //
     let msg = STRS.ACCESS_FAILED.replace('%s', id);
     showError(msg);
@@ -45,7 +39,7 @@ function showElemAccessErr(id) {
  * @param {string} message - The error message to be shown.
  * @returns {void}
  */
-function showError(message) {
+export function showError(message) {
     console.error(message);
     showAlert(message, 'danger');
 }
@@ -56,7 +50,7 @@ function showError(message) {
  * `primary`.
  * @returns {void}
  */
-function showAlert(msg, type = 'danger') {
+export function showAlert(msg, type = 'danger') {
     let alertContainer = document.getElementById('alert-container');
     if (alertContainer === null) {
         showElemAccessErr('alert-container');

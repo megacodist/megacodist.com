@@ -1,5 +1,6 @@
 
-
+# Transpilation TS to JS
+The TypeScript files (.ts) were transpiled to JavaScript files (.js) using `tsconfig.json` and `tsc --verbose --pretty --diagnostics`.
 
 
 # How to run megacodist.com
@@ -64,3 +65,5 @@ docker run -d --name celery_process \
   -v D:/Mohsen/Programming/Django/megacodist.com/utils:/django/utils/ \
   megacodist.com:2.0.4 celery -A core worker --loglevel=info
 ```
+
+

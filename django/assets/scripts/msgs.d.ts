@@ -14,5 +14,6 @@ declare module '@utils/msgs.json' {
      export interface Errors {
       outdatedBrowser: string;
       errTryLater: string;
+      privateClassFieldsErr: string;
    }
 }

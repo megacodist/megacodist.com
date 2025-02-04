@@ -1,6 +1,7 @@
 {
     "errors": {
         "outdatedBrowser": "Your browser is outdated and does not support some features of megacodist.com. Please update your browser.",
-        "errTryLater": "An unknown error occurred. Please try again later. If error persists, please contact support."
+        "errTryLater": "An unknown error occurred. Please try again later. If error persists, please contact support.",
+        "privateClassFieldsErr": "Private class fields are not supported in this browser. Please update your browser or enables them."
     }
 }
