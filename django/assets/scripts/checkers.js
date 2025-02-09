@@ -3,7 +3,7 @@
  * ECMAScript 2022 features.
  * @module checkers
  */
-import MSGS from '@utils/msgs.json';
+import MSGS from '/assets/scripts/msgs.json';
 /**
  * Returns without any problem if the browser supports private class fields,
  * otherwise informs the user about the incompatibility, logs the error, and

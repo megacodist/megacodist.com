@@ -1,7 +1,7 @@
 //
 //
 //
-import { showElemAccessErr } from '@utils/funcs';
+import { showElemAccessErr } from '/assets/scripts/funcs.js';
 (function () {
     class BadThemeError extends Error {
         constructor(message) {
