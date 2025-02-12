@@ -2,10 +2,10 @@
  *
  */
 // Checking availability of class private fields...
-import { supportsPrivateFields } from '@utils/checkers';
+import { supportsPrivateFields } from '/assets/scripts/checkers.js';
 supportsPrivateFields();
 // Importing required stuff...
-import { getCsrfToken, showAlert, showElemAccessErr, showError } from '@utils/funcs';
+import { getCsrfToken, showAlert, showElemAccessErr, showError } from '/assets/scripts/funcs.js';
 (function () {
     var _a;
     const STRS = {

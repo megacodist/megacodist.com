@@ -8,14 +8,31 @@
 
 /* Default light theme */
 :root {
+	/* Colors */
 	--bg-clr: rgba(202, 185, 167, 0.932);
-	--txt-clr: rgb(73, 48, 0);
+	--txt-clr: rgb(34, 23, 2);
+	--txt-active-clt: rgb(189, 76, 1);
+	--txt-hover-clr:  rgb(224, 224, 0);
+	--btn-clr: rgb(0, 0, 0);
+	--shadow-clr: rgba(0, 0, 0, 0.3);
+
+	/* Measurements */
+	--line-width: 2px;
 }
 
 /* Dark theme */
 [data-theme='dark'] {
+	/* Colors */
 	--bg-clr: rgba(54, 50, 46, 0.932);
 	--txt-clr: rgb(224, 147, 4);
+	--txt-active-clt: rgb(189, 76, 1);
+	--txt-hover-clr:  rgb(224, 224, 0);
+	--btn-clr: rgb(250, 213, 188);
+	--shadow-clr: rgba(0, 0, 0, 0.3);
+
+	/* Measurements */
+	--line-width: 2px;
+	--line-radius: 0.3;
 }
 
 html {
@@ -58,13 +75,13 @@ body {
 
 /* Customizing anchor elements */
 a.link {
-	color: rgb(224, 147, 4) !important;
-  text-decoration-line: underline !important;
-  text-decoration-style: dotted !important;
-  text-decoration-thickness: 12% !important;
+	color: var(--txt-clr) !important;
+	text-decoration-line: underline !important;
+	text-decoration-style: dotted !important;
+	text-decoration-thickness: 12% !important;
 }
 a.link:hover {
-	color: rgb(224, 224, 0) !important;
+	color: var(--txt-hover-clr) !important;
   	cursor: pointer;
   	text-decoration-line: underline !important;
   	text-decoration-style: solid !important;
@@ -73,6 +90,53 @@ a.external[target="_blank"]:after {
   font-family: 'FontAwesome';
   content: " \f08e";
   size: 0.5rem;
+}
+
+
+/* mm-btn */
+.mm-btn {
+	align-items: center;
+	background-clip: padding-box;
+	background-color: var(--bg-clr);
+	border: var(--line-width) solid var(--txt-clr);
+	border-radius: var(--line-radius);
+	box-shadow: var(--shadow-clr) 0 1px 3px 0;
+	box-sizing: border-box;
+	color: var(--txt-clr);
+	cursor: pointer;
+	display: inline-flex;
+	font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-size: 16px;
+	font-weight: 600;
+	justify-content: center;
+	line-height: 1.25;
+	margin: 0;
+	min-height: 3rem;
+	padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+	position: relative;
+	text-decoration: none;
+	transition: all 250ms;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	vertical-align: baseline;
+	width: auto;
+}
+
+.mm-btn:hover,
+.mm-btn:focus {
+	background-color: var(--txt-hover-clr);
+	box-shadow: var(--shadow-clr) 0 4px 12px;
+}
+
+.mm-btn:hover {
+  	transform: translateY(-1px);
+}
+
+.mm-btn:active {
+	background-color: #c85000;
+	box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
+	transform: translateY(0);
 }
 
 
