@@ -6,50 +6,40 @@
     
 <head>
   <link rel="stylesheet" href="{{ static('css/header.css') }}">
-
-  <style>
-    div.mm1-header {
-      /* Setting background image of the header */
-      background-image: url("{{ static('img/banner.png') }}");
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position: center center;
-
-      min-height: 125px;
-    }
-  </style>
 </head>
 
 {% block header %}
 <header>
-  <div class="mm1-header bg-dark">
-    <div class="container-fluid">
-    </div>
-  </div>
 
-  <nav class="navbar navbar-expand-sm bg-dark">
-    <div class="container-fluid">
+  <nav role="navigation" class="primary-navigation">
+    <ul>
       <a class="navbar-brand" href="{{ url('home-page') }}"><img src="{{ static('img/megacodist-3.png') }}" alt="Megacodist" style="width: 48px; height: auto;"></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="fa-solid fa-grip-lines" style="color: orange;"></i>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active link external" aria-current="page" href="https://medium.com/@megacodist" target="_blank">Articles</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active link" aria-current="page" href="{{ url('challenges:index-page') }}">Challenges</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active link" aria-current="page" href="{{ url('about-me') }}">About me</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active link" aria-current="page" href="{{ url('license') }}">License</a>
-          </li>
+
+      <li><a href="#">Articles &dtrif;</a>
+        <ul class="dropdown">
+          <li><a href="#">Web Development</a></li>
+          <li><a href="#">Web Design</a></li>
+          <li><a href="#">Illustration</a></li>
+          <li><a href="#">Iconography</a></li>
         </ul>
-      </div>
-    </div>
+      </li>
+
+      {# Link to `Challenges` page #}
+      <li>
+        <a class="nav-link active link" aria-current="page" href="{{ url('challenges:index-page') }}">Challenges</a>
+      </li>
+
+      {# Link to `About me` page #}
+      <li>
+        <a class="nav-link active link" aria-current="page" href="{{ url('about-me') }}">About me</a>
+      </li>
+
+      {# Link to `License` page #}
+      <li>
+        <a class="nav-link active link" aria-current="page" href="{{ url('license') }}">License</a>
+      </li>
+    </ul>
   </nav>
+
 </header>
 {%- endblock header %}

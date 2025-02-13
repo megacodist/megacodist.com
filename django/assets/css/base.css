@@ -1,45 +1,77 @@
 /*
-	======================================================================================================================================
+	=========================================================================
 	
-	This CSS file is the main casecade style sheet for the entire Megacodist web site, hence it is named after this truth (main.css).
+	This CSS file is the main Casecade Style Sheet (CSS) for the entire
+	Megacodist web site, hence it is named after this truth (main.css).
 
-	======================================================================================================================================
+	=========================================================================
 */
 
-/* Default light theme */
+/* Constant properties */
 :root {
-	/* Colors */
-	--bg-clr: rgba(202, 185, 167, 0.932);
-	--txt-clr: rgb(34, 23, 2);
-	--txt-active-clt: rgb(189, 76, 1);
-	--txt-hover-clr:  rgb(224, 224, 0);
-	--btn-clr: rgb(0, 0, 0);
-	--shadow-clr: rgba(0, 0, 0, 0.3);
-
 	/* Measurements */
-	--line-width: 2px;
+	--m3-line-small: 2px;
+	--m3-line-medium: 4px;
+	--m3-line-radius: 0.3;
+
+	/* Paddings */
+	--m3-spacing-none: 0;
+	--m3-spacing-tiny: 0.25rem;
+	--m3-spacing-small: 0.5rem;
+	--m3-spacing-medium: 1rem;
+
+	/* Font */
+	--m3-font-small: 16px;
 }
 
-/* Dark theme */
-[data-theme='dark'] {
-	/* Colors */
-	--bg-clr: rgba(54, 50, 46, 0.932);
-	--txt-clr: rgb(224, 147, 4);
-	--txt-active-clt: rgb(189, 76, 1);
-	--txt-hover-clr:  rgb(224, 224, 0);
-	--btn-clr: rgb(250, 213, 188);
-	--shadow-clr: rgba(0, 0, 0, 0.3);
+/* Light theme properties values */
+[data-theme='light'] {
+	/* Backgrounds */
+	--m3-bg-clr: rgb(202, 185, 167);
+	--m3-banner-bg-clr: rgb(0, 0, 0);
+	/* Text */
+	--m3-txt-clr: rgb(34, 23, 2);
+	/* Anchor */
+	--m3-a-link-clr: rgb(189, 76, 1);
+	--m3-a-hover-clr:  rgb(224, 224, 0);
+	/* Line */
+	--m3-line-clr: var(--m3-txt-clr);
+	/* button */
+	--m3-btn-clr: rgb(0, 0, 0);
+	/* Miscellaneous */
+	--m3-shadow-clr: rgba(0, 0, 0, 0.3);
+}
 
-	/* Measurements */
-	--line-width: 2px;
-	--line-radius: 0.3;
+/* Dark theme properties values */
+[data-theme='dark'] {
+	/* Backgrounds */
+	--m3-bg-clr: rgb(14, 32, 26);
+	--m3-banner-bg-clr: rgb(10, 22, 18);
+	/* Text */
+	--m3-txt-clr: rgb(166, 243, 214);
+	/* Anchor */
+	--m3-a-link-clr: rgb(26, 219, 145);
+	--m3-a-hover-clr:  var(--m3-txt-clr);
+	/* Line */
+	--m3-line-clr: var(--m3-txt-clr);
+	/* button */
+	--m3-btn-clr: rgb(250, 213, 188);
+	/* Miscellaneous */
+	--m3-shadow-clr: rgba(0, 0, 0, 0.3);
 }
 
 html {
   height: 100vh;
 }
+
 body {
-	/*  */
+	/* Font families */
+	font-family: 'Karla', Arial, Helvetica, "Helvetica Neue", sans-serif;
+	font-size: var(--m3-font-small);
+	font-weight: 300;
+	line-height: 1.6; /* Good for readability with sans-serif fonts */
+
+	/* Laying out the page */
 	min-height: 100vh;
 	display: grid;
 	grid-template-rows: auto 1fr auto;
@@ -48,9 +80,24 @@ body {
 	                        "main"
 						    "footer";
 	margin: 0;
+
 	/*  */
-	background-color: var(--bg-clr);
-	color: var(--txt-clr);
+	background-color: var(--m3-bg-clr);
+	color: var(--m3-txt-clr);
+}
+
+main {
+	grid-area: main;
+	padding: var(--m3-spacing-medium);
+}
+
+footer {
+	grid-area: footer;
+	background-color: var(--m3-banner-bg-clr);
+	color: var(--m3-txt-clr);
+	text-align: center;
+	border-top: var(--m3-line-medium) solid var(--m3-a-link-clr);
+	padding: var(--m3-spacing-medium);
 }
 
 
@@ -73,46 +120,56 @@ body {
 }
 
 
-/* Customizing anchor elements */
-a.link {
-	color: var(--txt-clr) !important;
+/* Customizing general anchor elements */
+/* The typical link */
+a:link {
+	color: var(--m3-a-link-clr) !important;
 	text-decoration-line: underline !important;
 	text-decoration-style: dotted !important;
 	text-decoration-thickness: 12% !important;
 }
-a.link:hover {
-	color: var(--txt-hover-clr) !important;
+/* When mouse hovers over it */
+a:hover {
+	color: var(--m3-a-hover-clr) !important;
   	cursor: pointer;
   	text-decoration-line: underline !important;
   	text-decoration-style: solid !important;
 }
+/* A link refers outside of megacodist.com */
 a.external[target="_blank"]:after {
   font-family: 'FontAwesome';
   content: " \f08e";
   size: 0.5rem;
 }
+/*
+// A link that is being clicked
+a:active {
+}
+// A visited link
+a:visited {
+}
+// A link that is being focused by keyboard navigation
+a:focus {
+}
+*/
 
 
-/* mm-btn */
-.mm-btn {
+/* m3-btn */
+button.m3-btn {
 	align-items: center;
 	background-clip: padding-box;
-	background-color: var(--bg-clr);
-	border: var(--line-width) solid var(--txt-clr);
-	border-radius: var(--line-radius);
-	box-shadow: var(--shadow-clr) 0 1px 3px 0;
+	background-color: var(--m3-bg-clr);
+	border: var(--m3-line-small) solid var(--m3-line-clr);
+	border-radius: var(--m3-line-radius);
+	box-shadow: var(--m3-shadow-clr) 0 1px 3px 0;
 	box-sizing: border-box;
-	color: var(--txt-clr);
+	color: var(--m3-txt-clr);
 	cursor: pointer;
 	display: inline-flex;
-	font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
-	font-size: 16px;
-	font-weight: 600;
 	justify-content: center;
 	line-height: 1.25;
-	margin: 0;
-	min-height: 3rem;
-	padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+	margin: var(--m3-spacing-tiny);
+	padding: var(--m3-spacing-tiny);
 	position: relative;
 	text-decoration: none;
 	transition: all 250ms;
@@ -123,17 +180,17 @@ a.external[target="_blank"]:after {
 	width: auto;
 }
 
-.mm-btn:hover,
-.mm-btn:focus {
-	background-color: var(--txt-hover-clr);
-	box-shadow: var(--shadow-clr) 0 4px 12px;
+button.m3-btn:hover,
+button.m3-btn:focus {
+	background-color: var(--m3-a-hover-clr);
+	box-shadow: var(--m3-shadow-clr) 0 4px 12px;
 }
 
-.mm-btn:hover {
+button.m3-btn:hover {
   	transform: translateY(-1px);
 }
 
-.mm-btn:active {
+button.m3-btn:active {
 	background-color: #c85000;
 	box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
 	transform: translateY(0);
