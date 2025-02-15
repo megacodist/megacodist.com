@@ -22,6 +22,13 @@
 
 	/* Font */
 	--m3-font-small: 16px;
+
+	/* Graphics (images, icons, ...) */
+	--m3-grphc-tiny: 1rem;
+	--m3-grphc-small: 2rem;
+	--m3-grphc-medium: 3rem;
+	--m3-grphc-large: 4rem;
+	--m3-grphc-xlarge: 5rem;
 }
 
 /* Light theme properties values */
@@ -117,6 +124,14 @@ footer {
 	
 	/* background-image: url("../img/dark-mode.png");   Image for the "off" state */
 	/* background-image: url("../img/light-mode.png");  Image for the "on" state */
+}
+
+/* Customizing icons */
+img.icon {
+	width: 1em;
+	height: 1em;
+	stroke: var(--m3-txt-clr);
+	stroke-width: var(--m3-line-small);
 }
 
 

@@ -8,38 +8,41 @@
   <link rel="stylesheet" href="{{ static('css/header.css') }}">
 </head>
 
-{% block header %}
 <header>
+  <nav class="navbar">
+    <div class="navbar-left beating-transition">
+      <a href="#" class="logo">{% include 'svg/megacodist.svg' %}</a>
+    </div>
 
-  <nav role="navigation" class="primary-navigation">
-    <ul>
-      <a class="navbar-brand" href="{{ url('home-page') }}"><img src="{{ static('img/megacodist-3.png') }}" alt="Megacodist" style="width: 48px; height: auto;"></a>
+    <div class="navbar-middle">
+        <a href="https://medium.com/@megacodist" target="_blank" class="beating-transition">{% include 'svg/articles.svg' %}</a>
+        <a href="{{ url('challenges:index-page') }}" target="_blank" class="beating-transition">{% include 'svg/challenges.svg' %}</a>
+        <a href="#" class="beating-transition">#3</a>
+        <a href="{{ url('license') }}" target="_blank" class="beating-transition">{% include 'svg/challenges.svg' %}</a>
+    </div>
 
-      <li><a href="#">Articles &dtrif;</a>
-        <ul class="dropdown">
-          <li><a href="#">Web Development</a></li>
-          <li><a href="#">Web Design</a></li>
-          <li><a href="#">Illustration</a></li>
-          <li><a href="#">Iconography</a></li>
-        </ul>
-      </li>
+    <div class="navbar-right">
+      <div class="search-bar">
+        <input type="text" placeholder="Search...">
+        <button type="submit">Search</button>
+      </div>
+    </div>
 
-      {# Link to `Challenges` page #}
-      <li>
-        <a class="nav-link active link" aria-current="page" href="{{ url('challenges:index-page') }}">Challenges</a>
-      </li>
+    <!-- Hamburger Menu (for small screens) -->
+    <button class="hamburger-menu" id="hamburger-icon">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </button>
 
-      {# Link to `About me` page #}
-      <li>
-        <a class="nav-link active link" aria-current="page" href="{{ url('about-me') }}">About me</a>
-      </li>
-
-      {# Link to `License` page #}
-      <li>
-        <a class="nav-link active link" aria-current="page" href="{{ url('license') }}">License</a>
-      </li>
-    </ul>
+    <!-- Collapsed Menu (hidden by default on small screens) -->
+    <div class="collapsed-menu" id="collapsed-nav">
+      <ul class="collapsed-nav-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
   </nav>
-
 </header>
-{%- endblock header %}
