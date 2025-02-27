@@ -26,7 +26,7 @@ import {showElemAccessErr} from '@utils/funcs';
       let themeToggler = document.getElementById(
          'theme-toggler') as HTMLButtonElement | null;
       if (!themeToggler) {
-         showElemAccessErr('start-stop');
+         showElemAccessErr('theme-toggler');
          return;
       }
       themeToggler.addEventListener(
@@ -62,21 +62,31 @@ import {showElemAccessErr} from '@utils/funcs';
     */
    function switchTheme(theme: string): void {
       const ROOT = document.documentElement;
-      let themeToggler = document.getElementById(
-         'theme-toggler') as HTMLButtonElement | null;
-      if (!themeToggler) {
-         showElemAccessErr('start-stop');
+      //
+      let darkModeSvg = document.getElementById(
+         'dark-mode-svg') as SVGSVGElement | null;
+      if (!darkModeSvg) {
+         showElemAccessErr('dark-mode-svg');
+         return;
+      }
+      //
+      let lightModeSvg = document.getElementById(
+         'light-mode-svg') as SVGSVGElement | null;
+      if (!lightModeSvg) {
+         showElemAccessErr('light-mode-svg');
          return;
       }
       switch (theme) {
          case 'light':
             ROOT.setAttribute('data-theme', theme);
-            themeToggler.style.backgroundImage = "url('/assets/img/dark-mode.png')";
+            darkModeSvg.style.display = 'block';
+            lightModeSvg.style.display = 'none';
             localStorage.setItem('theme', theme);
             break;
          case 'dark':
             ROOT.setAttribute('data-theme', theme);
-            themeToggler.style.backgroundImage = "url('/assets/img/light-mode.png')";
+            darkModeSvg.style.display = 'none';
+            lightModeSvg.style.display = 'block';
             localStorage.setItem('theme', theme);
             break;
          default:

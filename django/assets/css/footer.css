@@ -7,35 +7,15 @@
 */
 
 footer {
-    background-color: rgb(77, 77, 77);
-    border-top: 5px solid orange;
+	grid-area: footer;
+	background-color: var(--m3-banner-bg-clr);
+	color: var(--m3-txt-clr);
+	text-align: center;
+	border-top: var(--m3-line-small) solid var(--m3-a-link-clr);
+	padding: var(--m3-spacing-medium);
 }
-footer ul {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}
-footer div.copyright {
-    color: orange;
-    text-align: center;
-    font-size: 80%;
-    font-weight: 300;
-    margin: 0px;
-    margin-bottom: 1rem;
-    padding: 0px;
-}
-footer a.interface:link {
-    color: orange;
-    text-decoration-line: underline;
-    text-decoration-style: dotted;
-    text-decoration-thickness: 18%;
-}
-footer a.interface:visited {
-    color: orange;
-    text-decoration-line: underline;
-    text-decoration-style: dotted;
-    text-decoration-thickness: 18%;
-}
-footer a.interface:hover {
-    color: yellow;
-    text-decoration-line: solid;
+footer > ul > li > a > svg.icon {
+    width: var(--m3-grphc-small);
+    height: var(--m3-grphc-small);
+    fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
 }

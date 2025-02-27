@@ -16,24 +16,20 @@
 
     <div class="navbar-middle">
         <a href="https://medium.com/@megacodist" target="_blank" class="beating-transition">{% include 'svg/articles.svg' %}</a>
-        <a href="{{ url('challenges:index-page') }}" target="_blank" class="beating-transition">{% include 'svg/challenges.svg' %}</a>
-        <a href="#" class="beating-transition">#3</a>
-        <a href="{{ url('license') }}" target="_blank" class="beating-transition">{% include 'svg/challenges.svg' %}</a>
+        <a href="{{ url('challenges:index-page') }}" class="beating-transition">{% include 'svg/challenges.svg' %}</a>
+        <a href="{{ url('about-me') }}" class="beating-transition">{% include 'svg/about-me.svg' %}</a>
+        <a href="{{ url('license') }}" class="beating-transition">{% include 'svg/license.svg' %}</a>
     </div>
 
     <div class="navbar-right">
-      <div class="search-bar">
-        <input type="text" placeholder="Search...">
-        <button type="submit">Search</button>
-      </div>
+      <button id="theme-toggler" class="beating-transition">
+        {% include 'svg/dark-mode.svg' %}
+        {% include 'svg/light-mode.svg' %}
+      </button>
     </div>
 
     <!-- Hamburger Menu (for small screens) -->
-    <button class="hamburger-menu" id="hamburger-icon">
-      <div class="bar"></div>
-      <div class="bar"></div>
-      <div class="bar"></div>
-    </button>
+    {% include 'svg/hamburger-menu.svg' %}
 
     <!-- Collapsed Menu (hidden by default on small screens) -->
     <div class="collapsed-menu" id="collapsed-nav">

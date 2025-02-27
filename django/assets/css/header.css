@@ -4,27 +4,41 @@ header {
     grid-area: header;
     color: var(--m3-txt-clr);
 	background-color: var(--m3-banner-bg-clr);
-    border-bottom: var(--m3-line-medium) solid var(--m3-a-link-clr);
+    border-bottom: var(--m3-line-small) solid var(--m3-a-link-clr);
 }
 
 
 header nav.navbar {
     display: flex; /* Use flexbox for layout */
+    flex-direction: row; /* Arrange items horizontally */
     justify-content: space-between; /* Space out left, middle, and right sections */
     align-items: center; /* Vertically align items in the navbar */
     padding: 15px 20px; /* Padding around the navbar */
 }
 
-header > nav.navbar svg {
-    width: var(--m3-grphc-medium);
-    height: var(--m3-grphc-medium);
-}
-
-header > nav.navbar svg * {
-    fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
-}
-
+/* Styling the middle div of the navbar */
 header > nav.navbar div.navbar-middle {
     display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    column-gap: var(--m3-spacing-small);
     align-items: center;
+}
+
+/* Styling the right div of the navbar */
+header > nav.navbar div.navbar-right {
+    display: flex;
+    flex-direction: row; /* Arrange items horizontally */
+    align-items: center;
+}
+header > nav.navbar div.navbar-right #theme-toggler {
+    border:none;
+    background: none;
+	background-size: cover; /* or contain, depending on your images */
+	background-repeat: no-repeat;
+}
+header > nav.navbar div.navbar-right #light-mode-svg {
+    display: none;
+}
+header > nav.navbar div.navbar-right #dark-mode-svg {
+    display: block;
 }

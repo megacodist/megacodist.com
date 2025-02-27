@@ -10,46 +10,44 @@
 
 <head>
   <!-- <link rel="stylesheet" href="{{ static('css/footer.css') }}"> -->
-  <link rel="stylesheet" href="{{ static('css/beating-transition.css') }}">
+  <link rel="stylesheet" href="{{ static('css/footer.css') }}">
 </head>
 
-{% block footer %}
-  <!-- Footer -->
-  <footer>
-    <!-- Social media buttons -->
-    <!-- The list of social media icons is in two rows on extra small screens and one row otherwise -->
-    <ul class="list-unstyled list-inline text-center">
-      <li class="list-inline-item beating-transition">
-        <a href="https://x.com/megacodist" title="Megacodist account on X" target="_blank" class="interface"><i class="fa-brands fa-x-twitter" style="font-size: 40px;"></i></a>
-      </li>
+<!-- Footer -->
+<footer>
+  <!-- Social media buttons -->
+  <!-- The list of social media icons is in two rows on extra small screens and one row otherwise -->
+  <ul class="list-unstyled list-inline text-center">
+    <li class="list-inline-item beating-transition">
+      <a href="https://x.com/megacodist" title="Megacodist account on X" target="_blank" class="interface">{% include 'svg/x.svg' %}</a>
+    </li>
 
-      <li class="list-inline-item beating-transition">
-        <a href="https://github.com/megacodist" title="Megacodist account on GitHub" target="_blank" class="interface"><i class="fa-brands fa-github" style="font-size: 40px;"></i></a>
-      </li>
+    <li class="list-inline-item beating-transition">
+      <a href="https://github.com/megacodist" title="Megacodist account on GitHub" target="_blank" class="interface">{% include 'svg/github.svg' %}</a>
+    </li>
 
-      <li class="list-inline-item beating-transition">
-        <a href="https://linkedin.com/in/megacodist" title="Megacodist account on LinkedIn" target="_blank" class="interface"><i class="fa-brands fa-linkedin" style="font-size: 40px;"></i></a>
-      </li>
+    <li class="list-inline-item beating-transition">
+      <a href="https://linkedin.com/in/megacodist" title="Megacodist account on LinkedIn" target="_blank" class="interface">{% include 'svg/linkedin.svg' %}</a>
+    </li>
 
-      <li class="list-inline-item beating-transition">
-        <a href="https://instagram.com/megacodist" title="Megacodist account on Instagram" target="_blank" class="interface"><i class="fa-brands fa-instagram" style="font-size: 40px;"></i></a>
-      </li>
+    <li class="list-inline-item beating-transition">
+      <a href="https://instagram.com/megacodist" title="Megacodist account on Instagram" target="_blank" class="interface">{% include 'svg/instagram.svg' %}</a>
+    </li>
 
-      <li class="list-inline-item beating-transition">
-        <a href="https://wa.me/989377472900" title="Megacodist account on WhatsApp" target="_blank" class="interface"><i class="fa-brands fa-whatsapp" style="font-size: 40px;"></i></a>
-      </li>
+    <li class="list-inline-item beating-transition">
+      <a href="https://wa.me/989377472900" title="Megacodist account on WhatsApp" target="_blank" class="interface">{% include 'svg/whatsapp.svg' %}</a>
+    </li>
 
-      <li class="list-inline-item beating-transition">
-        <a href="https://t.me/mm91mm92" title="Megacodist account on Telegram" target="_blank" class="interface"><i class="fa-brands fa-telegram" style="font-size: 40px;"></i></a>
-      </li>
-    </ul>
-    <!-- End of social media buttons -->
+    <li class="list-inline-item beating-transition">
+      <a href="https://t.me/mm91mm92" title="Megacodist account on Telegram" target="_blank" class="interface">{% include 'svg/telegram.svg' %}</a>
+    </li>
+  </ul>
+  <!-- End of social media buttons -->
 
-    <!-- Copyright -->
-    <div class="copyright">
-      {% set year = now().year %}
-      © {{ year }} Copyright: <strong>Megacodist</strong>
-    </div>
-    <!-- End of copyright -->
-  </footer>
-{% endblock footer %}
+  <!-- Copyright -->
+  <div class="copyright">
+    {% set year = now().year %}
+    © {{ year }} Copyright: <strong>Megacodist</strong>
+  </div>
+  <!-- End of copyright -->
+</footer>

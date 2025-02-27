@@ -39,8 +39,9 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.5.1/css/all.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-    {# Linking the 'base.css'... -#}
+    {# Linking general CSS files... -#}
     <link rel="stylesheet" href="{{ static('css/base.css') }}">
+    <link rel="stylesheet" href="{{ static('css/beating-transition.css') }}">
 
     <!-- [if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
@@ -60,9 +61,6 @@
   <main class="container">
     {% block main %}
     {% endblock main %}
-
-    {# The theme toggler #}
-    <button id="theme-toggler"></button>
   </main>
 
   {# Including footer---------------------------------------------------- -#}
@@ -80,7 +78,7 @@
     {# Enabling Box Icons icon library -#}
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
 
-    <script defer type="module" src="{{ static('scripts/base.js') }}"></script>
+    <script defer type="module" src="{{ static('scripts/header.js') }}"></script>
   {% endblock jsFiles %}
 
   {# Including JS scripts the end of page ------------------------------  -#}

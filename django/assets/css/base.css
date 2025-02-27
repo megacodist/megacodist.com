@@ -34,13 +34,13 @@
 /* Light theme properties values */
 [data-theme='light'] {
 	/* Backgrounds */
-	--m3-bg-clr: rgb(202, 185, 167);
-	--m3-banner-bg-clr: rgb(0, 0, 0);
+	--m3-bg-clr: rgb(199, 255, 234);
+	--m3-banner-bg-clr: rgb(149, 235, 202);
 	/* Text */
-	--m3-txt-clr: rgb(34, 23, 2);
+	--m3-txt-clr: rgb(10, 43, 32);
 	/* Anchor */
-	--m3-a-link-clr: rgb(189, 76, 1);
-	--m3-a-hover-clr:  rgb(224, 224, 0);
+	--m3-a-link-clr: rgb(0, 0, 0);
+	--m3-a-hover-clr: var(--m3-txt-clr);
 	/* Line */
 	--m3-line-clr: var(--m3-txt-clr);
 	/* button */
@@ -70,7 +70,6 @@
 html {
   height: 100vh;
 }
-
 body {
 	/* Font families */
 	font-family: 'Karla', Arial, Helvetica, "Helvetica Neue", sans-serif;
@@ -92,41 +91,18 @@ body {
 	background-color: var(--m3-bg-clr);
 	color: var(--m3-txt-clr);
 }
-
 main {
 	grid-area: main;
 	padding: var(--m3-spacing-medium);
 }
 
-footer {
-	grid-area: footer;
-	background-color: var(--m3-banner-bg-clr);
-	color: var(--m3-txt-clr);
-	text-align: center;
-	border-top: var(--m3-line-medium) solid var(--m3-a-link-clr);
-	padding: var(--m3-spacing-medium);
+/* Text elements */
+h3.m3-h3 {
+	margin-top: var(--m3-spacing-small);
+	margin-bottom: var(--m3-spacing-none);
 }
 
-
-/* Customizing theme toggler button */
-#theme-toggler {
-	appearance: none;
-	position: fixed; /* Fixes the button's position */
-	bottom: 20px;    /* Distance from the bottom of the screen */
-	right: 20px;     /* Distance from the right of the screen */
-	cursor: pointer;
-	width: 40px;
-  	height: 40px;
-	border-radius: 20px;
-
-	background-size: cover; /* or contain, depending on your images */
-	background-repeat: no-repeat;
-	
-	/* background-image: url("../img/dark-mode.png");   Image for the "off" state */
-	/* background-image: url("../img/light-mode.png");  Image for the "on" state */
-}
-
-/* Customizing icons */
+/* Styling icons */
 img.icon {
 	width: 1em;
 	height: 1em;
@@ -135,7 +111,7 @@ img.icon {
 }
 
 
-/* Customizing general anchor elements */
+/* Styling general anchor elements */
 /* The typical link */
 a:link {
 	color: var(--m3-a-link-clr) !important;
@@ -151,7 +127,7 @@ a:hover {
   	text-decoration-style: solid !important;
 }
 /* A link refers outside of megacodist.com */
-a.external[target="_blank"]:after {
+a.m3-external[target="_blank"]:after {
   font-family: 'FontAwesome';
   content: " \f08e";
   size: 0.5rem;
@@ -214,4 +190,11 @@ button.m3-btn:active {
 
 section.notes {
   font-size: small;
+}
+
+/* SVG icons */
+svg.m3-icon {
+    width: var(--m3-grphc-small);
+    height: var(--m3-grphc-small);
+    fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
 }
