@@ -14,8 +14,10 @@ footer {
 	border-top: var(--m3-line-small) solid var(--m3-a-link-clr);
 	padding: var(--m3-spacing-medium);
 }
-footer > ul > li > a > svg.icon {
-    width: var(--m3-grphc-small);
-    height: var(--m3-grphc-small);
-    fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
+footer > div.social-media {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	column-gap: var(--m3-spacing-medium);
 }

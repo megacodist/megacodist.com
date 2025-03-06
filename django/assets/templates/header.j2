@@ -3,33 +3,29 @@
     
     No special context is needed. Only environment is sufficient.
 #}
-    
-<head>
-  <link rel="stylesheet" href="{{ static('css/header.css') }}">
-</head>
 
 <header>
   <nav class="navbar">
     <div class="navbar-left beating-transition">
-      <a href="#" class="logo">{% include 'svg/megacodist.svg' %}</a>
+      <a class="m3-lnk beating-transition" href="#"><i class="m3-megacodist"></i></a>
     </div>
 
     <div class="navbar-middle">
-        <a href="https://medium.com/@megacodist" target="_blank" class="beating-transition">{% include 'svg/articles.svg' %}</a>
-        <a href="{{ url('challenges:index-page') }}" class="beating-transition">{% include 'svg/challenges.svg' %}</a>
-        <a href="{{ url('about-me') }}" class="beating-transition">{% include 'svg/about-me.svg' %}</a>
-        <a href="{{ url('license') }}" class="beating-transition">{% include 'svg/license.svg' %}</a>
+        <a class="m3-lnk beating-transition" href="https://medium.com/@megacodist" target="_blank"><i class="m3-articles"></i></a>
+        <a class="m3-lnk beating-transition" href="{{ url('challenges:index-page') }}"><i class="m3-challenges"></i></a>
+        <a class="m3-lnk beating-transition" href="{{ url('about-me') }}"><i class="m3-about-me"></i></a>
+        <a class="m3-lnk beating-transition" href="{{ url('license') }}"><i class="m3-license"></i></a>
     </div>
 
     <div class="navbar-right">
       <button id="theme-toggler" class="beating-transition">
-        {% include 'svg/dark-mode.svg' %}
-        {% include 'svg/light-mode.svg' %}
+        <i id="dark-mode-icon" class="m3-dark-mode"></i>
+        <i id="light-mode-icon" class="m3-light-mode"></i>
       </button>
     </div>
 
     <!-- Hamburger Menu (for small screens) -->
-    {% include 'svg/hamburger-menu.svg' %}
+    <i class="m3-hamburger-menu"></i>
 
     <!-- Collapsed Menu (hidden by default on small screens) -->
     <div class="collapsed-menu" id="collapsed-nav">

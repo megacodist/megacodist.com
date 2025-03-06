@@ -64,16 +64,16 @@ import {showElemAccessErr} from '@utils/funcs';
       const ROOT = document.documentElement;
       //
       let darkModeSvg = document.getElementById(
-         'dark-mode-svg') as SVGSVGElement | null;
+         'dark-mode-icon') as SVGSVGElement | null;
       if (!darkModeSvg) {
-         showElemAccessErr('dark-mode-svg');
+         showElemAccessErr('dark-mode-icon');
          return;
       }
       //
       let lightModeSvg = document.getElementById(
-         'light-mode-svg') as SVGSVGElement | null;
+         'light-mode-icon') as SVGSVGElement | null;
       if (!lightModeSvg) {
-         showElemAccessErr('light-mode-svg');
+         showElemAccessErr('light-mode-icon');
          return;
       }
       switch (theme) {

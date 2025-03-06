@@ -1,0 +1,80 @@
+@font-face {
+  font-family: 'megacodist-icons';
+  src:  url('../fonts/megacodist-icons.eot?87pjzl');
+  src:  url('../fonts/megacodist-icons.eot?87pjzl#iefix') format('embedded-opentype'),
+    url('../fonts/megacodist-icons.ttf?87pjzl') format('truetype'),
+    url('../fonts/megacodist-icons.woff?87pjzl') format('woff'),
+    url('../fonts/megacodist-icons.svg?87pjzl#megacodist-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+i {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'megacodist-icons' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.m3-linkedin:before {
+  content: "\e902";
+}
+.m3-dark-mode:before {
+  content: "\e903";
+}
+.m3-django:before {
+  content: "\e904";
+}
+.m3-external-link:before {
+  content: "\e905";
+}
+.m3-github:before {
+  content: "\e906";
+}
+.m3-hamburger-menu:before {
+  content: "\e907";
+}
+.m3-instagram:before {
+  content: "\e908";
+}
+.m3-license:before {
+  content: "\e909";
+}
+.m3-light-mode:before {
+  content: "\e90a";
+}
+.m3-megacodist:before {
+  content: "\e90b";
+}
+.m3-python:before {
+  content: "\e90c";
+}
+.m3-whatsapp:before {
+  content: "\e90d";
+}
+.m3-x:before {
+  content: "\e90e";
+}
+.m3-creative-commons-by:before {
+  content: "\e90f";
+}
+.m3-creative-commons:before {
+  content: "\e910";
+}
+.m3-challenges:before {
+  content: "\e911";
+}
+.m3-about-me:before {
+  content: "\e901";
+}
+.m3-articles:before {
+  content: "\e900";
+}

@@ -48,15 +48,15 @@ import { showElemAccessErr } from '/assets/scripts/funcs.js';
     function switchTheme(theme) {
         const ROOT = document.documentElement;
         //
-        let darkModeSvg = document.getElementById('dark-mode-svg');
+        let darkModeSvg = document.getElementById('dark-mode-icon');
         if (!darkModeSvg) {
-            showElemAccessErr('dark-mode-svg');
+            showElemAccessErr('dark-mode-icon');
             return;
         }
         //
-        let lightModeSvg = document.getElementById('light-mode-svg');
+        let lightModeSvg = document.getElementById('light-mode-icon');
         if (!lightModeSvg) {
-            showElemAccessErr('light-mode-svg');
+            showElemAccessErr('light-mode-icon');
             return;
         }
         switch (theme) {

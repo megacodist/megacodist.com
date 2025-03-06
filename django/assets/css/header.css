@@ -8,16 +8,25 @@ header {
 }
 
 
-header nav.navbar {
+header > nav.navbar {
     display: flex; /* Use flexbox for layout */
     flex-direction: row; /* Arrange items horizontally */
     justify-content: space-between; /* Space out left, middle, and right sections */
     align-items: center; /* Vertically align items in the navbar */
     padding: 15px 20px; /* Padding around the navbar */
 }
+header > nav.navbar a {
+    text-decoration: none;
+}
+header > nav.navbar a > i {
+    font-size: var(--m3-grphc-small);
+}
+header > nav.navbar button > i {
+    font-size: var(--m3-grphc-small);
+}
 
 /* Styling the middle div of the navbar */
-header > nav.navbar div.navbar-middle {
+header > nav.navbar > div.navbar-middle {
     display: flex;
     flex-direction: row; /* Arrange items horizontally */
     column-gap: var(--m3-spacing-small);

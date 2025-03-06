@@ -104,8 +104,8 @@ h3.m3-h3 {
 
 /* Styling icons */
 img.icon {
-	width: 1em;
-	height: 1em;
+	width: var(--m3-grphc-tiny);
+	height: var(--m3-grphc-tiny);
 	stroke: var(--m3-txt-clr);
 	stroke-width: var(--m3-line-small);
 }
@@ -113,34 +113,38 @@ img.icon {
 
 /* Styling general anchor elements */
 /* The typical link */
-a:link {
+a.m3-lnk:link {
 	color: var(--m3-a-link-clr) !important;
 	text-decoration-line: underline !important;
 	text-decoration-style: dotted !important;
 	text-decoration-thickness: 12% !important;
 }
 /* When mouse hovers over it */
-a:hover {
+a.m3-lnk:hover {
 	color: var(--m3-a-hover-clr) !important;
   	cursor: pointer;
   	text-decoration-line: underline !important;
   	text-decoration-style: solid !important;
 }
-/* A link refers outside of megacodist.com */
-a.m3-external[target="_blank"]:after {
-  font-family: 'FontAwesome';
-  content: " \f08e";
-  size: 0.5rem;
+/* An indicator that a link refers outside of megacodist.com */
+a.m3-lnk-external:after {
+	display: inline-block;
+	font-family: megacodist-icons;
+	content: '\e905';
+	margin-left: var(--m3-spacing-tiny);
+	width: var(--m3-grphc-tiny);
+	height: var(--m3-grphc-tiny);
+	color: var(--m3-a-link-clr) !important;
 }
 /*
 // A link that is being clicked
-a:active {
+a.m3-lnk:active {
 }
 // A visited link
-a:visited {
+a.m3-lnk:visited {
 }
 // A link that is being focused by keyboard navigation
-a:focus {
+a.m3-lnk:focus {
 }
 */
 
@@ -170,26 +174,18 @@ button.m3-btn {
 	vertical-align: baseline;
 	width: auto;
 }
-
 button.m3-btn:hover,
 button.m3-btn:focus {
 	background-color: var(--m3-a-hover-clr);
 	box-shadow: var(--m3-shadow-clr) 0 4px 12px;
 }
-
 button.m3-btn:hover {
   	transform: translateY(-1px);
 }
-
 button.m3-btn:active {
 	background-color: #c85000;
 	box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
 	transform: translateY(0);
-}
-
-
-section.notes {
-  font-size: small;
 }
 
 /* SVG icons */
@@ -197,4 +193,9 @@ svg.m3-icon {
     width: var(--m3-grphc-small);
     height: var(--m3-grphc-small);
     fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
+}
+
+/* Font icon */
+i.m3-icon-small {
+	font-size: var(--m3-grphc-small);
 }
