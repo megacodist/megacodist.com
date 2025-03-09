@@ -74,7 +74,7 @@ body {
 	/* Font families */
 	font-family: 'Karla', Arial, Helvetica, "Helvetica Neue", sans-serif;
 	font-size: var(--m3-font-small);
-	font-weight: 300;
+	font-weight: 200;
 	line-height: 1.6; /* Good for readability with sans-serif fonts */
 
 	/* Laying out the page */
@@ -98,14 +98,16 @@ main {
 
 /* Text elements */
 h3.m3-h3 {
-	margin-top: var(--m3-spacing-small);
+	margin-top: var(--m3-spacing-medium);
 	margin-bottom: var(--m3-spacing-none);
+}
+p.m3-p {
+	margin-top: var(--m3-spacing-none);
+	margin-bottom: var(--m3-spacing-small);
 }
 
 /* Styling icons */
-img.icon {
-	width: var(--m3-grphc-tiny);
-	height: var(--m3-grphc-tiny);
+i.m3-icon {
 	stroke: var(--m3-txt-clr);
 	stroke-width: var(--m3-line-small);
 }
@@ -195,7 +197,19 @@ svg.m3-icon {
     fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
 }
 
-/* Font icon */
-i.m3-icon-small {
-	font-size: var(--m3-grphc-small);
+/* Icon button styling */
+a.m3-icon-btn:link {
+    text-decoration: none;
+    color: var(--m3-a-link-clr);
+}
+a.m3-icon-btn:hover {
+    text-decoration: none;
+    color: var(--m3-a-hover-clr);
+}
+a.m3-icon-btn:visited {
+    text-decoration: none;
+    color: var(--m3-a-link-clr);
+}
+a.m3-icon-btn > i {
+    font-size: var(--m3-grphc-small);
 }

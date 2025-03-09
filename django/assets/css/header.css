@@ -6,23 +6,12 @@ header {
 	background-color: var(--m3-banner-bg-clr);
     border-bottom: var(--m3-line-small) solid var(--m3-a-link-clr);
 }
-
-
 header > nav.navbar {
     display: flex; /* Use flexbox for layout */
     flex-direction: row; /* Arrange items horizontally */
     justify-content: space-between; /* Space out left, middle, and right sections */
     align-items: center; /* Vertically align items in the navbar */
     padding: 15px 20px; /* Padding around the navbar */
-}
-header > nav.navbar a {
-    text-decoration: none;
-}
-header > nav.navbar a > i {
-    font-size: var(--m3-grphc-small);
-}
-header > nav.navbar button > i {
-    font-size: var(--m3-grphc-small);
 }
 
 /* Styling the middle div of the navbar */
@@ -39,15 +28,43 @@ header > nav.navbar div.navbar-right {
     flex-direction: row; /* Arrange items horizontally */
     align-items: center;
 }
-header > nav.navbar div.navbar-right #theme-toggler {
-    border:none;
-    background: none;
-	background-size: cover; /* or contain, depending on your images */
-	background-repeat: no-repeat;
-}
 header > nav.navbar div.navbar-right #light-mode-svg {
     display: none;
 }
 header > nav.navbar div.navbar-right #dark-mode-svg {
     display: block;
+}
+
+/* Styling of hamburgur icon & menu */
+header > nav.navbar #hamburger-icon {
+    display: none;
+}
+header > nav.navbar #menu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--m3-banner-bg-clr);
+    border-top: var(--m3-line-small) solid var(--m3-a-link-clr);
+    display: none;
+}
+
+@media (max-width: 400px) {
+    header > nav.navbar #hamburger-icon {
+        display: block;
+    }
+    header > nav.navbar #menu {
+        display: none;
+    }
+    header > nav.navbar #menu.active {
+        display: flex;
+    }
+    header > nav.navbar div.navbar-middle {
+        display: none;
+    }
+    header > nav.navbar div.navbar-right {
+        display: none;
+    }
 }

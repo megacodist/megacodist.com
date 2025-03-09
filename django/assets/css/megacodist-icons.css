@@ -24,57 +24,60 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.m3-linkedin:before {
+.m3-icons-telegram:before {
+  content: "\e912";
+}
+.m3-icons-linkedin:before {
   content: "\e902";
 }
-.m3-dark-mode:before {
+.m3-icons-dark-mode:before {
   content: "\e903";
 }
-.m3-django:before {
+.m3-icons-django:before {
   content: "\e904";
 }
-.m3-external-link:before {
+.m3-icons-external-link:before {
   content: "\e905";
 }
-.m3-github:before {
+.m3-icons-github:before {
   content: "\e906";
 }
-.m3-hamburger-menu:before {
+.m3-icons-hamburger-menu:before {
   content: "\e907";
 }
-.m3-instagram:before {
+.m3-icons-instagram:before {
   content: "\e908";
 }
-.m3-license:before {
+.m3-icons-license:before {
   content: "\e909";
 }
-.m3-light-mode:before {
+.m3-icons-light-mode:before {
   content: "\e90a";
 }
-.m3-megacodist:before {
+.m3-icons-megacodist:before {
   content: "\e90b";
 }
-.m3-python:before {
+.m3-icons-python:before {
   content: "\e90c";
 }
-.m3-whatsapp:before {
+.m3-icons-whatsapp:before {
   content: "\e90d";
 }
-.m3-x:before {
+.m3-icons-x:before {
   content: "\e90e";
 }
-.m3-creative-commons-by:before {
+.m3-icons-creative-commons-by:before {
   content: "\e90f";
 }
-.m3-creative-commons:before {
+.m3-icons-creative-commons:before {
   content: "\e910";
 }
-.m3-challenges:before {
+.m3-icons-challenges:before {
   content: "\e911";
 }
-.m3-about-me:before {
+.m3-icons-about-me:before {
   content: "\e901";
 }
-.m3-articles:before {
+.m3-icons-articles:before {
   content: "\e900";
 }

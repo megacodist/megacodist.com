@@ -7,34 +7,44 @@
 <header>
   <nav class="navbar">
     <div class="navbar-left beating-transition">
-      <a class="m3-lnk beating-transition" href="#"><i class="m3-megacodist"></i></a>
+      <a class="m3-icon-btn beating-transition" href="#"><i class="m3-icons-megacodist"></i></a>
     </div>
 
     <div class="navbar-middle">
-        <a class="m3-lnk beating-transition" href="https://medium.com/@megacodist" target="_blank"><i class="m3-articles"></i></a>
-        <a class="m3-lnk beating-transition" href="{{ url('challenges:index-page') }}"><i class="m3-challenges"></i></a>
-        <a class="m3-lnk beating-transition" href="{{ url('about-me') }}"><i class="m3-about-me"></i></a>
-        <a class="m3-lnk beating-transition" href="{{ url('license') }}"><i class="m3-license"></i></a>
+      <a class="m3-icon-btn beating-transition" href="https://medium.com/@megacodist" target="_blank"><i class="m3-icons-articles"></i></a>
+      <a class="m3-icon-btn beating-transition" href="{{ url('challenges:index-page') }}"><i class="m3-icons-challenges"></i></a>
+      <a class="m3-icon-btn beating-transition" href="{{ url('about-me') }}"><i class="m3-icons-about-me"></i></a>
+      <a class="m3-icon-btn beating-transition" href="{{ url('license') }}"><i class="m3-icons-license"></i></a>
     </div>
 
     <div class="navbar-right">
-      <button id="theme-toggler" class="beating-transition">
-        <i id="dark-mode-icon" class="m3-dark-mode"></i>
-        <i id="light-mode-icon" class="m3-light-mode"></i>
-      </button>
+      <a id="theme-toggler" class="m3-icon-btn beating-transition">
+        <i id="dark-mode-icon" class="m3-icons-dark-mode"></i>
+        <i id="light-mode-icon" class="m3-icons-light-mode"></i>
+      </a>
     </div>
 
-    <!-- Hamburger Menu (for small screens) -->
-    <i class="m3-hamburger-menu"></i>
-
-    <!-- Collapsed Menu (hidden by default on small screens) -->
-    <div class="collapsed-menu" id="collapsed-nav">
-      <ul class="collapsed-nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
+    <!-- Hamburger icon (for small screens) -->
+    <div id="hamburgur-icon">
+      <a class="m3-icon-btn"><i class="m3-icons-hamburger-menu"></i></a>
     </div>
+
+    <!-- Hamburger menu (hidden by default on rather wide screens) -->
+    <div id="hamburgur-menu" id="collapsed-nav">
+      <div class="navbar-middle">
+        <a class="m3-icon-btn beating-transition" href="https://medium.com/@megacodist" target="_blank"><i class="m3-icons-articles"></i></a>
+        <a class="m3-icon-btn beating-transition" href="{{ url('challenges:index-page') }}"><i class="m3-icons-challenges"></i></a>
+        <a class="m3-icon-btn beating-transition" href="{{ url('about-me') }}"><i class="m3-icons-about-me"></i></a>
+        <a class="m3-icon-btn beating-transition" href="{{ url('license') }}"><i class="m3-icons-license"></i></a>
+      </div>
+
+      <div class="navbar-right">
+        <a id="theme-toggler" class="m3-icon-btn beating-transition">
+          <i id="dark-mode-icon" class="m3-icons-dark-mode"></i>
+          <i id="light-mode-icon" class="m3-icons-light-mode"></i>
+        </a>
+      </div>
+    </div>
+    <!-- End of hamburgur menu -->
   </nav>
 </header>
