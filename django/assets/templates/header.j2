@@ -18,33 +18,37 @@
     </div>
 
     <div class="navbar-right">
+      <!-- The theme toggler button -->
       <a id="theme-toggler" class="m3-icon-btn beating-transition">
         <i id="dark-mode-icon" class="m3-icons-dark-mode"></i>
         <i id="light-mode-icon" class="m3-icons-light-mode"></i>
       </a>
-    </div>
+      <!-- The end of the theme toggler button -->
 
-    <!-- Hamburger icon (for small screens) -->
-    <div id="hamburgur-icon">
-      <a class="m3-icon-btn"><i class="m3-icons-hamburger-menu"></i></a>
-    </div>
+      <div id="hamburger">
+        <!-- Hamburger icon (for small screens) -->
+        <a id="hamburger-icon" class="m3-icon-btn beating-transition"><i class="m3-icons-hamburger-menu"></i></a>
 
-    <!-- Hamburger menu (hidden by default on rather wide screens) -->
-    <div id="hamburgur-menu" id="collapsed-nav">
-      <div class="navbar-middle">
-        <a class="m3-icon-btn beating-transition" href="https://medium.com/@megacodist" target="_blank"><i class="m3-icons-articles"></i></a>
-        <a class="m3-icon-btn beating-transition" href="{{ url('challenges:index-page') }}"><i class="m3-icons-challenges"></i></a>
-        <a class="m3-icon-btn beating-transition" href="{{ url('about-me') }}"><i class="m3-icons-about-me"></i></a>
-        <a class="m3-icon-btn beating-transition" href="{{ url('license') }}"><i class="m3-icons-license"></i></a>
+        <!-- Hamburger menu (hidden by default on rather wide screens) -->
+        <div id="hamburger-menu">
+          <div class="navbar-middle">
+            <a class="m3-icon-btn beating-transition" href="https://medium.com/@megacodist" target="_blank"><i class="m3-icons-articles"></i></a>
+            <a class="m3-icon-btn beating-transition" href="{{ url('challenges:index-page') }}"><i class="m3-icons-challenges"></i></a>
+            <a class="m3-icon-btn beating-transition" href="{{ url('about-me') }}"><i class="m3-icons-about-me"></i></a>
+            <a class="m3-icon-btn beating-transition" href="{{ url('license') }}"><i class="m3-icons-license"></i></a>
+          </div>
+
+          <div class="navbar-right">
+            <a id="theme-toggler" class="m3-icon-btn beating-transition">
+              <i id="dark-mode-icon" class="m3-icons-dark-mode"></i>
+              <i id="light-mode-icon" class="m3-icons-light-mode"></i>
+            </a>
+          </div>
+        </div>
       </div>
-
-      <div class="navbar-right">
-        <a id="theme-toggler" class="m3-icon-btn beating-transition">
-          <i id="dark-mode-icon" class="m3-icons-dark-mode"></i>
-          <i id="light-mode-icon" class="m3-icons-light-mode"></i>
-        </a>
-      </div>
+      <!-- The end of hamburger icon -->
     </div>
-    <!-- End of hamburgur menu -->
   </nav>
+
+  <!-- End of hamburger menu -->
 </header>

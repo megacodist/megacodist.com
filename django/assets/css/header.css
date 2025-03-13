@@ -27,6 +27,7 @@ header > nav.navbar div.navbar-right {
     display: flex;
     flex-direction: row; /* Arrange items horizontally */
     align-items: center;
+    position: relative;
 }
 header > nav.navbar div.navbar-right #light-mode-svg {
     display: none;
@@ -34,13 +35,12 @@ header > nav.navbar div.navbar-right #light-mode-svg {
 header > nav.navbar div.navbar-right #dark-mode-svg {
     display: block;
 }
-
-/* Styling of hamburgur icon & menu */
-header > nav.navbar #hamburger-icon {
+header > nav.navbar div.navbar-right #hamburger {
     display: none;
+    position: relative;
 }
-header > nav.navbar #menu {
-    display: flex;
+header > nav.navbar div.navbar-right #hamburger-menu {
+    display: none;
     flex-direction: column;
     position: absolute;
     top: 100%;
@@ -48,23 +48,16 @@ header > nav.navbar #menu {
     width: 100%;
     background-color: var(--m3-banner-bg-clr);
     border-top: var(--m3-line-small) solid var(--m3-a-link-clr);
-    display: none;
 }
 
 @media (max-width: 400px) {
-    header > nav.navbar #hamburger-icon {
-        display: block;
-    }
-    header > nav.navbar #menu {
-        display: none;
-    }
-    header > nav.navbar #menu.active {
-        display: flex;
-    }
     header > nav.navbar div.navbar-middle {
         display: none;
     }
-    header > nav.navbar div.navbar-right {
+    header > nav.navbar #theme-toggler {
         display: none;
+    }
+    header > nav.navbar div.navbar-right #hamburger {
+        display: block;
     }
 }

@@ -22,25 +22,18 @@
 
 	/* Font */
 	--m3-font-small: 16px;
-
-	/* Graphics (images, icons, ...) */
-	--m3-grphc-tiny: 1rem;
-	--m3-grphc-small: 2rem;
-	--m3-grphc-medium: 3rem;
-	--m3-grphc-large: 4rem;
-	--m3-grphc-xlarge: 5rem;
 }
 
 /* Light theme properties values */
 [data-theme='light'] {
 	/* Backgrounds */
-	--m3-bg-clr: rgb(199, 255, 234);
-	--m3-banner-bg-clr: rgb(149, 235, 202);
+	--m3-bg-clr: rgb(202, 185, 167);
+	--m3-banner-bg-clr: rgb(0, 0, 0);
 	/* Text */
-	--m3-txt-clr: rgb(10, 43, 32);
+	--m3-txt-clr: rgb(34, 23, 2);
 	/* Anchor */
-	--m3-a-link-clr: rgb(0, 0, 0);
-	--m3-a-hover-clr: var(--m3-txt-clr);
+	--m3-a-link-clr: rgb(189, 76, 1);
+	--m3-a-hover-clr:  rgb(224, 224, 0);
 	/* Line */
 	--m3-line-clr: var(--m3-txt-clr);
 	/* button */
@@ -70,11 +63,12 @@
 html {
   height: 100vh;
 }
+
 body {
 	/* Font families */
 	font-family: 'Karla', Arial, Helvetica, "Helvetica Neue", sans-serif;
 	font-size: var(--m3-font-small);
-	font-weight: 200;
+	font-weight: 300;
 	line-height: 1.6; /* Good for readability with sans-serif fonts */
 
 	/* Laying out the page */
@@ -91,62 +85,71 @@ body {
 	background-color: var(--m3-bg-clr);
 	color: var(--m3-txt-clr);
 }
+
 main {
 	grid-area: main;
 	padding: var(--m3-spacing-medium);
 }
 
-/* Text elements */
-h3.m3-h3 {
-	margin-top: var(--m3-spacing-medium);
-	margin-bottom: var(--m3-spacing-none);
-}
-p.m3-p {
-	margin-top: var(--m3-spacing-none);
-	margin-bottom: var(--m3-spacing-small);
-}
-
-/* Styling icons */
-i.m3-icon {
-	stroke: var(--m3-txt-clr);
-	stroke-width: var(--m3-line-small);
+footer {
+	grid-area: footer;
+	background-color: var(--m3-banner-bg-clr);
+	color: var(--m3-txt-clr);
+	text-align: center;
+	border-top: var(--m3-line-medium) solid var(--m3-a-link-clr);
+	padding: var(--m3-spacing-medium);
 }
 
 
-/* Styling general anchor elements */
+/* Customizing theme toggler button */
+#theme-toggler {
+	appearance: none;
+	position: fixed; /* Fixes the button's position */
+	bottom: 20px;    /* Distance from the bottom of the screen */
+	right: 20px;     /* Distance from the right of the screen */
+	cursor: pointer;
+	width: 40px;
+  	height: 40px;
+	border-radius: 20px;
+
+	background-size: cover; /* or contain, depending on your images */
+	background-repeat: no-repeat;
+	
+	/* background-image: url("../img/dark-mode.png");   Image for the "off" state */
+	/* background-image: url("../img/light-mode.png");  Image for the "on" state */
+}
+
+
+/* Customizing general anchor elements */
 /* The typical link */
-a.m3-lnk:link {
+a:link {
 	color: var(--m3-a-link-clr) !important;
 	text-decoration-line: underline !important;
 	text-decoration-style: dotted !important;
 	text-decoration-thickness: 12% !important;
 }
 /* When mouse hovers over it */
-a.m3-lnk:hover {
+a:hover {
 	color: var(--m3-a-hover-clr) !important;
   	cursor: pointer;
   	text-decoration-line: underline !important;
   	text-decoration-style: solid !important;
 }
-/* An indicator that a link refers outside of megacodist.com */
-a.m3-lnk-external:after {
-	display: inline-block;
-	font-family: megacodist-icons;
-	content: '\e905';
-	margin-left: var(--m3-spacing-tiny);
-	width: var(--m3-grphc-tiny);
-	height: var(--m3-grphc-tiny);
-	color: var(--m3-a-link-clr) !important;
+/* A link refers outside of megacodist.com */
+a.external[target="_blank"]:after {
+  font-family: 'FontAwesome';
+  content: " \f08e";
+  size: 0.5rem;
 }
 /*
 // A link that is being clicked
-a.m3-lnk:active {
+a:active {
 }
 // A visited link
-a.m3-lnk:visited {
+a:visited {
 }
 // A link that is being focused by keyboard navigation
-a.m3-lnk:focus {
+a:focus {
 }
 */
 
@@ -176,40 +179,24 @@ button.m3-btn {
 	vertical-align: baseline;
 	width: auto;
 }
+
 button.m3-btn:hover,
 button.m3-btn:focus {
 	background-color: var(--m3-a-hover-clr);
 	box-shadow: var(--m3-shadow-clr) 0 4px 12px;
 }
+
 button.m3-btn:hover {
   	transform: translateY(-1px);
 }
+
 button.m3-btn:active {
 	background-color: #c85000;
 	box-shadow: rgba(0, 0, 0, .06) 0 2px 4px;
 	transform: translateY(0);
 }
 
-/* SVG icons */
-svg.m3-icon {
-    width: var(--m3-grphc-small);
-    height: var(--m3-grphc-small);
-    fill: var(--m3-a-link-clr);  /* Changes the fill color of all SVG elements */
-}
 
-/* Icon button styling */
-a.m3-icon-btn:link {
-    text-decoration: none;
-    color: var(--m3-a-link-clr);
-}
-a.m3-icon-btn:hover {
-    text-decoration: none;
-    color: var(--m3-a-hover-clr);
-}
-a.m3-icon-btn:visited {
-    text-decoration: none;
-    color: var(--m3-a-link-clr);
-}
-a.m3-icon-btn > i {
-    font-size: var(--m3-grphc-small);
+section.notes {
+  font-size: small;
 }

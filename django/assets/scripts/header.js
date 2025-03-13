@@ -21,6 +21,13 @@ import { showElemAccessErr } from '/assets/scripts/funcs.js';
             return;
         }
         themeToggler.addEventListener('click', onThemeTogglerClicked);
+        //
+        let hamburgerIcon = document.getElementById('hamburger-icon');
+        if (!hamburgerIcon) {
+            showElemAccessErr('hamburger-icon');
+            return;
+        }
+        hamburgerIcon.addEventListener('click', onHamburgerIconClicked);
     }
     /**
      * Returns the preferred theme which is the first available value in the
@@ -86,6 +93,20 @@ import { showElemAccessErr } from '/assets/scripts/funcs.js';
         }
         catch (err) {
             console.error(err);
+        }
+    }
+
+    function onHamburgerIconClicked(){
+        //
+        let hamburgerMenu = document.getElementById('hamburger-menu');
+        if (!hamburgerMenu) {
+            showElemAccessErr('hamburger-icon');
+            return;
+        }
+        if (hamburgerMenu.style.display === 'none' || hamburgerMenu.style.display === '') {
+            hamburgerMenu.style.display = 'flex'; // Set to flex
+        } else {
+            hamburgerMenu.style.display = 'none'; // Set to none
         }
     }
     // Applying the initial theme...
